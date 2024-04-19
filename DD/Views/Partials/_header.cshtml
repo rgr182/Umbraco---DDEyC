@@ -30,7 +30,7 @@
 
         <div class="container">
             <div class="row">
-                <div class="col" style="width 100%; text-align: center">
+                <div class="col centered-col">
                     @if (topHeaderImage != null)
                     {
                         <img src="@topHeaderImage.Url()" alt="Logo 1" class="logo-img">
@@ -39,15 +39,15 @@
             </div>
 
             <div class="row">
-                <div class="col" style="width: 100%; text-align: center">
+                <div class="col centered-col">
                     @if (bottomHeaderImage1 != null)
                     {
-                        <img src="@bottomHeaderImage1.Url()" class="img-fluid" alt="Logo 2"
+                        <img src="@bottomHeaderImage1.Url()" class="logo-img img-fluid" alt="Logo 2"
                             style="max-height: 16vh; width:auto; object-fit: contain;">
                     }
                     @if (bottomHeaderImage2 != null)
                     {
-                        <img src="@bottomHeaderImage2.Url()" class="img-fluid" alt="Logo 3"
+                        <img src="@bottomHeaderImage2.Url()" class="logo-img img-fluid" alt="Logo 3"
                             style="max-height: 16vh; width:auto; object-fit: contain;">
                     }
                 </div>

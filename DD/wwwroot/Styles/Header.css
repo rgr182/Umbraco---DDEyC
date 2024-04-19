@@ -1,10 +1,15 @@
+.banner-max-height {
+    max-height: 33vh
+}
+
 .centered-col {
     width: 100%;
     text-align: center;
 }
 
 .logo-img {
-    max-height: 16vh;
+    max-height: 15vh;
+    max-width: 48%;
     width: auto;
     object-fit: contain;
 }
