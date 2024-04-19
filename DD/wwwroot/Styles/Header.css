@@ -1,0 +1,10 @@
+.centered-col {
+    width: 100%;
+    text-align: center;
+}
+
+.logo-img {
+    max-height: 16vh;
+    width: auto;
+    object-fit: contain;
+}

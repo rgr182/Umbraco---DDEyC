@@ -8,7 +8,7 @@ builder.CreateUmbracoBuilder()
     .Build();
 
 WebApplication app = builder.Build();
-
+app.UseStaticFiles();
 await app.BootUmbracoAsync();
 
 

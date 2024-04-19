@@ -19,6 +19,9 @@
 
 }
 
+<head>
+    <link href="~/Styles/Header.css" rel="stylesheet" />
+</head>
 <header>
 
     @if (!Model.HideHeaderImages)
@@ -26,55 +29,30 @@
     {
 
         <div class="container">
+            <div class="row">
+                <div class="col" style="width 100%; text-align: center">
+                    @if (topHeaderImage != null)
+                    {
+                        <img src="@topHeaderImage.Url()" alt="Logo 1" class="logo-img">
+                    }
+                </div>
+            </div>
 
             <div class="row">
-
-                <div class="col">
-
-                    @if (topHeaderImage != null)
-
+                <div class="col" style="width: 100%; text-align: center">
+                    @if (bottomHeaderImage1 != null)
                     {
-
-                        <img src="@topHeaderImage.Url()" alt="Image 1"
-                            style="max-height: 16vh; width:100%; object-fit: contain;">
-
+                        <img src="@bottomHeaderImage1.Url()" class="img-fluid" alt="Logo 2"
+                            style="max-height: 16vh; width:auto; object-fit: contain;">
                     }
-
+                    @if (bottomHeaderImage2 != null)
+                    {
+                        <img src="@bottomHeaderImage2.Url()" class="img-fluid" alt="Logo 3"
+                            style="max-height: 16vh; width:auto; object-fit: contain;">
+                    }
                 </div>
 
             </div>
-
-            <div class="row">
-
-                <span class="col-md-6 d-flex justify-content-end">
-
-                    @if (bottomHeaderImage1 != null)
-
-                    {
-
-                        <img src="@bottomHeaderImage1.Url()" alt="Image 2"
-                            style="max-height: 16vh; width:49%; object-fit: contain;">
-
-                    }
-
-                </span>
-
-                <span class="col-md-6 d-flex justify-content-start">
-
-                    @if (bottomHeaderImage2 != null)
-
-                    {
-
-                        <img src="@bottomHeaderImage2.Url()" alt="Image 3"
-                            style="max-height: 16vh; width:49%; object-fit: contain;">
-
-                    }
-
-                </span>
-
-            </div>
-
         </div>
-
     }
 </header>
