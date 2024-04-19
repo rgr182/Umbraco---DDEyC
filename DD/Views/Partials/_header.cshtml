@@ -1,0 +1,80 @@
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<IHeaderProperties>
+@{
+    const string DefaultHeaderNodeName = "DefaultHeader";
+    const string HomeName = "Home";
+    const string THI = "TopHeaderImage";
+    const string BH1 = "BottomHeaderImage1";
+    const string BH2 = "BottomHeaderImage2";
+    const string BH3 = "BottomHeaderImage3";
+    //Get Home Node
+    var rootNode = Umbraco.ContentAtRoot().Where(x => x.Name == HomeName).FirstOrDefault();
+    //Get Default Header Properties
+    var defaultHeaderPropertiesNode = rootNode.Children.FirstOrDefault(x => x.Name == DefaultHeaderNodeName);
+    //Check which properties are set on the current page and use default for the rest
+    var topHeaderImage = Model.TopHeaderImage ?? defaultHeaderPropertiesNode?.Value<IPublishedContent>(THI);
+    var bottomHeaderImage1 = Model.BottomHeaderImage1 ??
+    defaultHeaderPropertiesNode?.Value<IPublishedContent>(BH1);
+    var bottomHeaderImage2 = Model.BottomHeaderImage2 ??
+    defaultHeaderPropertiesNode?.Value<IPublishedContent>(BH2);
+
+}
+
+<header>
+
+    @if (!Model.HideHeaderImages)
+
+    {
+
+        <div class="container">
+
+            <div class="row">
+
+                <div class="col">
+
+                    @if (topHeaderImage != null)
+
+                    {
+
+                        <img src="@topHeaderImage.Url()" alt="Image 1"
+                            style="max-height: 16vh; width:100%; object-fit: contain;">
+
+                    }
+
+                </div>
+
+            </div>
+
+            <div class="row">
+
+                <span class="col-md-6 d-flex justify-content-end">
+
+                    @if (bottomHeaderImage1 != null)
+
+                    {
+
+                        <img src="@bottomHeaderImage1.Url()" alt="Image 2"
+                            style="max-height: 16vh; width:49%; object-fit: contain;">
+
+                    }
+
+                </span>
+
+                <span class="col-md-6 d-flex justify-content-start">
+
+                    @if (bottomHeaderImage2 != null)
+
+                    {
+
+                        <img src="@bottomHeaderImage2.Url()" alt="Image 3"
+                            style="max-height: 16vh; width:49%; object-fit: contain;">
+
+                    }
+
+                </span>
+
+            </div>
+
+        </div>
+
+    }
+</header>

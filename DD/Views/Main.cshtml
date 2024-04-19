@@ -23,6 +23,9 @@
 </head>
 
 <body>
+
+	@await Html.PartialAsync("~/Views/Partials/_header.cshtml")
+
 	@RenderBody()
 	<!-- Bootstrap JS-->
 	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
