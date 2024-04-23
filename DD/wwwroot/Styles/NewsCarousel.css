@@ -1,10 +1,26 @@
+.col-6 {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: auto;
+}
+
+.text-ellipsis {
+    display: inline-block;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 /* Carousel styles */
-.carousel {}
 
 .carousel-item {
-    height: 450px;
+    min-height: 450px;
     width: 98%;
     position: relative;
+    overflow: hidden;
 }
 
 .carousel-item active {
@@ -25,6 +41,8 @@
     width: 100%;
     padding: 0 15px;
     display: flex;
+    flex-direction: column;
+    align-items: center;
     justify-content: center;
 }
 
@@ -94,7 +112,7 @@
 /* Responsive styles */
 @media (max-width: 767px) {
     .carousel-item {
-        height: 320px;
+        min-height: 380px;
         /* Set a smaller height for smaller screens */
     }
 

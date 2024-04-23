@@ -10,7 +10,7 @@
 <head>
     <link href="~/Styles/NewsCarousel.css" rel="stylesheet" />
 </head>
-<div id="newsCarousel" class="carousel slide" data-bs-ride="carousel">
+<div id="newsCarousel" class="carousel slide" data-bs-ride="">
     <ol class="carousel-indicators">
         @for (int a = 0; a < blocksList.Count; a += 2)
         {
@@ -30,11 +30,11 @@
                         {
                             var block = blocksList[i + j];
                             var content = (ContentModels.NewsCarouselItems)block.Content;
-                            <div class="col-md-6 d-flex align-items-center">
+                            <div class="col-md-6 d-flex align-items-center flex-wrap">
                                 <div class="col-6">
 
-                                    <p>@content.NewsCarouselItemText1</p>
-                                    <p>@content.NewsCarouselItemText2</p>
+                                    <p class="text-ellipsis">@content.NewsCarouselItemText1</p>
+                                    <p class="text-ellipsis">@content.NewsCarouselItemText2</p>
                                 </div>
                                 <div class="col-6 text-center">
                                     <a href="@content.NewsCarouselItemUrl.Url">
