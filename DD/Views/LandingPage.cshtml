@@ -1,6 +1,5 @@
 ﻿@using Umbraco.Cms.Web.Common.PublishedModels;
-@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ContentModels.LandingPage>
-@using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
 @{
 	Layout = "Main.cshtml";
 }
@@ -11,4 +10,5 @@
 	<hr class="my-4">
 	<p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
 	<a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
+	@await Html.PartialAsync("Partials/_newsCarousel")
 </div>
