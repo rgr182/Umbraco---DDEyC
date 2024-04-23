@@ -24,31 +24,30 @@
         {
             var isFirst = i == 0;
             <div class="carousel-item @(isFirst ? "active" : "")">
-                <div class="row">
-                    @for (int j = 0; j < 2 && i + j < blocksList.Count; j++)
-                    {
-                        var block = blocksList[i + j];
-                        var content = (ContentModels.NewsCarouselItems)block.Content;
-                        <div class="col-md-6 align-items-center">
-                           <div class="row align-items-center">
-    <div class="col-6  align-items-center justify-content-center">
-        <div class="row">
-            <p>@content.NewsCarouselItemText1</p>
-            <p>@content.NewsCarouselItemText2</p>
-        </div>
-    </div>
-    <div class="col-6  text-center align-items-center justify-content-center">
-        <a href="@content.NewsCarouselItemUrl.Url">
-            <img src="@content.NewsCarouselItemImage.Url()" class="d-block w-100" alt="...">
-        </a>
-    </div>
-</div>
-                        </div>
-                    }
+                <div class="carousel-item-content">
+                    <div class="row">
+                        @for (int j = 0; j < 2 && i + j < blocksList.Count; j++)
+                        {
+                            var block = blocksList[i + j];
+                            var content = (ContentModels.NewsCarouselItems)block.Content;
+                            <div class="col-md-6 d-flex align-items-center">
+                                <div class="col-6">
+
+                                    <p>@content.NewsCarouselItemText1</p>
+                                    <p>@content.NewsCarouselItemText2</p>
+                                </div>
+                                <div class="col-6 text-center">
+                                    <a href="@content.NewsCarouselItemUrl.Url">
+                                        <img src="@content.NewsCarouselItemImage.Url()" class="d-block w-100" alt="...">
+                                    </a>
+                                </div>
+                            </div>
+                        }
+                    </div>
                 </div>
             </div>
         }
-       
+
     </div>
     <button class="carousel-control-prev" type="button" data-bs-target="#newsCarousel" data-bs-slide="prev">
         <span class="carousel-control-prev-icon" aria-hidden="true"></span>

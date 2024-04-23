@@ -3,20 +3,42 @@
 
 .carousel-item {
     height: 450px;
-    /* Set a fixed height for the carousel items */
-    /* Light gray background color */
-
+    width: 98%;
+    position: relative;
 }
 
-.carousel-item img {
-    max-height: 100%;
-    width: auto;
-    margin: auto;
+.carousel-item active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.full-height {
+    min-height: 100%;
 }
 
 .carousel-item-content {
-    height: 100%;
-    /* Make sure the content container takes up the full height */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    padding: 0 15px;
+    display: flex;
+    justify-content: center;
+}
+
+.carousel-item-content .row {
+    width: 100%;
+}
+
+.carousel-item-content .col-md-6 {
+    display: flex;
+    align-items: center;
+}
+
+.carousel-item-content .col-6 {
+    flex: 1;
 }
 
 /* Caption styles */
@@ -71,6 +93,11 @@
 
 /* Responsive styles */
 @media (max-width: 767px) {
+    .carousel-item {
+        height: 320px;
+        /* Set a smaller height for smaller screens */
+    }
+
     .carousel-item-content {
         flex-direction: column;
         /* Stack the content and image vertically on smaller screens */
