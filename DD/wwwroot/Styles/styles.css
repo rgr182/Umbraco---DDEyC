@@ -83,3 +83,14 @@ body {
 }
 
 /* Add your custom styles here */
+
+/* HomePage redirect button */
+.home-redirect-button {
+    font-size: 24px;
+    font-weight: bold;
+    padding: 12px 24px;
+    width: 60%;
+    /* Make the button take up the full width of its parent */
+    box-sizing: border-box;
+    /* Include padding and border in the element's total width and height */
+}
