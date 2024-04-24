@@ -1,0 +1,16 @@
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<IHomeRedirectButtonProperties>
+
+@{
+    const string defaultColor = "#0077b6";
+    const string defaultTextColor = "#ffffff";
+
+    var buttonColor = Model.HomeRedirectButtonColor ?? defaultColor;
+    var buttonTextColor = Model.HomeRedirectButtonTextColor ?? defaultTextColor;
+}
+@if (!Model.HideHomeRedirectButton)
+{
+    <a href="@Model.HomeRedirectButtonUrl.Url" class="btn btn-primary btn-lg home-redirect-button fixed-size-button"
+        style="background-color: @buttonColor; color: @buttonTextColor;">
+        @Model.HomeRedirectButtonText
+    </a>
+}

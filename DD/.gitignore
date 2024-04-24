@@ -476,4 +476,5 @@ appsettings-schema.*.json
 /umbraco/Logs/
 
 # Media files
-/wwwroot/media/
+/wwwroot/media/*
+!/wwwroot/media/mvkajess/
