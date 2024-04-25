@@ -2,70 +2,55 @@
 @using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
 @using Umbraco.Cms.Core.Models.Blocks;
 @{
-    var blocks = Model.Value<IEnumerable<BlockListItem>>("newsCarousel");
+    var blocks = Model.Value<IEnumerable<BlockListItem>>("imageCarousel");
     var blocksList = blocks.ToList();
 }
 
 <head>
-    <link href="~/Styles/NewsCarousel.css" rel="stylesheet" />
+    <link href="~/Styles/ImageCarousel.css" rel="stylesheet" />
 </head>
-<div id="newsCarousel" class="carousel slide" data-bs-ride="">
+
+<div id="imageCarousel" class="carousel slide" data-bs-ride="">
     <ol class="carousel-indicators">
-        @for (int a = 0; a < blocksList.Count; a += 2)
+        @for (int a = 0; a < blocksList.Count; a++)
         {
-            <li data-bs-target="#newsCarousel" data-bs-slide-to="@((int)(a / 2))" class="@(a == 0 ? "active" : "")"></li>
+            <li data-bs-target="#imageCarousel" data-bs-slide-to="@a" class="@(a == 0 ? "active" : "")"></li>
         }
     </ol>
     <div class="carousel-inner">
-        @for (int i = 0; i < blocksList.Count; i += 2)
+        @for (int i = 0; i < blocksList.Count; i++)
         {
+            var block = blocksList[i];
+            var content = (ContentModels.ImageCarouselItem)block.Content;
             var isFirst = i == 0;
             <div class="carousel-item @(isFirst ? "active" : "")">
                 <div class="carousel-item-content">
                     <div class="row">
-                        @for (int j = 0; j < 2 && i + j < blocksList.Count; j++)
-                        {
-                            var block = blocksList[i + j];
-                            var content = (ContentModels.NewsCarouselItems)block.Content;
-                            <div class="col-md-6 d-flex align-items-center flex-wrap">
-                                <div class="col-6">
-                                    @if (!string.IsNullOrEmpty(content.NewsCarouselItemText1))
-                                    {
-                                        <p class="text-ellipsis">@content.NewsCarouselItemText1</p>
-                                    }
-                                    @if (!string.IsNullOrEmpty(content.NewsCarouselItemText2))
-                                    {
-                                        <p class="text-ellipsis">@content.NewsCarouselItemText2</p>
-                                    }
-                                </div>
-                                <div class="col-6 text-center">
-                                    @if (!string.IsNullOrEmpty(content.NewsCarouselItemImage.Url))
-                                    {
-                                        <a href="@content.NewsCarouselItemUrl.Url">
-                                            <img src="@content.NewsCarouselItemImage.Url" class="d-block w-100" alt="...">
-                                        </a>
-                                    }
-                                    else if (!string.IsNullOrEmpty(content.YouTubeVideoUrl))
-                                    {
-                                        <div class="embed-responsive embed-responsive-16by9">
-                                            <iframe class="embed-responsive-item" src="@content.YouTubeVideoUrl" allowfullscreen></iframe>
-                                        </div>
-                                    }
-                                </div>
+                        <div class="col-md-12">
+                            <div class="carousel-item-text">
+                                <p>@content.ImageCarouselTextItem</p>
                             </div>
-                        }
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="carousel-item-media">
+                                <a href="@content.ImageCarouselItemURL.Url">
+                                    <img src="@content.ImageCarouselItem.Url()" class="d-block w-100" alt="...">
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         }
     </div>
-    <button class="carousel-control-prev" type="button" data-bs-target="#newsCarousel" data-bs-slide="prev">
+    <button class="carousel-control-prev" type="button" data-bs-target="#imageCarousel" data-bs-slide="prev">
         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
         <span class="visually-hidden">Previous</span>
     </button>
-    <button class="carousel-control-next" type="button" data-bs-target="#newsCarousel" data-bs-slide="next">
+    <button class="carousel-control-next" type="button" data-bs-target="#imageCarousel" data-bs-slide="next">
         <span class="carousel-control-next-icon" aria-hidden="true"></span>
         <span class="visually-hidden">Next</span>
     </button>
 </div>
-
