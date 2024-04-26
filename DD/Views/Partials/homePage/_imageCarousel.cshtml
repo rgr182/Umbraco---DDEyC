@@ -1,0 +1,55 @@
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage;
+@using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
+@using Umbraco.Cms.Core.Models.Blocks;
+@{
+    var blocks = Model.Value<IEnumerable<BlockListItem>>("imageCarousel");
+    var blocksList = blocks.ToList();
+}
+
+<head>
+    <link href="~/Styles/NewsCarousel.css" rel="stylesheet" />
+</head>
+<div id="imageCarousel" class="carousel slide" data-bs-ride="">
+    <ol class="carousel-indicators">
+        @for (int a = 0; a < blocksList.Count; a += 2)
+        {
+            <li data-bs-target="#imageCarousel" data-bs-slide-to="@((int)(a / 2))" class="@(a == 0 ? "active" : "")"></li>
+        }
+    </ol>
+    <div class="carousel-inner">
+        @foreach (var block in blocksList)
+        {
+            if (block.Content is ContentModels.ImageCarouselItems content)
+            {
+                var imageUrl = content.ImageCarouselItemURL.ToString();
+                var text1 = content.ImageCarouselItemText1.ToString();
+                var text2 = content.ImageCarouselItemText2.ToString();
+                <div class="carousel-item">
+                    <div class="carousel-item-content">
+                        <div class="row">
+                            <div class="col-md-6 d-flex align-items-center flex-wrap">
+                                <div class="col-6">
+                                    <p class="text-ellipsis">@text1</p>
+                                    <p class="text-ellipsis">@text2</p>
+                                </div>
+                                <div class="col-6 text-center">
+                                    <a href="@imageUrl">
+                                        <img src="@imageUrl" class="d-block w-100" alt="...">
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#imageCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#imageCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
+</div>
