@@ -2,13 +2,11 @@
 @using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
 @using Umbraco.Cms.Core.Models.Blocks;
 @{
-    var blocks = Model.Value<IEnumerable<BlockListItem>>("ImagesCarousel");
+    var blocks = Model.Value<IEnumerable<BlockListItem>>("imageCarousel");
     var blocksList = blocks.ToList();
-
 }
 
 <head>
-    <link href="~/Styles/NewsCarousel.css" rel="stylesheet" />
 </head>
 <div id="imageCarousel" class="carousel slide" data-bs-ride="">
     <ol class="carousel-indicators">
@@ -17,26 +15,32 @@
             <li data-bs-target="#imageCarousel" data-bs-slide-to="@((int)(a / 2))" class="@(a == 0 ? "active" : "")"></li>
         }
     </ol>
-    <div class="carousel-inner">
-        @for (int i = 0; i < blocksList.Count; i++)
+        <div class="carousel-inner">
+
+
+        @for (int i = 0; i < blocksList.Count; i += 2)
         {
-            var block = blocksList[i];
-            var content = (ContentModels.ImageCarouselItems)block.Content;
             var isFirst = i == 0;
             <div class="carousel-item @(isFirst ? "active" : "")">
                 <div class="carousel-item-content">
                     <div class="row">
-                        <div class="col-md-12 d-flex align-items-center">
-                            <div class="col-12 text-center">
-                                <a href="@content.ImageCarouselItemUrl.Url">
-                                    <img src="@content.ImageCarouselItemImage.Url()" class="d-block w-100" alt="...">
-                                </a>
+                        @for (int j = 0; j < 2 && i + j < blocksList.Count; j++)
+                        {
+                            var block = blocksList[i + j];
+                            var content = (ContentModels.ImageCarouselItems)block.Content;
+                            <div class="col-md-6 d-flex align-items-center flex-wrap">
+                                <div class="col-6 text-center">
+                                    <a href="@content.ImageCarouselItemUrl.Url">
+                                        <img src="@content.ImageCarouselItemImage.Url()" class="d-block w-100" alt="...">
+                                    </a>
+                                </div>
                             </div>
-                        </div>
+                        }
                     </div>
                 </div>
             </div>
         }
+
     </div>
     <button class="carousel-control-prev" type="button" data-bs-target="#imageCarousel" data-bs-slide="prev">
         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
