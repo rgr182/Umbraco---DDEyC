@@ -1,0 +1,137 @@
+.col-6 {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: auto;
+    color: white;
+}
+
+.text-ellipsis {
+    display: inline-block;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Carousel styles */
+
+.carousel-item {
+    min-height: 450px;
+    width: 98%;
+    position: relative;
+    overflow: hidden;
+}
+
+.carousel-item active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.full-height {
+    min-height: 100%;
+}
+
+.carousel-item-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    padding: 0 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.carousel-item-content .row {
+    width: 100%;
+}
+
+.carousel-item-content .col-md-6 {
+    display: flex;
+    align-items: center;
+}
+
+.carousel-item-content .col-6 {
+    flex: 1;
+}
+
+/* Caption styles */
+.carousel-caption {
+    background-color: rgba(255, 255, 255, 0.8);
+    /* Semi-transparent white background */
+    padding: 1rem;
+    border-radius: 0.5rem;
+    color: #333;
+    /* Dark text color */
+    text-align: left;
+    /* Align the caption to the left */
+    max-width: 100%;
+    /* Make sure the caption doesn't exceed the container width */
+}
+
+/* Image styles */
+.carousel-image-container {
+    flex-grow: 1;
+    /* Allow the image container to grow and take up remaining space */
+    max-width: 50%;
+
+    /* Limit the maximum width of the image container */
+}
+
+.object-fit-cover {
+    object-fit: cover;
+    /* Ensure the image covers the entire container */
+    height: 100%;
+    /* Make sure the image takes up the full height of the container */
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+    align-items: center;
+    height: auto;
+    width: 8%;
+    outline: rgb(0, 0, 0);
+}
+
+.carousel-control-next-icon:after {
+
+    font-size: 55px;
+    color: red;
+}
+
+.carousel-control-prev-icon:after {
+
+    font-size: 55px;
+    color: red;
+}
+
+/* Responsive styles */
+@media (max-width: 767px) {
+    .carousel-item {
+        min-height: 380px;
+        /* Set a smaller height for smaller screens */
+    }
+
+    .carousel-item-content {
+        flex-direction: column;
+        /* Stack the content and image vertically on smaller screens */
+    }
+
+    .carousel-caption {
+        max-width: none;
+        /* Reset the maximum width of the caption */
+    }
+
+    .carousel-image-container {
+        max-width: none;
+        /* Reset the maximum width of the image container */
+        height: 170px;
+        /* Set a fixed height for the image container on smaller screens */
+    }
+
+}

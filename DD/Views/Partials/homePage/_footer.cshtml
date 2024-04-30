@@ -1,0 +1,60 @@
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage;
+@using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
+@using Umbraco.Cms.Core.Models.Blocks;
+@{
+    var blocks = Model.Value<IEnumerable<BlockListItem>>("footerItems");
+    var blocksList = blocks.ToList();
+
+}
+
+<head>
+
+</head>
+<div id="footerItems" class="carousel slide" data-bs-ride="">
+    <ol class="carousel-indicators">
+        @for (int a = 0; a < blocksList.Count; a += 2)
+        {
+            <li data-bs-target="#footerItems" data-bs-slide-to="@((int)(a / 2))" class="@(a == 0 ? "active" : "")"></li>
+        }
+    </ol>
+    <div class="carousel-inner">
+
+
+        @for (int i = 0; i < blocksList.Count; i += 2)
+        {
+            var isFirst = i == 0;
+            <div class="carousel-item @(isFirst ? "active" : "")">
+                <div class="carousel-item-content">
+                    <div class="row">
+                        @for (int j = 0; j < 2 && i + j < blocksList.Count; j++)
+                        {
+                            var block = blocksList[i + j];
+                            var content = (ContentModels.FooterItems)block.Content;
+                            <div class="col-md-6 d-flex align-items-center flex-wrap">
+                                <div class="col-6">
+
+                                    <p class="text-ellipsis">@content.FooterItemText1</p>
+                                    <p class="text-ellipsis">@content.FooterItemText2</p>
+                                </div>
+                                <div class="col-6 text-center">
+                                    <a href="@content.FooterItemUrl.Url">
+                                        <img src="@content.FooterItemImage.Url()" class="d-block w-100" alt="...">
+                                    </a>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#newsCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#newsCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
+</div>

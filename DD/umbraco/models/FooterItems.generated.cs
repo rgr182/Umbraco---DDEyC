@@ -18,14 +18,14 @@ using Umbraco.Extensions;
 
 namespace Umbraco.Cms.Web.Common.PublishedModels
 {
-	/// <summary>Footer Page</summary>
-	[PublishedModel("footerPage")]
-	public partial class FooterPage : PublishedContentModel, IFootterProperties
+	/// <summary>Footer Items</summary>
+	[PublishedModel("footerItems")]
+	public partial class FooterItems : PublishedElementModel
 	{
 		// helpers
 #pragma warning disable 0109 // new is redundant
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
-		public new const string ModelTypeAlias = "footerPage";
+		public new const string ModelTypeAlias = "footerItems";
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
 		public new const PublishedItemType ModelItemType = PublishedItemType.Content;
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
@@ -34,14 +34,14 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 			=> PublishedModelUtility.GetModelContentType(publishedSnapshotAccessor, ModelItemType, ModelTypeAlias);
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
 		[return: global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		public static IPublishedPropertyType GetModelPropertyType<TValue>(IPublishedSnapshotAccessor publishedSnapshotAccessor, Expression<Func<FooterPage, TValue>> selector)
+		public static IPublishedPropertyType GetModelPropertyType<TValue>(IPublishedSnapshotAccessor publishedSnapshotAccessor, Expression<Func<FooterItems, TValue>> selector)
 			=> PublishedModelUtility.GetModelPropertyType(GetModelContentType(publishedSnapshotAccessor), selector);
 #pragma warning restore 0109
 
 		private IPublishedValueFallback _publishedValueFallback;
 
 		// ctor
-		public FooterPage(IPublishedContent content, IPublishedValueFallback publishedValueFallback)
+		public FooterItems(IPublishedElement content, IPublishedValueFallback publishedValueFallback)
 			: base(content, publishedValueFallback)
 		{
 			_publishedValueFallback = publishedValueFallback;
@@ -50,43 +50,35 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		// properties
 
 		///<summary>
-		/// contactInfo: enter contact information text
+		/// Footer Item Image
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("contactInfo")]
-		public virtual string ContactInfo => this.Value<string>(_publishedValueFallback, "contactInfo");
+		[ImplementPropertyType("footerItemImage")]
+		public virtual global::Umbraco.Cms.Core.Models.MediaWithCrops FooterItemImage => this.Value<global::Umbraco.Cms.Core.Models.MediaWithCrops>(_publishedValueFallback, "footerItemImage");
 
 		///<summary>
-		/// contactLink: enter a hyperlink for the contact information (if required)
+		/// Footer Item Text 1
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("contactLink")]
-		public virtual global::Umbraco.Cms.Core.Models.Link ContactLink => this.Value<global::Umbraco.Cms.Core.Models.Link>(_publishedValueFallback, "contactLink");
+		[ImplementPropertyType("footerItemText1")]
+		public virtual global::Umbraco.Cms.Core.Strings.IHtmlEncodedString FooterItemText1 => this.Value<global::Umbraco.Cms.Core.Strings.IHtmlEncodedString>(_publishedValueFallback, "footerItemText1");
 
 		///<summary>
-		/// Image: Select a image for the footer
+		/// Footer Item Text 2
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("image")]
-		public virtual global::Umbraco.Cms.Core.Models.MediaWithCrops Image => global::Umbraco.Cms.Web.Common.PublishedModels.FootterProperties.GetImage(this, _publishedValueFallback);
+		[ImplementPropertyType("footerItemText2")]
+		public virtual global::Umbraco.Cms.Core.Strings.IHtmlEncodedString FooterItemText2 => this.Value<global::Umbraco.Cms.Core.Strings.IHtmlEncodedString>(_publishedValueFallback, "footerItemText2");
 
 		///<summary>
-		/// Maps Link: add the URL of the ubication
+		/// Footer Item URL
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("mapsLink")]
-		public virtual global::System.Collections.Generic.IEnumerable<global::Umbraco.Cms.Core.Models.Link> MapsLink => global::Umbraco.Cms.Web.Common.PublishedModels.FootterProperties.GetMapsLink(this, _publishedValueFallback);
-
-		///<summary>
-		/// Title: Add a title for the footer
-		///</summary>
-		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
-		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("title")]
-		public virtual string Title => global::Umbraco.Cms.Web.Common.PublishedModels.FootterProperties.GetTitle(this, _publishedValueFallback);
+		[ImplementPropertyType("footerItemURL")]
+		public virtual global::Umbraco.Cms.Core.Models.Link FooterItemUrl => this.Value<global::Umbraco.Cms.Core.Models.Link>(_publishedValueFallback, "footerItemURL");
 	}
 }
