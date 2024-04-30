@@ -6,6 +6,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="wwwroot\media\mvkajess\logo-idea_mesa-de-trabajo-1.png" />
+    <Content Include="wwwroot\media\mxpe1vlr\**" />
+    <Content Include="wwwroot\media\srrn2nhz\**" />
+    <Content Include="wwwroot\media\wt3dwvzd\**" />
+    <Content Include="wwwroot\media\hvup5we0\**" />
+    <Content Include="wwwroot\media\da5opuwy\**" />
+    <Content Include="wwwroot\media\5chdzwzw\**" />
+    <Content Include="wwwroot\media\1lwbqnnw\**" />
   </ItemGroup>
 
   <ItemGroup>
