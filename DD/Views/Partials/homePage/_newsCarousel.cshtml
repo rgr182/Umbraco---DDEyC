@@ -35,13 +35,12 @@
 
                             <div id="newsCarouselItemData" class="col-md-6 d-flex align-items-center flex-wrap">
                                 <div class="col-6 text-content">
-
                                     <p class="text-ellipsis">@content.NewsCarouselItemText1</p>
                                     <p class="text-ellipsis">@content.NewsCarouselItemText2</p>
                                 </div>
-                                <div class="col-6 text-center">
+                                <div class="col-6 text-center carousel-img-container">
                                     <a href="@content.NewsCarouselItemUrl?.Url">
-                                        <img src="@imageUrl" class="d-block w-100" alt="..."
+                                        <img src="@imageUrl" class="img-fluid carousel-img" alt="..."
                                             onerror="handleImageError(this, '@defaultImageUrl')">
                                     </a>
                                 </div>

@@ -20,7 +20,7 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 {
 	/// <summary>NavBar Page</summary>
 	[PublishedModel("navBarPage")]
-	public partial class NavBarPage : PublishedContentModel, INavBarProperties
+	public partial class NavBarPage : PublishedContentModel, INavigationItems
 	{
 		// helpers
 #pragma warning disable 0109 // new is redundant
@@ -50,11 +50,11 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		// properties
 
 		///<summary>
-		/// Main Navigation
+		/// Items
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("mainNavigation")]
-		public virtual global::Umbraco.Cms.Core.Models.Blocks.BlockListModel MainNavigation => global::Umbraco.Cms.Web.Common.PublishedModels.NavBarProperties.GetMainNavigation(this, _publishedValueFallback);
+		[ImplementPropertyType("items")]
+		public virtual global::Umbraco.Cms.Core.Models.Blocks.BlockListModel Items => global::Umbraco.Cms.Web.Common.PublishedModels.NavigationItems.GetItems(this, _publishedValueFallback);
 	}
 }

@@ -1,0 +1,46 @@
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage;
+@using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
+@using Umbraco.Cms.Core.Models.Blocks;
+@{
+    var blocks = Model.Value<IEnumerable<BlockListItem>>("imageCarousel");
+    var blocksList = blocks?.ToList() ?? new List<BlockListItem>();
+}
+
+<head>
+    <link href="~/Styles/NewsCarousel.css" rel="stylesheet" />
+</head>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-8"> 
+            <div id="imageCarousel" class="carousel slide" data-bs-ride="">
+                <div class="carousel-inner">
+                    @foreach (var block in blocksList)
+                    {
+                        var content = (ContentModels.ImageCarouselItems)block.Content;
+                        <div class="carousel-item @(block == blocksList.First() ? "active" : "")">
+                            @if (!string.IsNullOrEmpty(content.ImageCarouselItemUrl?.Url))
+                            {
+                                <a href="@content.ImageCarouselItemUrl.Url">
+                                    <img src="@content.ImageCarouselItem.Url()" class="d-block w-100" alt="...">
+                                </a>
+                            }
+                            else
+                            {
+                                <img src="@content.ImageCarouselItem.Url()" class="d-block w-100" alt="...">
+                            }
+                        </div>
+                    }
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#imageCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#imageCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

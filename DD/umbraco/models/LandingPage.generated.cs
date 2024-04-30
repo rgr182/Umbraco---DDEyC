@@ -50,12 +50,36 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		// properties
 
 		///<summary>
+		/// Footer
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("footer")]
+		public virtual global::Umbraco.Cms.Core.Models.Blocks.BlockListModel Footer => this.Value<global::Umbraco.Cms.Core.Models.Blocks.BlockListModel>(_publishedValueFallback, "footer");
+
+		///<summary>
+		/// Image Carousel
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("imageCarousel")]
+		public virtual global::Umbraco.Cms.Core.Models.Blocks.BlockListModel ImageCarousel => this.Value<global::Umbraco.Cms.Core.Models.Blocks.BlockListModel>(_publishedValueFallback, "imageCarousel");
+
+		///<summary>
 		/// News Carousel
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
 		[ImplementPropertyType("newsCarousel")]
 		public virtual global::Umbraco.Cms.Core.Models.Blocks.BlockListModel NewsCarousel => this.Value<global::Umbraco.Cms.Core.Models.Blocks.BlockListModel>(_publishedValueFallback, "newsCarousel");
+
+		///<summary>
+		/// Rich Text and Images
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("richTextAndImages")]
+		public virtual global::Umbraco.Cms.Core.Models.Blocks.BlockListModel RichTextAndImages => this.Value<global::Umbraco.Cms.Core.Models.Blocks.BlockListModel>(_publishedValueFallback, "richTextAndImages");
 
 		///<summary>
 		/// Bottom Header Image 1
@@ -72,14 +96,6 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
 		[ImplementPropertyType("bottomHeaderImage2")]
 		public virtual global::Umbraco.Cms.Core.Models.MediaWithCrops BottomHeaderImage2 => global::Umbraco.Cms.Web.Common.PublishedModels.HeaderProperties.GetBottomHeaderImage2(this, _publishedValueFallback);
-
-		///<summary>
-		/// Bottom Header Image 3
-		///</summary>
-		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
-		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("bottomHeaderImage3")]
-		public virtual global::Umbraco.Cms.Core.Models.MediaWithCrops BottomHeaderImage3 => global::Umbraco.Cms.Web.Common.PublishedModels.HeaderProperties.GetBottomHeaderImage3(this, _publishedValueFallback);
 
 		///<summary>
 		/// Hide Header Images
