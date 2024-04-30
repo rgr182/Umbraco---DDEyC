@@ -19,7 +19,7 @@
                     {
                         var content = (ContentModels.ImageCarouselItems)block.Content;
                         <div class="carousel-item @(block == blocksList.First() ? "active" : "")">
-                            @if (content.ImageCarouselItemUrl != null)
+                            @if (!string.IsNullOrEmpty(content.ImageCarouselItemUrl?.Url))
                             {
                                 <a href="@content.ImageCarouselItemUrl.Url">
                                     <img src="@content.ImageCarouselItem.Url()" class="d-block w-100" alt="...">
