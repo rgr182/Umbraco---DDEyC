@@ -3,7 +3,7 @@
 @using Umbraco.Cms.Core.Models.Blocks;
 @{
     var blocks = Model.Value<IEnumerable<BlockListItem>>("imageCarousel");
-    var blocksList = blocks.ToList();
+    var blocksList = blocks?.ToList() ?? new List<BlockListItem>();
 }
 
 <head>
@@ -19,9 +19,16 @@
                     {
                         var content = (ContentModels.ImageCarouselItems)block.Content;
                         <div class="carousel-item @(block == blocksList.First() ? "active" : "")">
-                            <a href="@content.ImageCarouselItemUrl.Url">
+                            @if (content.ImageCarouselItemUrl != null)
+                            {
+                                <a href="@content.ImageCarouselItemUrl.Url">
+                                    <img src="@content.ImageCarouselItem.Url()" class="d-block w-100" alt="...">
+                                </a>
+                            }
+                            else
+                            {
                                 <img src="@content.ImageCarouselItem.Url()" class="d-block w-100" alt="...">
-                            </a>
+                            }
                         </div>
                     }
                 </div>
