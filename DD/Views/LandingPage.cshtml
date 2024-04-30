@@ -1,5 +1,6 @@
 ﻿@using Umbraco.Cms.Web.Common.PublishedModels;
-@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<LandingPage>
+
 @{
 	Layout = "Main.cshtml";
 }
@@ -15,4 +16,15 @@
 	<div class="mt-3">
 		@await Html.PartialAsync("Partials/homePage/_newsCarousel")
 	</div>
+    <div class="mt-3">
+        @Model.RichTextAndImages.Count
+       @{
+            var textAndImageBlocks = Model.RichTextAndImages;
+    
+            foreach (var block in textAndImageBlocks)
+            {
+            @await Html.PartialAsync("Partials/_textAndImage", block.Content)
+            }
+        }
+        </div>
 </div>

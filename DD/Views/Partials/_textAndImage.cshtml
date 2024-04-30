@@ -1,0 +1,17 @@
+@using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
+
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ContentModels.RichTextAndImageItems>
+<div class="card mb-3 bg-transparent">
+    <div class="row g-0">
+        <div class="col-md-8">
+            <div class="card-body">
+                <h5 class="card-title">@Model.RichTextAndImageTitle</h5>
+                <p class="card-text">@Html.Raw(Model.RichTextAndImageItemText)</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <img src="@Model.RichTextAndImageItemImage?.Url()" class="img-fluid rounded-start"
+                alt="@Model.RichTextAndImageItemImage?.Name" />
+        </div>
+    </div>
+</div>
