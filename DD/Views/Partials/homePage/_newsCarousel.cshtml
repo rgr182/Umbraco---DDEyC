@@ -4,7 +4,7 @@
 @{
     var blocks = Model.Value<IEnumerable<BlockListItem>>("newsCarousel");
     var blocksList = blocks.ToList();
-
+    var defaultImageUrl = Url.Content("~/assets/default.webp");
 }
 
 <head>
@@ -30,15 +30,19 @@
                         {
                             var block = blocksList[i + j];
                             var content = (ContentModels.NewsCarouselItems)block.Content;
-                            <div class="col-md-6 d-flex align-items-center flex-wrap">
-                                <div class="col-6">
+                            var imageUrl = string.IsNullOrWhiteSpace(content.NewsCarouselItemImage?.Url()) ? defaultImageUrl :
+                            content.NewsCarouselItemImage?.Url();
+
+                            <div id="newsCarouselItemData" class="col-md-6 d-flex align-items-center flex-wrap">
+                                <div class="col-6 text-content">
 
                                     <p class="text-ellipsis">@content.NewsCarouselItemText1</p>
                                     <p class="text-ellipsis">@content.NewsCarouselItemText2</p>
                                 </div>
                                 <div class="col-6 text-center">
-                                    <a href="@content.NewsCarouselItemUrl.Url">
-                                        <img src="@content.NewsCarouselItemImage.Url()" class="d-block w-100" alt="...">
+                                    <a href="@content.NewsCarouselItemUrl?.Url">
+                                        <img src="@imageUrl" class="d-block w-100" alt="..."
+                                            onerror="handleImageError(this, '@defaultImageUrl')">
                                     </a>
                                 </div>
                             </div>
@@ -58,3 +62,5 @@
         <span class="visually-hidden">Next</span>
     </button>
 </div>
+
+<script src="~/Scripts/imageErrorHandler.js"></script>
