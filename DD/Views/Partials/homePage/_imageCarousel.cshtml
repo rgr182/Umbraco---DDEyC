@@ -7,47 +7,33 @@
 }
 
 <head>
+    <link href="~/Styles/ImagesCarousel.css" rel="stylesheet" />
 </head>
-<div id="imageCarousel" class="carousel slide" data-bs-ride="">
-    <ol class="carousel-indicators">
-        @for (int a = 0; a < blocksList.Count; a += 2)
-        {
-            <li data-bs-target="#imageCarousel" data-bs-slide-to="@((int)(a / 2))" class="@(a == 0 ? "active" : "")"></li>
-        }
-    </ol>
-        <div class="carousel-inner">
 
-
-        @for (int i = 0; i < blocksList.Count; i += 2)
-        {
-            var isFirst = i == 0;
-            <div class="carousel-item @(isFirst ? "active" : "")">
-                <div class="carousel-item-content">
-                    <div class="row">
-                        @for (int j = 0; j < 2 && i + j < blocksList.Count; j++)
-                        {
-                            var block = blocksList[i + j];
-                            var content = (ContentModels.ImageCarouselItems)block.Content;
-                            <div class="col-md-6 d-flex align-items-center flex-wrap">
-                                <div class="col-6 text-center">
-                                    <a href="@content.ImageCarouselItemUrl.Url">
-                                        <img src="@content.ImageCarouselItemImage.Url()" class="d-block w-100" alt="...">
-                                    </a>
-                                </div>
-                            </div>
-                        }
-                    </div>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-8"> <!-- Ajusta según tus necesidades -->
+            <div id="imageCarousel" class="carousel slide" data-bs-ride="">
+                <div class="carousel-inner">
+                    @foreach (var block in blocksList)
+                    {
+                        var content = (ContentModels.ImageCarouselItems)block.Content;
+                        <div class="carousel-item @(block == blocksList.First() ? "active" : "")">
+                            <a href="@content.ImageCarouselItemUrl.Url">
+                                <img src="@content.ImageCarouselItem.Url()" class="d-block w-100" alt="...">
+                            </a>
+                        </div>
+                    }
                 </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#imageCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#imageCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
             </div>
-        }
-
+        </div>
     </div>
-    <button class="carousel-control-prev" type="button" data-bs-target="#imageCarousel" data-bs-slide="prev">
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Previous</span>
-    </button>
-    <button class="carousel-control-next" type="button" data-bs-target="#imageCarousel" data-bs-slide="next">
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Next</span>
-    </button>
 </div>
