@@ -3,57 +3,67 @@
 @using Umbraco.Cms.Core.Models.Blocks;
 @{
     var blocks = Model.Value<IEnumerable<BlockListItem>>("footerItems");
-    var blocksList = blocks.ToList();
-
+    var blocksList = blocks?.ToList();
 }
 
 <head>
-
+    <link href="~/Styles/Footer.css" rel="stylesheet" />
 </head>
-<div id="footerItems" class="carousel slide" data-bs-ride="">
+
+<div id="footerCarousel" class="carousel slide" data-bs-ride="carousel">
     <ol class="carousel-indicators">
-        @for (int a = 0; a < blocksList.Count; a += 2)
+        @if (blocksList != null)
         {
-            <li data-bs-target="#footerItems" data-bs-slide-to="@((int)(a / 2))" class="@(a == 0 ? "active" : "")"></li>
+            @for (int a = 0; a < blocksList.Count; a += 3)
+            {
+                <li data-bs-target="#footerCarousel" data-bs-slide-to="@((int)(a / 3))" class="@(a == 0 ? "active" : "")"></li>
+            }
         }
     </ol>
+
     <div class="carousel-inner">
-
-
-        @for (int i = 0; i < blocksList.Count; i += 2)
+        @if (blocksList != null)
         {
-            var isFirst = i == 0;
-            <div class="carousel-item @(isFirst ? "active" : "")">
-                <div class="carousel-item-content">
-                    <div class="row">
-                        @for (int j = 0; j < 2 && i + j < blocksList.Count; j++)
-                        {
-                            var block = blocksList[i + j];
-                            var content = (ContentModels.FooterItems)block.Content;
-                            <div class="col-md-6 d-flex align-items-center flex-wrap">
-                                <div class="col-6">
-
-                                    <p class="text-ellipsis">@content.FooterItemText1</p>
-                                    <p class="text-ellipsis">@content.FooterItemText2</p>
-                                </div>
-                                <div class="col-6 text-center">
-                                    <a href="@content.FooterItemUrl.Url">
-                                        <img src="@content.FooterItemImage.Url()" class="d-block w-100" alt="...">
-                                    </a>
-                                </div>
-                            </div>
-                        }
+            @for (int i = 0; i < blocksList.Count; i += 3)
+            {
+                var isFirst = i == 0;
+                <div class="carousel-item @(isFirst ? "active" : "")">
+                    <div class="carousel-item-content">
+                        <div class="row">
+                            @for (int j = 0; j < 3 && i + j < blocksList.Count; j++)
+                            {
+                                var block = blocksList[i + j];
+                                if (block != null)
+                                {
+                                    var content = (ContentModels.FooterItems)block.Content;
+                                    <div class="col-md-4">
+                                        <div class="d-flex align-items-center">
+                                            <div class="carousel-image-container">
+                                                <a href="@content?.FooterItemUrl?.Url">
+                                                    <img src="@content?.FooterItemImage?.Url()" class="d-block w-100 object-fit-cover" alt="...">
+                                                </a>
+                                            </div>
+                                            
+                                            <div class="carousel-text">
+                                                <p class="carousel-text-ellipsis">@content?.FooterItemText1</p>
+                                                <p class="carousel-text-ellipsis">@content?.FooterItemText2</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
                     </div>
                 </div>
-            </div>
+            }
         }
-
     </div>
-    <button class="carousel-control-prev" type="button" data-bs-target="#newsCarousel" data-bs-slide="prev">
+
+    <button class="carousel-control-prev" type="button" data-bs-target="#footerCarousel" data-bs-slide="prev">
         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
         <span class="visually-hidden">Previous</span>
     </button>
-    <button class="carousel-control-next" type="button" data-bs-target="#newsCarousel" data-bs-slide="next">
+    <button class="carousel-control-next" type="button" data-bs-target="#footerCarousel" data-bs-slide="next">
         <span class="carousel-control-next-icon" aria-hidden="true"></span>
         <span class="visually-hidden">Next</span>
     </button>
