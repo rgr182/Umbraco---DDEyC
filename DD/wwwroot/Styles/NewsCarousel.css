@@ -24,7 +24,7 @@
     overflow: hidden;
 }
 
-.carousel-item active {
+.carousel-item .active {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -32,6 +32,10 @@
 
 .full-height {
     min-height: 100%;
+}
+
+.carousel-img-container {
+    max-width: 500px;
 }
 
 .carousel-item-content {
@@ -75,13 +79,7 @@
 }
 
 /* Image styles */
-.carousel-image-container {
-    flex-grow: 1;
-    /* Allow the image container to grow and take up remaining space */
-    max-width: 50%;
 
-    /* Limit the maximum width of the image container */
-}
 
 .object-fit-cover {
     object-fit: cover;
