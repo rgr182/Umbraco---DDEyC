@@ -1,6 +1,7 @@
 @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage;
 @using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
 @using Umbraco.Cms.Core.Models.Blocks;
+
 @{
     var blocks = Model.Value<IEnumerable<BlockListItem>>("newsCarousel");
     var blocksList = blocks.ToList();
@@ -9,57 +10,121 @@
 
 <head>
     <link href="~/Styles/NewsCarousel.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
 </head>
+
 <div id="newsCarousel" class="carousel slide" data-bs-ride="">
     <ol class="carousel-indicators">
-        @for (int a = 0; a < blocksList.Count; a += 2)
+        @* @for (int a = 0; a < blocksList.Count; a += 2)
         {
-            <li data-bs-target="#newsCarousel" data-bs-slide-to="@((int)(a / 2))" class="@(a == 0 ? "active" : "")"></li>
-        }
+        <li data-bs-target="#newsCarousel" data-bs-slide-to="@((int)(a / 2))" class="@(a == 0 ? "active" : "")"></li>
+        } *@
     </ol>
+
     <div class="carousel-inner">
-
-
-        @for (int i = 0; i < blocksList.Count; i += 2)
-        {
-            var isFirst = i == 0;
-            <div class="carousel-item @(isFirst ? "active" : "")">
-                <div class="carousel-item-content">
-                    <div class="row">
-                        @for (int j = 0; j < 2 && i + j < blocksList.Count; j++)
-                        {
-                            var block = blocksList[i + j];
-                            var content = (ContentModels.NewsCarouselItems)block.Content;
-                            var imageUrl = string.IsNullOrWhiteSpace(content.NewsCarouselItemImage?.Url()) ? defaultImageUrl :
-                            content.NewsCarouselItemImage?.Url();
-
-                            <div id="newsCarouselItemData" class="col-md-6 d-flex align-items-center flex-wrap">
-                                <div class="col-6 text-content">
-                                    <p class="text-ellipsis">@content.NewsCarouselItemText1</p>
-                                    <p class="text-ellipsis">@content.NewsCarouselItemText2</p>
-                                </div>
-                                <div class="col-6 text-center carousel-img-container">
-                                    <a href="@content.NewsCarouselItemUrl?.Url">
-                                        <img src="@imageUrl" class="img-fluid carousel-img" alt="..."
-                                            onerror="handleImageError(this, '@defaultImageUrl')">
-                                    </a>
-                                </div>
-                            </div>
-                        }
-                    </div>
-                </div>
-            </div>
-        }
-
+        <!-- Carousel content will be rendered here -->
     </div>
+
     <button class="carousel-control-prev" type="button" data-bs-target="#newsCarousel" data-bs-slide="prev">
         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
         <span class="visually-hidden">Previous</span>
     </button>
+
     <button class="carousel-control-next" type="button" data-bs-target="#newsCarousel" data-bs-slide="next">
         <span class="carousel-control-next-icon" aria-hidden="true"></span>
         <span class="visually-hidden">Next</span>
     </button>
 </div>
+
+<script>
+    function renderCarouselLayout() {
+        const isMobile = window.innerWidth <= 767;
+        const carouselInner = document.querySelector('#newsCarousel .carousel-inner');
+        const carouselIndicators = document.querySelector('#newsCarousel .carousel-indicators');
+        carouselIndicators.innerHTML='';
+        carouselInner.innerHTML = '';
+
+        if (isMobile) {
+    @{
+        int index = 0;
+    }
+    @foreach (var block in blocksList)
+    {
+        var content = (ContentModels.NewsCarouselItems)block.Content;
+        var imageUrl = string.IsNullOrWhiteSpace(content.NewsCarouselItemImage?.Url()) ? defaultImageUrl : content.NewsCarouselItemImage?.Url();
+        var isActive = index == 0 ? "active" : "";
+        <text>
+                        carouselInner.insertAdjacentHTML('beforeend', `
+                        <div class="carousel-item @isActive">
+                            <div class="carousel-item-content">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="text-content">
+                                            <p>@content.NewsCarouselItemText1</p>
+                                            <p>@content.NewsCarouselItemText2</p>
+                                        </div>
+                                        <div class="text-center carousel-img-container">
+                                            <a href="@content.NewsCarouselItemUrl?.Url">
+                                                <img src="@imageUrl" class="img-fluid carousel-img" alt="..."
+                                                    onerror="handleImageError(this, '@defaultImageUrl')">
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        `);
+                        carouselIndicators.insertAdjacentHTML('beforeend', `
+                        <li data-bs-target="#newsCarousel" data-bs-slide-to="@index" class="@isActive"></li>`);
+        </text>
+        index++;
+    }
+        } else {
+            // Render desktop layout
+    @for (int i = 0; i < blocksList.Count; i += 2)
+    {
+        var isFirst = i == 0;
+        <text>
+                        carouselInner.insertAdjacentHTML('beforeend', `
+                        <div class="carousel-item @(isFirst ? "active" : "")">
+                            <div class="carousel-item-content">
+                                <div class="row">
+                        @for (int j = 0; j < 2 && i + j < blocksList.Count; j++)
+                        {
+                            var block = blocksList[i + j];
+                            var content = (ContentModels.NewsCarouselItems)block.Content;
+                            var imageUrl = string.IsNullOrWhiteSpace(content.NewsCarouselItemImage?.Url()) ? defaultImageUrl : content.NewsCarouselItemImage?.Url();
+
+                            <text>
+                                            <div class="col-md-6 d-flex align-items-center flex-wrap">
+                                                <div class="col-6 text-content">
+                                                    <p class="text-ellipsis">@content.NewsCarouselItemText1</p>
+                                                    <p class="text-ellipsis">@content.NewsCarouselItemText2</p>
+                                                </div>
+                                                <div class="col-6 text-center carousel-img-container">
+                                                    <a href="@content.NewsCarouselItemUrl?.Url">
+                                                        <img src="@imageUrl" class="img-fluid carousel-img" alt="..."
+                                                            onerror="handleImageError(this, '@defaultImageUrl')">
+                                                    </a>
+                                                </div>
+                                            </div>
+                                           
+                            </text>
+
+                        }
+                                </div>
+                            </div>
+                        </div>
+                            `);
+                             carouselIndicators.insertAdjacentHTML('beforeend', `
+                                            <li data-bs-target="#newsCarousel" data-bs-slide-to="@(i / 2)" class="@(i==0 ? "active" : "")"></li>`);
+        </text>
+    }
+        }
+    }
+    window.addEventListener('load', renderCarouselLayout);
+    window.addEventListener('resize', renderCarouselLayout);
+    window.addEventListener('DOMContentLoaded', renderCarouselLayout); // Call initially to set the correct layout
+</script>
 
 <script src="~/Scripts/imageErrorHandler.js"></script>
