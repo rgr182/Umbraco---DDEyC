@@ -1,0 +1,70 @@
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage;
+@using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
+@using Umbraco.Cms.Core.Models.Blocks;
+@{
+    var blocks = Model.Value<IEnumerable<BlockListItem>>("footerItems");
+    var blocksList = blocks?.ToList();
+}
+
+<head>
+    <link href="~/Styles/Footer.css" rel="stylesheet" />
+</head>
+
+<div id="footerCarousel" class="carousel slide" data-bs-ride="carousel">
+    <ol class="carousel-indicators">
+        @if (blocksList != null)
+        {
+            @for (int a = 0; a < blocksList.Count; a += 3)
+            {
+                <li data-bs-target="#footerCarousel" data-bs-slide-to="@((int)(a / 3))" class="@(a == 0 ? "active" : "")"></li>
+            }
+        }
+    </ol>
+
+    <div class="carousel-inner">
+        @if (blocksList != null)
+        {
+            @for (int i = 0; i < blocksList.Count; i += 3)
+            {
+                var isFirst = i == 0;
+                <div class="carousel-item @(isFirst ? "active" : "")">
+                    <div class="carousel-item-content">
+                        <div class="row">
+                            @for (int j = 0; j < 3 && i + j < blocksList.Count; j++)
+                            {
+                                var block = blocksList[i + j];
+                                if (block != null)
+                                {
+                                    var content = (ContentModels.FooterItems)block.Content;
+                                    <div class="col-md-4">
+                                        <div class="d-flex align-items-center">
+                                            <div class="carousel-image-container">
+                                                <a href="@content?.FooterItemUrl?.Url">
+                                                    <img src="@content?.FooterItemImage?.Url()" class="d-block w-100 object-fit-cover" alt="...">
+                                                </a>
+                                            </div>
+                                            
+                                            <div class="carousel-text">
+                                                <p class="carousel-text-ellipsis">@content?.FooterItemText1</p>
+                                                <p class="carousel-text-ellipsis">@content?.FooterItemText2</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+
+    <button class="carousel-control-prev" type="button" data-bs-target="#footerCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#footerCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
+</div>

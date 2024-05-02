@@ -1,0 +1,89 @@
+.carousel-item {
+    position: relative;
+    overflow: hidden;
+    min-height: 450px;
+    width: 98%;
+}
+
+.carousel-item.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.carousel-item-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    padding: 0 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.carousel-item-content .row {
+    width: 100%;
+}
+
+.carousel-item-content .col-md-4 {
+    display: flex;
+    align-items: center;
+}
+
+.carousel-item-content .carousel-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: auto;
+    color: white;
+}
+
+.carousel-text-ellipsis {
+    display: inline-block;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.carousel-image-container {
+    flex-grow: 1;
+    max-width: 50%;
+}
+
+.object-fit-cover {
+    object-fit: cover;
+    height: 100%;
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+    align-items: center;
+    height: auto;
+    width: 8%;
+    outline: rgb(0, 0, 0);
+}
+
+.carousel-control-next-icon:after,
+.carousel-control-prev-icon:after {
+    font-size: 55px;
+    color: red;
+}
+
+@media (max-width: 767px) {
+    .carousel-item {
+        min-height: 380px;
+    }
+
+    .carousel-item-content {
+        flex-direction: column;
+    }
+
+    .carousel-image-container {
+        height: 170px;
+    }
+}
