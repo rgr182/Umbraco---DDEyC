@@ -15,23 +15,11 @@
     white-space: nowrap;
 }
 
-/* Carousel styles */
-
 .carousel-item {
     min-height: 450px;
     width: 98%;
     position: relative;
     overflow: hidden;
-}
-
-.carousel-item .active {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.full-height {
-    min-height: 100%;
 }
 
 .carousel-img-container {
@@ -64,30 +52,6 @@
     flex: 1;
 }
 
-/* Caption styles */
-.carousel-caption {
-    background-color: rgba(255, 255, 255, 0.8);
-    /* Semi-transparent white background */
-    padding: 1rem;
-    border-radius: 0.5rem;
-    color: #333;
-    /* Dark text color */
-    text-align: left;
-    /* Align the caption to the left */
-    max-width: 100%;
-    /* Make sure the caption doesn't exceed the container width */
-}
-
-/* Image styles */
-
-
-.object-fit-cover {
-    object-fit: cover;
-    /* Ensure the image covers the entire container */
-    height: 100%;
-    /* Make sure the image takes up the full height of the container */
-}
-
 .carousel-control-prev,
 .carousel-control-next {
     align-items: center;
@@ -97,39 +61,88 @@
 }
 
 .carousel-control-next-icon:after {
-
     font-size: 55px;
     color: red;
 }
 
 .carousel-control-prev-icon:after {
-
     font-size: 55px;
     color: red;
 }
 
 /* Responsive styles */
+/* Mobile view styles */
 @media (max-width: 767px) {
     .carousel-item {
         min-height: 380px;
-        /* Set a smaller height for smaller screens */
     }
 
     .carousel-item-content {
         flex-direction: column;
-        /* Stack the content and image vertically on smaller screens */
+        justify-content: center;
+        align-items: center;
     }
 
-    .carousel-caption {
-        max-width: none;
-        /* Reset the maximum width of the caption */
+    .carousel-item .row {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
     }
 
-    .carousel-image-container {
-        max-width: none;
-        /* Reset the maximum width of the image container */
-        height: 170px;
-        /* Set a fixed height for the image container on smaller screens */
+    .col-12 {
+        display: flex;
+        flex-direction: row;
+        height: 100%;
     }
 
+    .text-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+
+        padding: 10px;
+        max-height: 50%;
+        position: relative;
+    }
+
+    .text-content p {
+        margin: 0;
+        line-height: 1.2;
+        max-height: 9em;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 6;
+        -webkit-box-orient: vertical;
+    }
+
+    .text-content::after {
+        content: "...";
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        padding: 0 5px;
+        background-color: rgba(255, 255, 255, 0.8);
+        color: #333;
+        font-weight: bold;
+        display: none;
+    }
+
+    .text-content.overflow::after {
+        display: block;
+    }
+
+    .carousel-img-container {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        max-height: 50%;
+    }
+
+    .carousel-img {
+        max-height: 100%;
+        max-width: 100%;
+        object-fit: contain;
+    }
 }

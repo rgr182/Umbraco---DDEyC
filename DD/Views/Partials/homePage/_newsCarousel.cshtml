@@ -35,7 +35,19 @@
         <span class="visually-hidden">Next</span>
     </button>
 </div>
+<script>
+function handleResize() {
+    const currentWindowWidth = window.innerWidth;
+    const isMobile = currentWindowWidth <= 767;
+    const wasMobile = prevWindowWidth <= 767;
 
+    if (isMobile !== wasMobile) {
+        renderCarouselLayout();
+    }
+
+    prevWindowWidth = currentWindowWidth;
+}
+</script>
 <script>
     function renderCarouselLayout() {
         const isMobile = window.innerWidth <= 767;
@@ -122,8 +134,13 @@
     }
         }
     }
+
+    let prevWindowWidth = window.innerWidth;
+
+
+
     window.addEventListener('load', renderCarouselLayout);
-    window.addEventListener('resize', renderCarouselLayout);
+    window.addEventListener('resize', handleResize);
     window.addEventListener('DOMContentLoaded', renderCarouselLayout); // Call initially to set the correct layout
 </script>
 
