@@ -50,12 +50,12 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		// properties
 
 		///<summary>
-		/// Footer
+		/// Footer Items
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("footer")]
-		public virtual global::Umbraco.Cms.Core.Models.Blocks.BlockListModel Footer => this.Value<global::Umbraco.Cms.Core.Models.Blocks.BlockListModel>(_publishedValueFallback, "footer");
+		[ImplementPropertyType("footerItems")]
+		public virtual global::Umbraco.Cms.Core.Models.Blocks.BlockListModel FooterItems => this.Value<global::Umbraco.Cms.Core.Models.Blocks.BlockListModel>(_publishedValueFallback, "footerItems");
 
 		///<summary>
 		/// Image Carousel
