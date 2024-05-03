@@ -1,0 +1,64 @@
+﻿*{
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+html{
+    font-size: 62.5%;
+}
+
+/* basics menu */
+#navigation ul {
+    display:flex;
+    background-color: #4471c4;
+    justify-content:space-evenly;
+    list-style: none;
+    flex-wrap:wrap;
+}
+
+/* items menu */
+
+#navigation ul li {
+    position: relative;
+    display: inline-flex;
+}
+
+/* menu links*/
+#navigation ul a {
+    display: block;
+    color: white;
+    text-decoration: none;
+    font-size: clamp(0.8rem, 2vw ,1.5rem);
+    padding: 1rem;
+    font-family: "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    text-transform: uppercase;
+}
+
+/* hover effects */
+#navigation ul li:hover {
+    background-color: #6c9dc2;
+        
+}
+#navigation li a:hover {
+    font-weight: bold;
+}
+
+/* menu dropdown */
+
+#navigation ul ul {
+    display: none;
+    position: absolute;
+    top: 100%;
+}
+
+/* items menu dropdown */
+
+#navigation ul ul li {
+    width: 25rem
+}
+
+/* items del menu desplegable al pasar el ratón */
+
+#navigation ul li:hover > ul {
+    display: block;
+}

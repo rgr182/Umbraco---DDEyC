@@ -1,0 +1,67 @@
+﻿@using Umbraco.Cms.Web.Common.PublishedModels;
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ContentModels.NavBarPage>
+@using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
+
+@{
+    Layout = null;
+    var rootNode = Umbraco.ContentAtRoot().FirstOrDefault();
+    IEnumerable<IPublishedContent> GetVisibleChildren(IPublishedContent node)
+    {
+        return node.Children().Where(x => x.IsVisible());
+    }
+    IEnumerable<IPublishedContent> GetVisibleDescendants(IPublishedContent node)
+    {
+        return GetVisibleChildren(node).Concat(GetVisibleChildren(node).SelectMany(GetVisibleDescendants));
+    }
+    var allVisiblePages = GetVisibleDescendants(rootNode);
+}
+<!DOCTYPE html>
+<html>
+    <head>
+        @await Html.PartialAsync("~/Views/Partials/_metaData.cshtml")
+        <link rel="stylesheet" href="~/Styles/navigation.css"/>
+    </head>
+    <body>
+        <nav id="navigation">
+            <div >
+                <ul>
+                    @if (allVisiblePages != null && allVisiblePages.Any())
+                    {
+                        var dropdownId = 0;
+                        @foreach (var item in allVisiblePages)
+                        {
+                            var hasChildLinks = item.Name == "Emprendimiento" || item.Name == "Capacitacion" || item.Name == "Ferias y Eventos" || item.Name == "Sector Industrial" || item.Name == "Apoyos y Financiamientos";
+                            @if (hasChildLinks)
+                            {
+                                <li>
+                                    <a href="@item.Url()">@item.Name</a>
+                                    <ul>
+                                        @foreach (var childLink in item.Children())
+                                        {
+                                            <li>
+                                                <a href="@childLink.Url()">@childLink.Name</a>
+@*                                                  
+                                                    <ul >
+                                                        @foreach (var thirdLink in childLink.Children())
+                                                        {
+                                                            <li >
+                                                                <a href="@thirdLink.Url()">@thirdLink.Name</a>
+                                                            </li>
+                                                        }
+                                                    </ul> 
+*@
+                                            </li>
+                                        }
+                                    </ul>
+                                </li>
+                            }
+                            dropdownId++;
+                        }
+                    }
+                </ul>
+            </div>
+                
+        </nav>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    </body>
+</html>
