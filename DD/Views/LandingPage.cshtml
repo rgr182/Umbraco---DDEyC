@@ -4,7 +4,9 @@
 @{
 	Layout = "Main.cshtml";
 }
-
+<div>
+	@await Html.PartialAsync("Partials/homePage/_navigation.cshtml")
+</div>
 <div class="jumbotron text-center">
 
 	<h1 class="display-4">Bienvenido a nuestro sitio</h1>
