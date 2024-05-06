@@ -9,16 +9,13 @@
 }
 
 <head>
-    <link href="~/Styles/NewsCarousel.css" rel="stylesheet" />
+    <link href="~/Styles/ContentCarousel.css" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
 </head>
 
-<div id="newsCarousel" class="carousel slide" data-bs-ride="">
+<div id="newsCarousel" class="carousel slide text-and-image-carousel" data-bs-ride="">
     <ol class="carousel-indicators">
-        @* @for (int a = 0; a < blocksList.Count; a += 2)
-        {
-        <li data-bs-target="#newsCarousel" data-bs-slide-to="@((int)(a / 2))" class="@(a == 0 ? "active" : "")"></li>
-        } *@
+        <!-- Carousel indicators will be rendered here -->
     </ol>
 
     <div class="carousel-inner">
@@ -67,7 +64,7 @@ function handleResize() {
         var isActive = index == 0 ? "active" : "";
         <text>
                         carouselInner.insertAdjacentHTML('beforeend', `
-                        <div class="carousel-item @isActive">
+                        <div class="carousel-item text-and-image-carousel @isActive">
                             <div class="carousel-item-content">
                                 <div class="row">
                                     <div class="col-12">
@@ -98,7 +95,7 @@ function handleResize() {
         var isFirst = i == 0;
         <text>
                         carouselInner.insertAdjacentHTML('beforeend', `
-                        <div class="carousel-item @(isFirst ? "active" : "")">
+                        <div class="carousel-item text-and-image-carousel @(isFirst ? "active" : "")">
                             <div class="carousel-item-content">
                                 <div class="row">
                         @for (int j = 0; j < 2 && i + j < blocksList.Count; j++)
