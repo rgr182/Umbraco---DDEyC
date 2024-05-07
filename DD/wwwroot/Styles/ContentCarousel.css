@@ -109,8 +109,12 @@
 /* Responsive styles */
 /* Mobile view styles */
 @media (max-width: 767px) {
-    .carousel-item {
-        min-height: 380px;
+    .carousel-item.text-and-image-carousel {
+        min-height: 320px;
+    }
+
+    .carousel-item.image-only {
+        min-height: 260px;
     }
 
     .carousel-item-content {
