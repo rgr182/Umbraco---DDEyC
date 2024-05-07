@@ -1,5 +1,4 @@
 @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
-
 @{
     Layout = null;
     var rootNode = Umbraco.ContentAtRoot().FirstOrDefault();
@@ -12,8 +11,6 @@
         return GetVisibleChildren(node).Concat(GetVisibleChildren(node).SelectMany(GetVisibleDescendants));
     }
     var allVisiblePages = GetVisibleDescendants(rootNode);
-
-    
 }
 <!DOCTYPE html>
 <html>
@@ -35,27 +32,18 @@
                         var hasChildLinks = item.Name == "Emprendimiento" || item.Name == "Capacitacion" || item.Name == "Ferias y Eventos" || item.Name == "Sector Industrial" || item.Name == "Apoyos y Financiamientos";
                         if (hasChildLinks)
                         {
-                <li>
-                    <a href="@item.Url()">@item.Name</a>
-                    <ul>
-                        @foreach (var childLink in item.Children())
-                            {
-                        <li>
-                            <a href="@childLink.Url()">@childLink.Name</a>
-                            @*
-                                <ul >
-                                @foreach (var thirdLink in childLink.Children())
-                                {
-                                    <li >
-                                        <a href="@thirdLink.Url()">@thirdLink.Name</a>
+                            <li>
+                                <a href="@item.Url()">@item.Name</a>
+                                <ul>
+                                    @foreach (var childLink in item.Children())
+                                        {
+                                    <li>
+                                        <a href="@childLink.Url()">@childLink.Name</a>
+                                        @*add dropdowns in navigationBar*@
                                     </li>
-                                }
+                                        }
                                 </ul>
-                            *@
-                        </li>
-                            }
-                    </ul>
-                </li>
+                            </li>
                         }
                         dropdownId++;
                     }
@@ -63,13 +51,6 @@
             </ul>
         </div>
     </nav>
-    <script>
-        const openMenuButton = document.querySelector('.open-menu');
-        const navigationMenu = document.querySelector('#navigation ul');
-
-        openMenuButton.addEventListener('click', () => {
-            navigationMenu.style.display = navigationMenu.style.display === 'none' ? 'block' : 'none';
-        });
-    </script>
+    <script src="~/Scripts/mobileMenuToggle.js"></script>
 </body>
 </html>
