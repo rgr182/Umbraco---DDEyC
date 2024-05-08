@@ -1,5 +1,10 @@
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
+IConfiguration configuration = new ConfigurationBuilder()
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .Build();
+
 builder.CreateUmbracoBuilder()
     .AddBackOffice()
     .AddWebsite()

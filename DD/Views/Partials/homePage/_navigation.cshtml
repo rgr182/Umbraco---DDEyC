@@ -1,5 +1,6 @@
 @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
-
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
 @{
     Layout = null;
     var rootNode = Umbraco.ContentAtRoot().FirstOrDefault();
@@ -12,52 +13,47 @@
         return GetVisibleChildren(node).Concat(GetVisibleChildren(node).SelectMany(GetVisibleDescendants));
     }
     var allVisiblePages = GetVisibleDescendants(rootNode);
+
+    var navigationConfig = Configuration.GetSection("Navigation");
+    var hasChildLinks = navigationConfig.Get<List<string>>();
 }
 <!DOCTYPE html>
 <html>
 <head>
     @await Html.PartialAsync("~/Views/Partials/_metaData.cshtml")
     <link rel="stylesheet" href="~/Styles/navigation.css" />
+
 </head>
 <body>
     <nav id="navigation">
         <div>
+            <a for="check" class="open-menu"><i class="fas fa-bars"></i></a>
             <ul>
                 @if (allVisiblePages != null && allVisiblePages.Any())
+                {
+                    foreach (var item in allVisiblePages)
                     {
-                        var dropdownId = 0;
-                @foreach (var item in allVisiblePages)
+
+                        if (hasChildLinks.Contains(item.Name))
                         {
-                            var hasChildLinks = item.Name == "Emprendimiento" || item.Name == "Capacitacion" || item.Name == "Ferias y Eventos" || item.Name == "Sector Industrial" || item.Name == "Apoyos y Financiamientos";
-                @if (hasChildLinks)
-                            {
-                <li>
-                    <a href="@item.Url()">@item.Name</a>
-                    <ul>
-                        @foreach (var childLink in item.Children())
+                            <li>
+                                <a href="@item.Url()">@item.Name</a>
+                                <ul>
+                                    @foreach (var childLink in item.Children())
                                         {
-                        <li>
-                            <a href="@childLink.Url()">@childLink.Name</a>
-                            @*
-                                <ul >
-                                    @foreach (var thirdLink in childLink.Children())
-                                    {
-                                        <li >
-                                            <a href="@thirdLink.Url()">@thirdLink.Name</a>
+                                        <li>
+                                            <a href="@childLink.Url()">@childLink.Name</a>
+                                            @*TODO: add dropdowns in navigationBar*@
                                         </li>
-                                    }
-                                </ul>
-                            *@
-                        </li>
                                         }
-                    </ul>
-                </li>
-                            }
-                            dropdownId++;
+                                </ul>
+                            </li>
                         }
                     }
+                }
             </ul>
         </div>
     </nav>
+    <script src="~/Scripts/mobileMenuToggle.js"></script>
 </body>
 </html>
