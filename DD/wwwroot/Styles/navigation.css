@@ -10,7 +10,6 @@ html{
 @media (min-width: 931px){
     .open-menu {
         display: none;
-        color:white
     }
     #navigation ul {
         display: flex;
