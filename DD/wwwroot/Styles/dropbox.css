@@ -1,0 +1,90 @@
+﻿* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+html {
+    font-size: 62.5%;
+}
+
+/*desktop and tablet style*/
+@media (min-width: 931px) {
+    .title {
+        font-size:2rem;
+    }
+
+    .DropboxContainer {
+        margin: 3rem;
+        display: flex;
+        justify-content: center;
+        gap: 3rem;
+
+    }
+
+    .dropboxItem {
+        padding: .5rem;
+        border: .1rem;
+        border-radius: .4rem;
+        font-size: 1.6rem;
+        width: 30rem;
+        
+    }
+
+    .dropboxItem:hover {
+        color:white;
+        font-weight: bold;
+        background-color: #4471c4;
+    }
+
+    option {
+        color: black;
+        background-color: white;
+    }
+    .searchButton {
+        color: white;
+        font-size: 2.5rem;
+    }
+}
+
+/*smartphone style*/
+@media (max-width: 930px) {
+    .title {
+        font-size: 2rem;
+    }
+    .DropboxContainer {
+        margin: 3rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .dropboxItem {
+        padding: .5rem;
+        border: .1rem;
+        border-radius: .4rem;
+        font-size: 1.6rem;
+        width: 25rem;
+    }
+
+        .dropboxItem:active {
+            color: white;
+            font-weight: bold;
+            background-color: #4471c4;
+        }
+
+    option {
+        color: black;
+        background-color: white;
+        font-size: 1.6rem;
+        text-align: center;
+        word-wrap: break-word
+    }
+
+    .searchButton {
+        color: white;
+        font-size:2.5rem;
+    }
+
+}

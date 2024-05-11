@@ -27,25 +27,25 @@
 <body>
     <nav id="navigation">
         <div>
-            <a for="check" class="open-menu"><i class="fas fa-bars"></i></a>
+            <a id="open-menu"><button class="fas fa-bars"></button></a>
             <ul>
                 @if (allVisiblePages != null && allVisiblePages.Any())
                 {
                     foreach (var item in allVisiblePages)
                     {
-
                         if (hasChildLinks.Contains(item.Name))
                         {
-                            <li>
+                            <li class="has-dropdown">
                                 <a href="@item.Url()">@item.Name</a>
-                                <ul>
+                                <button class="dropdown-arrow fas fa-chevron-down"></button>
+                                <ul class="dropdown">
                                     @foreach (var childLink in item.Children())
-                                        {
+                                    {
                                         <li>
                                             <a href="@childLink.Url()">@childLink.Name</a>
                                             @*TODO: add dropdowns in navigationBar*@
                                         </li>
-                                        }
+                                    }
                                 </ul>
                             </li>
                         }
