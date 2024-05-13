@@ -53,16 +53,16 @@
         carouselInner.innerHTML = '';
 
         if (isMobile) {
-    @{
-        int index = 0;
-    }
-    @foreach (var block in blocksList)
-    {
-        var content = (ContentModels.FooterItems)block.Content;
-        var imageUrl = string.IsNullOrWhiteSpace(content.FooterItemImage?.Url()) ? defaultImageUrl : content.FooterItemImage?.Url();
-        var isActive = index == 0 ? "active" : "";
-        <text>
-                        carouselInner.insertAdjacentHTML('beforeend', `
+            @{
+                int index = 0;
+            }
+            @foreach (var block in blocksList)
+            {
+                var content = (ContentModels.FooterItems)block.Content;
+                var imageUrl = string.IsNullOrWhiteSpace(content.FooterItemImage?.Url()) ? defaultImageUrl : content.FooterItemImage?.Url();
+                var isActive = index == 0 ? "active" : "";
+                <text>
+                    carouselInner.insertAdjacentHTML('beforeend', `
                         <div class="carousel-item @(isActive)">
                             <div class="carousel-item-content">
                                 <div class="row">
@@ -73,37 +73,38 @@
                                                     <img src="@imageUrl" class="d-block w-100 object-fit-cover" alt="..." style="max-width: 200px;"> <!-- Adjust max-width for smaller images -->
                                                 </a>
                                             </div>
-
-                                            <div class="carousel-text">
-                                                <p class="carousel-text-ellipsis" style="font-size: 14px;">@content.FooterItemText1</p> <!-- Adjust font size -->
-                                                <p class="carousel-text-ellipsis" style="font-size: 14px;">@content.FooterItemText2</p> <!-- Adjust font size -->
+                                            <div style="margin-left: 20px;"> <!-- Add more margin for spacing -->
+                                                <div class="carousel-text">
+                                                    <p class="carousel-text-ellipsis" style="font-size: 14px;">@content.FooterItemText1</p> <!-- Adjust font size -->
+                                                    <p class="carousel-text-ellipsis" style="font-size: 14px;">@content.FooterItemText2</p> <!-- Adjust font size -->
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        `);
-                        carouselIndicators.insertAdjacentHTML('beforeend', `
+                    `);
+                    carouselIndicators.insertAdjacentHTML('beforeend', `
                         <li data-bs-target="#footerCarousel" data-bs-slide-to="@index" class="@isActive"></li>`);
-        </text>
-        index++;
-    }
+                </text>
+                index++;
+            }
         } else {
             // Render desktop layout
-    @for (int i = 0; i < blocksList.Count; i += 3)
-    {
-        var isFirst = i == 0;
-        <text>
-                        carouselInner.insertAdjacentHTML('beforeend', `
+            @for (int i = 0; i < blocksList.Count; i += 3)
+            {
+                var isFirst = i == 0;
+                <text>
+                    carouselInner.insertAdjacentHTML('beforeend', `
                         <div class="carousel-item @(isFirst ? "active" : "")">
                             <div class="carousel-item-content">
                                 <div class="row">
-                        @for (int j = 0; j < 3 && i + j < blocksList.Count; j++)
-                        {
-                            var block = blocksList[i + j];
-                            var content = (ContentModels.FooterItems)block.Content;
-                            var imageUrl = string.IsNullOrWhiteSpace(content.FooterItemImage?.Url()) ? defaultImageUrl : content.FooterItemImage?.Url();
+                                    @for (int j = 0; j < 3 && i + j < blocksList.Count; j++)
+                                    {
+                                        var block = blocksList[i + j];
+                                        var content = (ContentModels.FooterItems)block.Content;
+                                        var imageUrl = string.IsNullOrWhiteSpace(content.FooterItemImage?.Url()) ? defaultImageUrl : content.FooterItemImage?.Url();
                                         <div class="col-md-4"> <!-- Adjust column size for desktop -->
                                             <div class="d-flex align-items-center">
                                                 <div class="carousel-image-container">
@@ -111,22 +112,23 @@
                                                         <img src="@imageUrl" class="d-block w-100 object-fit-cover" alt="..." style="max-width: 200px;"> <!-- Adjust max-width for smaller images -->
                                                     </a>
                                                 </div>
-
-                                                <div class="carousel-text">
-                                                    <p class="carousel-text-ellipsis" style="font-size: 14px;">@content.FooterItemText1</p> <!-- Adjust font size -->
-                                                    <p class="carousel-text-ellipsis" style="font-size: 14px;">@content.FooterItemText2</p> <!-- Adjust font size -->
+                                                <div style="margin-left: 20px;"> <!-- Add more margin for spacing -->
+                                                    <div class="carousel-text">
+                                                        <p class="carousel-text-ellipsis" style="font-size: 14px;">@content.FooterItemText1</p> <!-- Adjust font size -->
+                                                        <p class="carousel-text-ellipsis" style="font-size: 14px;">@content.FooterItemText2</p> <!-- Adjust font size -->
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                        }
+                                    }
                                 </div>
                             </div>
                         </div>
-                        `);
-                        carouselIndicators.insertAdjacentHTML('beforeend', `
+                    `);
+                    carouselIndicators.insertAdjacentHTML('beforeend', `
                         <li data-bs-target="#footerCarousel" data-bs-slide-to="@(i / 3)" class="@(i==0 ? "active" : "")"></li>`);
-        </text>
-    }
+                </text>
+            }
         }
     }
 
