@@ -1,6 +1,5 @@
 ﻿@using Umbraco.Cms.Web.Common.PublishedModels;
 @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<LandingPage>
-
 @{
 	Layout = "Main.cshtml";
 }
@@ -8,6 +7,9 @@
 	@await Html.PartialAsync("Partials/homePage/_navigation.cshtml")
 </div>
 <div class="jumbotron text-center">
+
+	@await Html.PartialAsync("Partials/homePage/_dropBox.cshtml")
+
 	<hr class="my-4">
 	<div class="mt-3">
 		@await Html.PartialAsync("Partials/homePage/_redirectButton")

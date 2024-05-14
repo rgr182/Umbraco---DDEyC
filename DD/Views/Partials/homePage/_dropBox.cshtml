@@ -1,0 +1,41 @@
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    @await Html.PartialAsync("~/Views/Partials/_metaData.cshtml")
+    <link rel="stylesheet" href="~/Styles/dropbox.css" />
+@*     <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script> *@
+</head>
+<body>
+    <div class="DropboxContainer">
+        <label class="title">Quién eres?</label>
+        <select class="dropboxItem">
+            <option selected>Selecciona una opción</option>
+            <option>Estudiante</option>
+            <option>Empleado</option>
+            <option>Emprendedor</option>
+            <option>Micro o pequeño empresario</option>
+            <option>Empresario</option>
+            <option>Productor</option>
+        </select>
+        <label class="title">Qué buscas?</label>
+        <select class="dropboxItem">
+            <option selected>Selecciona una opción</option>
+            <option>Emprender</option>
+            <option>Dar a conocer mis productos</option>
+            <option>Aumentar mis ventas</option>
+            <option>Capacitar a mi personal</option>
+            <option>Conocer más sobre los permisos y licencias</option>
+            <option>Fortalecer mi negocio</option>
+            <option>Apoyo economico para compra de equipo</option>
+            <option>Financiamiento para mi negocio</option>
+            <option>Asesoría personalizada</option>
+        </select>
+        <a href="#" class="searchButton"><i class="fas fa-search"></i></a>
+    </div>
+    <script src="~/Scripts/dropboxSlideText.js"></script>
+</body>
+</html>
