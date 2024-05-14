@@ -6,7 +6,6 @@
 html{
     font-size: 62.5%;
 }
-
 /*desktop and tablet style*/
 @media (min-width: 930px){
     #open-menu {
@@ -33,7 +32,6 @@ html{
     #navigation ul li:hover > ul {
         display: block;
     }
-
     #navigation ul a {
         display: block;
         color: white;
@@ -52,7 +50,6 @@ html{
         position: absolute;
         top: 100%;
     }
-
     #navigation ul ul li {
         width: 25rem;
         transition: 0.7s ease;
@@ -64,73 +61,60 @@ html{
         display: block;
         background-color: #4471c4;
         color: white;
+        font-size: 2.5rem;
+        padding-left:1rem;
     }
-
     #navigation ul {
         display: none;
         background-color: #4471c4;
         list-style: none;
     }
-
         #navigation ul li:hover > ul {
             display: block;
         }
-
         #navigation ul li {
             display: block;
             flex-direction: column;
             padding-bottom: 1rem;
         }
-
     /* Styles for dropdown arrows and menus */
     .has-dropdown {
         position: relative;
     }
-
     .dropdown-arrow {
         position: absolute;
         right: 1rem;
         top: 50%;
         transform: translateY(-50%);
-        font-size: 1.2rem;
-        cursor: pointer;
-        transition: transform 0.3s ease;
+        font-size: 2rem;
+        transition: transform 0.5s ease;
     }
-
     #navigation ul li:hover .dropdown-arrow {
         transform: translateY(-50%) rotate(180deg);
     }
-
     .dropdown {
-        display: none;
         position: absolute;
         padding: 0.3rem;
         width: 90%;
         background-color: #054c93;
-        transition: display 0.3s ease, opacity 0.3s ease;
         z-index: 10;
     }
-
     #navigation ul li:hover .dropdown {
         opacity: 1;
     }
-
     #navigation ul li:active {
         background-color: #6c9dc2;
         transition: 0.7s ease;
     }
-
     #navigation li a:active {
         font-weight: bold;
     }
-
     #navigation ul a {
         display: block;
         color: white;
         text-decoration: none;
         text-transform: uppercase;
     }
-
     #navigation ul ul li {
         transition: 0.7s ease;
         background-color: #054c93;

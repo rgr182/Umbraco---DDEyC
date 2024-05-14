@@ -11,7 +11,7 @@ html {
 /*desktop and tablet style*/
 @media (min-width: 931px) {
     .title {
-        font-size:2rem;
+        font-size: 2rem;
     }
 
     .DropboxContainer {
@@ -19,39 +19,39 @@ html {
         display: flex;
         justify-content: center;
         gap: 3rem;
-
     }
 
     .dropboxItem {
         padding: .5rem;
-        border: .1rem;
+        border: .1rem solid #ccc;
         border-radius: .4rem;
         font-size: 1.6rem;
         width: 30rem;
-        
     }
 
-    .dropboxItem:hover {
-        color:white;
-        font-weight: bold;
-        background-color: #4471c4;
-    }
+        .dropboxItem:hover {
+            color: white;
+            font-weight: bold;
+            background-color: #4471c4;
+        }
 
     option {
         color: black;
         background-color: white;
     }
+
     .searchButton {
         color: white;
         font-size: 2.5rem;
     }
 }
 
-/*smartphone style*/
+/* Estilos para smartphone */
 @media (max-width: 930px) {
     .title {
         font-size: 2rem;
     }
+
     .DropboxContainer {
         margin: 3rem;
         display: flex;
@@ -62,10 +62,11 @@ html {
 
     .dropboxItem {
         padding: .5rem;
-        border: .1rem;
+        border: .1rem solid #ccc;
         border-radius: .4rem;
         font-size: 1.6rem;
-        width: 25rem;
+        width: 100%;
+        max-width: 100%;
     }
 
         .dropboxItem:active {
@@ -74,17 +75,25 @@ html {
             background-color: #4471c4;
         }
 
+    select {
+        width: 100%;
+        overflow: hidden;
+    }
+
     option {
         color: black;
         background-color: white;
         font-size: 1.6rem;
-        text-align: center;
-        word-wrap: break-word
+        text-align: left;
+        white-space: normal;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        text-overflow: ellipsis;
+        padding: .2rem .5rem;
     }
 
     .searchButton {
         color: white;
-        font-size:2.5rem;
+        font-size: 2.5rem;
     }
-
 }
