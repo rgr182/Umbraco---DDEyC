@@ -1,0 +1,16 @@
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ContentModels.GeneralContentPage>
+@using Umbraco.Cms.Web.Common.PublishedModels;
+@using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
+@{
+    Layout = "Main.cshtml";
+}
+
+@foreach (var item in Model.ContentPageBlocks)
+{
+    if (item.Content is ContentModels.NewsCarouselRow row)
+    {
+        string uniqueCarouselId = $"newsCarousel-{item.GetHashCode()}";
+        @Html.Partial("Partials/homePage/_newsCarousel", row.NewsCarouselRowItems, new ViewDataDictionary(ViewContext.ViewData) { { "CarouselId", uniqueCarouselId } })
+    }
+} 
+ 

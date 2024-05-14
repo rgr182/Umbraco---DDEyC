@@ -1,11 +1,16 @@
-@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage;
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<IEnumerable<BlockListItem>>;
 @using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
 @using Umbraco.Cms.Core.Models.Blocks;
 
+
 @{
-    var blocks = Model.Value<IEnumerable<BlockListItem>>("newsCarousel");
-    var blocksList = blocks.ToList();
+    var blocksList = Model.ToList();
     var defaultImageUrl = Url.Content("~/assets/default.webp");
+    string newsCarouselId = ViewData["CarouselId"]?.ToString();
+    if (string.IsNullOrWhiteSpace(newsCarouselId))
+    {
+        newsCarouselId = "newsCarousel-" + Guid.NewGuid().ToString();
+    }
 }
 
 <head>
@@ -13,21 +18,21 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
 </head>
 
-<div id="newsCarousel" class="carousel slide text-and-image-carousel" data-bs-ride="">
+<div id="@newsCarouselId" class="carousel slide text-and-image-carousel" data-bs-ride="">
     <ol class="carousel-indicators">
         <!-- Carousel indicators will be rendered here -->
     </ol>
-
+    
     <div class="carousel-inner">
         <!-- Carousel content will be rendered here -->
     </div>
 
-    <button class="carousel-control-prev" type="button" data-bs-target="#newsCarousel" data-bs-slide="prev">
+    <button class="carousel-control-prev" type="button" data-bs-target="#@newsCarouselId" data-bs-slide="prev">
         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
         <span class="visually-hidden">Previous</span>
     </button>
 
-    <button class="carousel-control-next" type="button" data-bs-target="#newsCarousel" data-bs-slide="next">
+    <button class="carousel-control-next" type="button" data-bs-target="#@newsCarouselId" data-bs-slide="next">
         <span class="carousel-control-next-icon" aria-hidden="true"></span>
         <span class="visually-hidden">Next</span>
     </button>
@@ -48,8 +53,8 @@ function handleResize() {
 <script>
     function renderCarouselLayout() {
         const isMobile = window.innerWidth <= 767;
-        const carouselInner = document.querySelector('#newsCarousel .carousel-inner');
-        const carouselIndicators = document.querySelector('#newsCarousel .carousel-indicators');
+        const carouselInner = document.querySelector('#@newsCarouselId .carousel-inner');
+        const carouselIndicators = document.querySelector('#@newsCarouselId .carousel-indicators');
         carouselIndicators.innerHTML='';
         carouselInner.innerHTML = '';
 
@@ -84,7 +89,7 @@ function handleResize() {
                         </div>
                         `);
                         carouselIndicators.insertAdjacentHTML('beforeend', `
-                        <li data-bs-target="#newsCarousel" data-bs-slide-to="@index" class="@isActive"></li>`);
+                        <li data-bs-target="#@newsCarouselId" data-bs-slide-to="@index" class="@isActive"></li>`);
         </text>
         index++;
     }
@@ -126,7 +131,7 @@ function handleResize() {
                         </div>
                             `);
                              carouselIndicators.insertAdjacentHTML('beforeend', `
-                                            <li data-bs-target="#newsCarousel" data-bs-slide-to="@(i / 2)" class="@(i==0 ? "active" : "")"></li>`);
+                                            <li data-bs-target="#@newsCarouselId" data-bs-slide-to="@(i / 2)" class="@(i==0 ? "active" : "")"></li>`);
         </text>
     }
         }
