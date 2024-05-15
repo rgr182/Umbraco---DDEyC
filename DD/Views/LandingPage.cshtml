@@ -15,7 +15,7 @@
 		@await Html.PartialAsync("Partials/homePage/_redirectButton")
 	</div>
 	<div class="mt-3">
-		@await Html.PartialAsync("Partials/homePage/_imageCarousel")
+		@await Html.PartialAsync("Partials/homePage/_imageCarousel", Model.ImageCarousel)
 	</div>
 	<div class="mt-3">
 		@{

@@ -1,10 +1,10 @@
+let prevWindowWidth = window.innerWidth;
 function initNewsCarousel(data) {
     const { blocksList, defaultImageUrl, carouselId } = data;
     const carouselInner = document.querySelector(`#${carouselId} .carousel-inner`);
     const carouselIndicators = document.querySelector(`#${carouselId} .carousel-indicators`);
 
     renderCarouselLayout(blocksList, defaultImageUrl, carouselId, carouselInner, carouselIndicators);
-
     window.addEventListener('resize', function() {
         handleResize(blocksList, defaultImageUrl, carouselId, carouselInner, carouselIndicators);
     });
@@ -16,6 +16,7 @@ function renderCarouselLayout(blocksList, defaultImageUrl, carouselId, carouselI
     carouselInner.innerHTML = '';
 
     if (isMobile) {
+        console.log ('Mobile');
         renderMobileLayout(blocksList, defaultImageUrl, carouselId, carouselInner, carouselIndicators);
     } else {
         renderDesktopLayout(blocksList, defaultImageUrl, carouselId, carouselInner, carouselIndicators);

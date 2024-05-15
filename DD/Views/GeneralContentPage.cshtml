@@ -4,13 +4,27 @@
 @{
     Layout = "Main.cshtml";
 }
-
+<div>
+	@await Html.PartialAsync("Partials/homePage/_navigation.cshtml")
+</div>
 @foreach (var item in Model.ContentPageBlocks)
 {
-    if (item.Content is ContentModels.NewsCarouselRow row)
+    if (item.Content is ContentModels.NewsCarouselRow newsRow)
     {
         string uniqueCarouselId = $"newsCarousel-{item.GetHashCode()}";
-        @Html.Partial("Partials/homePage/_newsCarousel", row.NewsCarouselRowItems, new ViewDataDictionary(ViewContext.ViewData) { { "CarouselId", uniqueCarouselId } })
+        @Html.Partial("Partials/homePage/_newsCarousel", newsRow.NewsCarouselRowItems, new ViewDataDictionary(ViewContext.ViewData) { { "CarouselId", uniqueCarouselId } })
+    }
+    if(item.Content is ContentModels.ImageCarouselRow imageRow){
+        string uniqueCarouselId = $"imageCarousel-{item.GetHashCode()}";
+        @Html.Partial("Partials/homePage/_imageCarousel", imageRow.ImageCarouselRowItems, new ViewDataDictionary(ViewContext.ViewData) { { "CarouselId", uniqueCarouselId } })
+    }
+    if (item.Content is ContentModels.RichTextAndImageItems richTextAndImageItems)
+    {
+        @Html.Partial("Partials/_textAndImage", richTextAndImageItems)
+    }
+    if (item.Content is ContentModels.VideoEmbedElement videoEmbed)
+    {
+        @Html.Partial("Partials/blocklistItems/_embededVideo", videoEmbed)
     }
 } 
  
