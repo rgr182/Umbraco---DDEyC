@@ -36,10 +36,13 @@ window.addEventListener('resize', () => {
 
 // Ocultar el menú de navegación y los submenús si se hace clic fuera de ellos
 document.addEventListener('click', (e) => {
-    if (!e.target.closest('#navigation')) {
+    if (window.innerWidth <= 930 && navigationMenu && !e.target.closest('#navigation')) {
         navigationMenu.style.display = 'none';
         dropdownArrows.forEach((arrow) => {
-            arrow.nextElementSibling.style.display = 'none';
+            const dropdownMenu = arrow.nextElementSibling;
+            if (dropdownMenu) {
+                dropdownMenu.style.display = 'none';
+            } 
         });
     }
 });
