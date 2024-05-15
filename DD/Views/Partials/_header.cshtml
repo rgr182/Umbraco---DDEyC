@@ -16,42 +16,34 @@
     defaultHeaderPropertiesNode?.Value<IPublishedContent>(BH1);
     var bottomHeaderImage2 = Model.BottomHeaderImage2 ??
     defaultHeaderPropertiesNode?.Value<IPublishedContent>(BH2);
-
 }
-
 <head>
     <link href="~/Styles/Header.css" rel="stylesheet" />
 </head>
 <header>
-
     @if (!Model.HideHeaderImages)
-
     {
-
-        <div class="container ">
-            <div class="row">
-                <div class="col centered-col">
-                    @if (topHeaderImage != null)
-                    {
-                        <img src="@topHeaderImage.Url()" alt="Logo 1" class="logo-img">
-                    }
-                </div>
-            </div>
-
+        <div>
             <div class="row">
                 <div class="col centered-col">
                     @if (bottomHeaderImage1 != null)
                     {
-                        <img src="@bottomHeaderImage1.Url()" class="logo-img img-fluid" alt="Logo 2"
-                            style="max-height: 16vh; width:auto; object-fit: contain;">
+                        <img src="@bottomHeaderImage1.Url()" class="logo-img" alt="Logo 2">
+                    }
+                    @if (topHeaderImage != null)
+                    {
+                        <img src="@topHeaderImage.Url()" alt="Logo 1" class="logo-img">
                     }
                     @if (bottomHeaderImage2 != null)
                     {
-                        <img src="@bottomHeaderImage2.Url()" class="logo-img img-fluid" alt="Logo 3"
-                            style="max-height: 16vh; width:auto; object-fit: contain;">
+                        <img src="@bottomHeaderImage2.Url()" class="logo-img" alt="Logo 3">
                     }
                 </div>
-
+            </div>
+            <div class="row">
+                <div class="rainbow-box">
+                    
+                </div>
             </div>
         </div>
     }
