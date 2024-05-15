@@ -107,9 +107,6 @@ html{
         background-color: #054c93;
         z-index: 10;
     }
-    #navigation ul li:hover .dropdown {
-        opacity: 1;
-    }
     #navigation ul li:active {
         background-color: #6c9dc2;
         transition: 0.7s ease;
