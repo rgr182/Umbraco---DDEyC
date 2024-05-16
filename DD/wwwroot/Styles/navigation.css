@@ -43,7 +43,6 @@ html{
     }
     #navigation li a:hover {
         font-weight: bold;
-        
     }
     #navigation ul ul {
         display: none;
@@ -61,8 +60,17 @@ html{
         display: block;
         background-color: #4471c4;
         color: white;
-        font-size: 2.5rem;
-        padding-left:1rem;
+        font-size: 2rem;
+        padding-left: 1rem;
+        padding-top: .7rem;
+    }
+    #bars {
+        width: 3rem;
+        border: solid 0.1rem white;
+        border-radius: 20%;
+        padding: 0.1rem;
+        padding-left: 0.6rem;
+        padding-right: 0.6rem;
     }
     #navigation ul {
         display: none;
@@ -98,9 +106,6 @@ html{
         width: 90%;
         background-color: #054c93;
         z-index: 10;
-    }
-    #navigation ul li:hover .dropdown {
-        opacity: 1;
     }
     #navigation ul li:active {
         background-color: #6c9dc2;

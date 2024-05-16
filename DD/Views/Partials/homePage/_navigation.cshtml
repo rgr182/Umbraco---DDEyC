@@ -26,7 +26,7 @@
 <body>
     <nav id="navigation">
         <div>
-            <a id="open-menu"><button class="fas fa-bars"></button></a>
+            <a id="open-menu"><i id="bars" class="fas fa-bars"></i></a>
             <ul>
                 @if (allVisiblePages != null && allVisiblePages.Any())
                 {
@@ -53,21 +53,6 @@
             </ul>
         </div>
     </nav>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            $('.dropdown-arrow').on("click", function (e) {
-                var dropdownMenu = $(this).next('.dropdown');
-                if (dropdownMenu.is(":visible")) {
-                    dropdownMenu.hide();
-                } else {
-                    $('.dropdown').hide();
-                    dropdownMenu.show();
-                }
-                e.stopPropagation();
-            });
-        });
-    </script>
     <script src="~/Scripts/mobileMenuToggle.js"></script>
 </body>
 </html>
