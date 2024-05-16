@@ -18,14 +18,14 @@ using Umbraco.Extensions;
 
 namespace Umbraco.Cms.Web.Common.PublishedModels
 {
-	/// <summary>News Carousel Items</summary>
-	[PublishedModel("newsCarouselItems")]
-	public partial class NewsCarouselItems : PublishedElementModel
+	/// <summary>General Content Page</summary>
+	[PublishedModel("generalContentPage")]
+	public partial class GeneralContentPage : PublishedContentModel, IHeaderProperties
 	{
 		// helpers
 #pragma warning disable 0109 // new is redundant
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
-		public new const string ModelTypeAlias = "newsCarouselItems";
+		public new const string ModelTypeAlias = "generalContentPage";
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
 		public new const PublishedItemType ModelItemType = PublishedItemType.Content;
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
@@ -34,14 +34,14 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 			=> PublishedModelUtility.GetModelContentType(publishedSnapshotAccessor, ModelItemType, ModelTypeAlias);
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
 		[return: global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		public static IPublishedPropertyType GetModelPropertyType<TValue>(IPublishedSnapshotAccessor publishedSnapshotAccessor, Expression<Func<NewsCarouselItems, TValue>> selector)
+		public static IPublishedPropertyType GetModelPropertyType<TValue>(IPublishedSnapshotAccessor publishedSnapshotAccessor, Expression<Func<GeneralContentPage, TValue>> selector)
 			=> PublishedModelUtility.GetModelPropertyType(GetModelContentType(publishedSnapshotAccessor), selector);
 #pragma warning restore 0109
 
 		private IPublishedValueFallback _publishedValueFallback;
 
 		// ctor
-		public NewsCarouselItems(IPublishedElement content, IPublishedValueFallback publishedValueFallback)
+		public GeneralContentPage(IPublishedContent content, IPublishedValueFallback publishedValueFallback)
 			: base(content, publishedValueFallback)
 		{
 			_publishedValueFallback = publishedValueFallback;
@@ -50,43 +50,42 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		// properties
 
 		///<summary>
-		/// News Carousel Item Image
+		/// Content Page Blocks
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("newsCarouselItemImage")]
-		public virtual global::Umbraco.Cms.Core.Models.MediaWithCrops NewsCarouselItemImage => this.Value<global::Umbraco.Cms.Core.Models.MediaWithCrops>(_publishedValueFallback, "newsCarouselItemImage");
+		[ImplementPropertyType("contentPageBlocks")]
+		public virtual global::Umbraco.Cms.Core.Models.Blocks.BlockListModel ContentPageBlocks => this.Value<global::Umbraco.Cms.Core.Models.Blocks.BlockListModel>(_publishedValueFallback, "contentPageBlocks");
 
 		///<summary>
-		/// News Carousel Item Text 1
+		/// Bottom Header Image 1
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("newsCarouselItemText1")]
-		public virtual global::Umbraco.Cms.Core.Strings.IHtmlEncodedString NewsCarouselItemText1 => this.Value<global::Umbraco.Cms.Core.Strings.IHtmlEncodedString>(_publishedValueFallback, "newsCarouselItemText1");
+		[ImplementPropertyType("bottomHeaderImage1")]
+		public virtual global::Umbraco.Cms.Core.Models.MediaWithCrops BottomHeaderImage1 => global::Umbraco.Cms.Web.Common.PublishedModels.HeaderProperties.GetBottomHeaderImage1(this, _publishedValueFallback);
 
 		///<summary>
-		/// News Carousel Item Text 2
+		/// Bottom Header Image 2
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("newsCarouselItemText2")]
-		public virtual global::Umbraco.Cms.Core.Strings.IHtmlEncodedString NewsCarouselItemText2 => this.Value<global::Umbraco.Cms.Core.Strings.IHtmlEncodedString>(_publishedValueFallback, "newsCarouselItemText2");
+		[ImplementPropertyType("bottomHeaderImage2")]
+		public virtual global::Umbraco.Cms.Core.Models.MediaWithCrops BottomHeaderImage2 => global::Umbraco.Cms.Web.Common.PublishedModels.HeaderProperties.GetBottomHeaderImage2(this, _publishedValueFallback);
 
 		///<summary>
-		/// News Carousel Item URL
+		/// Hide Header Images
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
-		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("newsCarouselItemURL")]
-		public virtual global::Umbraco.Cms.Core.Models.Link NewsCarouselItemUrl => this.Value<global::Umbraco.Cms.Core.Models.Link>(_publishedValueFallback, "newsCarouselItemURL");
+		[ImplementPropertyType("hideHeaderImages")]
+		public virtual bool HideHeaderImages => global::Umbraco.Cms.Web.Common.PublishedModels.HeaderProperties.GetHideHeaderImages(this, _publishedValueFallback);
 
 		///<summary>
-		/// News Carousel Title
+		/// Top Header Image
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("newsCarouselTitle")]
-		public virtual global::Umbraco.Cms.Core.Strings.IHtmlEncodedString NewsCarouselTitle => this.Value<global::Umbraco.Cms.Core.Strings.IHtmlEncodedString>(_publishedValueFallback, "newsCarouselTitle");
+		[ImplementPropertyType("topHeaderImage")]
+		public virtual global::Umbraco.Cms.Core.Models.MediaWithCrops TopHeaderImage => global::Umbraco.Cms.Web.Common.PublishedModels.HeaderProperties.GetTopHeaderImage(this, _publishedValueFallback);
 	}
 }

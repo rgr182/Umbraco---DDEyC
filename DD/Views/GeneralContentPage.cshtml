@@ -1,0 +1,57 @@
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ContentModels.GeneralContentPage>
+@using Umbraco.Cms.Web.Common.PublishedModels;
+@using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
+@{
+    Layout = "Main.cshtml";
+    var richTextStyle = string.Empty;
+}
+<div>
+	@await Html.PartialAsync("Partials/homePage/_navigation.cshtml")
+</div>
+@foreach (var item in Model.ContentPageBlocks)
+{
+
+    
+    if(item.Content is ContentModels.RichTextItems text){
+        richTextStyle = string.Empty;
+
+        // If the text Color is not empty/null, add it to the style
+        if(!string.IsNullOrEmpty(text.TextColor)){
+            richTextStyle += $"color:{text.TextColor};";
+        }
+        // If the font size is not empty/null, add it to the style
+        if(text.FontSize != null && text.FontSize != 0){
+            richTextStyle += $"font-size:{text.FontSize}px;";
+        }
+        // Render the text
+        <div class="mt-3" style="@richTextStyle">
+        @Html.Raw(text.RichText)
+        </div>
+    }
+    if (item.Content is ContentModels.NewsCarouselRow newsRow)
+    {
+        string uniqueCarouselId = $"newsCarousel-{item.GetHashCode()}";
+        <div class="mt-3">
+        @Html.Partial("Partials/homePage/_newsCarousel", newsRow.NewsCarouselRowItems, new ViewDataDictionary(ViewContext.ViewData) { { "CarouselId", uniqueCarouselId } })
+        </div>
+    }
+    if(item.Content is ContentModels.ImageCarouselRow imageRow){
+        string uniqueCarouselId = $"imageCarousel-{item.GetHashCode()}";
+        <div class="mt-3">
+        @Html.Partial("Partials/homePage/_imageCarousel", imageRow.ImageCarouselRowItems, new ViewDataDictionary(ViewContext.ViewData) { { "CarouselId", uniqueCarouselId } })
+        </div>
+    }
+    if (item.Content is ContentModels.RichTextAndImageItems richTextAndImageItems)
+    {
+        <div class="mt-3">
+        @Html.Partial("Partials/_textAndImage", richTextAndImageItems)
+        </div>
+    }
+    if (item.Content is ContentModels.VideoEmbedElement videoEmbed)
+    {
+        <div class="mt-3">
+        @Html.Partial("Partials/blocklistItems/_embededVideo", videoEmbed)
+        </div>
+    }
+} 
+ 
