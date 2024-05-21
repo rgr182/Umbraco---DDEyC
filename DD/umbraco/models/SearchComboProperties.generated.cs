@@ -22,6 +22,21 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 	/// <summary>Search Combo Properties</summary>
 	public partial interface ISearchComboProperties : IPublishedContent
 	{
+		/// <summary>Combo Box 1 Title</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		string ComboBox1Title { get; }
+
+		/// <summary>Combo Box 2 Title</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		string ComboBox2Title { get; }
+
+		/// <summary>Default Search Combo Text</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		string DefaultSearchComboText { get; }
+
 		/// <summary>Hide Search Combo Contents</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
 		bool HideSearchComboContents { get; }
@@ -62,6 +77,45 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		}
 
 		// properties
+
+		///<summary>
+		/// Combo Box 1 Title
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("comboBox1Title")]
+		public virtual string ComboBox1Title => GetComboBox1Title(this, _publishedValueFallback);
+
+		/// <summary>Static getter for Combo Box 1 Title</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
+		[return: global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		public static string GetComboBox1Title(ISearchComboProperties that, IPublishedValueFallback publishedValueFallback) => that.Value<string>(publishedValueFallback, "comboBox1Title");
+
+		///<summary>
+		/// Combo Box 2 Title
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("comboBox2Title")]
+		public virtual string ComboBox2Title => GetComboBox2Title(this, _publishedValueFallback);
+
+		/// <summary>Static getter for Combo Box 2 Title</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
+		[return: global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		public static string GetComboBox2Title(ISearchComboProperties that, IPublishedValueFallback publishedValueFallback) => that.Value<string>(publishedValueFallback, "comboBox2Title");
+
+		///<summary>
+		/// Default Search Combo Text
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("defaultSearchComboText")]
+		public virtual string DefaultSearchComboText => GetDefaultSearchComboText(this, _publishedValueFallback);
+
+		/// <summary>Static getter for Default Search Combo Text</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
+		[return: global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		public static string GetDefaultSearchComboText(ISearchComboProperties that, IPublishedValueFallback publishedValueFallback) => that.Value<string>(publishedValueFallback, "defaultSearchComboText");
 
 		///<summary>
 		/// Hide Search Combo Contents

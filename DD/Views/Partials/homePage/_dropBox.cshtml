@@ -7,6 +7,9 @@
     var Hide = Model.HideSearchComboContents;
     var uniqueId = Guid.NewGuid().ToString().Replace("-", "");
     var blocksList = Model.SearchComboContents.ToList();
+    var defaultText = Model.DefaultSearchComboText ?? "Selecciona una opción";
+    var ComboBox1Title = Model.ComboBox1Title ?? "Quién eres?";
+    var ComboBox2Title = Model.ComboBox2Title ?? "Qué buscas?";
     var data = new
     {
         blocksList = blocksList.Select(b => new
@@ -42,7 +45,7 @@
         <div class="DropboxContainer">
             <label class="title">Quién eres?</label>
             <select id="parent-dropdown-@uniqueId" class="dropboxItem">
-                <option selected>Selecciona una opción</option>
+                <option selected>@defaultText</option>
                 @foreach (var item in Model.SearchComboContents)
                 {
                     if (item.Content is ComboBoxUserType userType)
@@ -53,15 +56,16 @@
             </select>
             <label class="title">Qué buscas?</label>
             <select id="child-dropdown-@uniqueId" class="dropboxItem">
-                <option selected>Selecciona una opción</option>
+                <option selected>@defaultText</option>
             </select>
-            <a href="#" class="searchButton"><i class="fas fa-search"></i></a>
+            <a id="search-icon-@uniqueId" href="#" class="searchButton"><i class="fas fa-search"></i></a>
         </div>
     </body>
 }
 <script>
+    const DefaultText = '@defaultText';
     const uniqueId = '@uniqueId';
     const searchComboContents = JSON.parse('@Html.Raw(json)');
-    initSearchCombo(uniqueId, searchComboContents);
+    initSearchCombo(uniqueId, searchComboContents, DefaultText);
 </script>
 </html>

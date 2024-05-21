@@ -220,6 +220,30 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		public virtual string SelectColor => global::Umbraco.Cms.Web.Common.PublishedModels.RichTextHeadlineRow.GetSelectColor(this, _publishedValueFallback);
 
 		///<summary>
+		/// Combo Box 1 Title
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("comboBox1Title")]
+		public virtual string ComboBox1Title => global::Umbraco.Cms.Web.Common.PublishedModels.SearchComboProperties.GetComboBox1Title(this, _publishedValueFallback);
+
+		///<summary>
+		/// Combo Box 2 Title
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("comboBox2Title")]
+		public virtual string ComboBox2Title => global::Umbraco.Cms.Web.Common.PublishedModels.SearchComboProperties.GetComboBox2Title(this, _publishedValueFallback);
+
+		///<summary>
+		/// Default Search Combo Text
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("defaultSearchComboText")]
+		public virtual string DefaultSearchComboText => global::Umbraco.Cms.Web.Common.PublishedModels.SearchComboProperties.GetDefaultSearchComboText(this, _publishedValueFallback);
+
+		///<summary>
 		/// Hide Search Combo Contents
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
