@@ -1,6 +1,7 @@
-﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ISearchComboProperties>
 @{
     Layout = null;
+    var Hide = Model.HideSearchComboContents;
 }
 <!DOCTYPE html>
 <html>
@@ -8,6 +9,7 @@
     @await Html.PartialAsync("~/Views/Partials/_metaData.cshtml")
     <link rel="stylesheet" href="~/Styles/dropbox.css" />
 </head>
+@if(!Hide){
 <body>
     <div class="DropboxContainer">
         <label class="title">Quién eres?</label>
@@ -36,4 +38,5 @@
         <a href="#" class="searchButton"><i class="fas fa-search"></i></a>
     </div>
 </body>
+}
 </html>
