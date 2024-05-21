@@ -1,0 +1,23 @@
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<LandingPage>
+@{
+    var footerHeadline = Model.FooterHeadline;
+    var fontSizeHeadline = Model.FooterFontSize;
+    var colorHeadline = Model.FooterHeadlineColor;
+    var hideHeadline = Model.FooterHeadlineHide;
+}
+<head>
+    @await Html.PartialAsync("~/Views/Partials/_metaData.cshtml")
+    <link rel="stylesheet" href="~/Styles/headlineTitle.css" />
+</head>
+<div class="headlineTitle">
+    @if (footerHeadline != null && hideHeadline != true)
+    {
+        <h1 id="footerheadline" style="color:@colorHeadline">@footerHeadline</h1>
+    }
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var fontSizeHeadline = @fontSizeHeadline;
+            document.getElementById("footerheadline").style.fontSize = fontSizeHeadline + "rem";
+        });
+    </script>
+</div>
