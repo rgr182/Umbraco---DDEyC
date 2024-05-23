@@ -20,7 +20,7 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 {
 	/// <summary>SecondPage</summary>
 	[PublishedModel("incubadoras")]
-	public partial class Incubadoras : PublishedContentModel
+	public partial class Incubadoras : PublishedContentModel, IHeaderProperties, IRichTextHeadlineRow
 	{
 		// helpers
 #pragma warning disable 0109 // new is redundant
@@ -50,11 +50,72 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		// properties
 
 		///<summary>
-		/// Link
+		/// Incubadora General Content
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("link")]
-		public virtual global::Umbraco.Cms.Core.Models.Link Link => this.Value<global::Umbraco.Cms.Core.Models.Link>(_publishedValueFallback, "link");
+		[ImplementPropertyType("incubadoraGeneralContent")]
+		public virtual global::Umbraco.Cms.Core.Models.Blocks.BlockListModel IncubadoraGeneralContent => this.Value<global::Umbraco.Cms.Core.Models.Blocks.BlockListModel>(_publishedValueFallback, "incubadoraGeneralContent");
+
+		///<summary>
+		/// Bottom Header Image 1
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("bottomHeaderImage1")]
+		public virtual global::Umbraco.Cms.Core.Models.MediaWithCrops BottomHeaderImage1 => global::Umbraco.Cms.Web.Common.PublishedModels.HeaderProperties.GetBottomHeaderImage1(this, _publishedValueFallback);
+
+		///<summary>
+		/// Bottom Header Image 2
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("bottomHeaderImage2")]
+		public virtual global::Umbraco.Cms.Core.Models.MediaWithCrops BottomHeaderImage2 => global::Umbraco.Cms.Web.Common.PublishedModels.HeaderProperties.GetBottomHeaderImage2(this, _publishedValueFallback);
+
+		///<summary>
+		/// Hide Header Images
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
+		[ImplementPropertyType("hideHeaderImages")]
+		public virtual bool HideHeaderImages => global::Umbraco.Cms.Web.Common.PublishedModels.HeaderProperties.GetHideHeaderImages(this, _publishedValueFallback);
+
+		///<summary>
+		/// Top Header Image
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("topHeaderImage")]
+		public virtual global::Umbraco.Cms.Core.Models.MediaWithCrops TopHeaderImage => global::Umbraco.Cms.Web.Common.PublishedModels.HeaderProperties.GetTopHeaderImage(this, _publishedValueFallback);
+
+		///<summary>
+		/// Edit Text: Edit the headline title
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("editText")]
+		public virtual global::Umbraco.Cms.Core.Strings.IHtmlEncodedString EditText => global::Umbraco.Cms.Web.Common.PublishedModels.RichTextHeadlineRow.GetEditText(this, _publishedValueFallback);
+
+		///<summary>
+		/// Font Size Editor
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
+		[ImplementPropertyType("fontSizeEditor")]
+		public virtual int FontSizeEditor => global::Umbraco.Cms.Web.Common.PublishedModels.RichTextHeadlineRow.GetFontSizeEditor(this, _publishedValueFallback);
+
+		///<summary>
+		/// Hide: Select to true if you need to hide the text
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
+		[ImplementPropertyType("hide")]
+		public virtual bool Hide => global::Umbraco.Cms.Web.Common.PublishedModels.RichTextHeadlineRow.GetHide(this, _publishedValueFallback);
+
+		///<summary>
+		/// Select Color
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("selectColor")]
+		public virtual string SelectColor => global::Umbraco.Cms.Web.Common.PublishedModels.RichTextHeadlineRow.GetSelectColor(this, _publishedValueFallback);
 	}
 }
