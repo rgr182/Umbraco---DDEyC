@@ -1,0 +1,23 @@
+@using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
+
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<LogoItems>
+
+@{
+    Layout = null;
+
+    var topLeftRadius = $"{Model.LogoItemBorderRadiusTopLeft}px";
+    var topRightRadius = $"{Model.LogoItemBorderRadiusTopRight}px";
+    var bottomRightRadius = $"{Model.LogoItemBorderRadiusBottomRight}px";
+    var bottomLeftRadius = $"{Model.LogoItemBorderRadiusBottomLeft}px";
+    var alignment = Model.LogoItemAlignment.ToLower();
+}
+
+<head>
+    <link rel="stylesheet" href="~/Styles/styles.css" />
+</head>
+<div style="text-align: @alignment;">
+<div class="logo" style="background-color: @Model.LogoItemBackgroundColor;
+border-radius: @topLeftRadius @topRightRadius @bottomRightRadius @bottomLeftRadius;">
+    <img src="@Model.LogoItemImage.Url()" alt="" />
+</div>
+</div>
