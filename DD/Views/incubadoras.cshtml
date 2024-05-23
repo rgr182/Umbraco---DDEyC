@@ -12,11 +12,11 @@
 <div>
     @await Html.PartialAsync("Partials/homePage/_navigation.cshtml")
 </div>
-@*Incubadora headline Title*@
-<div class="headlineTitle">
+@*headline Title*@
+<div class="headlineTitle m-5">
     @if(newsHeadline != null && hideHeadline != true)
     {
-    <h1 id="headline" style="color:@colorHeadline">@newsHeadline</h1>
+        <h1 id="headline" style="color:@colorHeadline">@newsHeadline</h1>
     }
     <script>
         document.addEventListener("DOMContentLoaded", function () {
@@ -26,21 +26,23 @@
     </script>
 </div>
 @*Content*@
-<div class="m-5" style="color:white;">
+<div class="m-3">
     @foreach (var item in Model.IncubadoraGeneralContent)
     {
         if(item.Content is ContentModels.RichTextItems text)
         {
-            <div class="mt-3">
+            
+            <div  class="m-5">
                 @Html.Raw(text.RichText)
             </div>
         }
         if(item.Content is ContentModels.ImageCarouselRow imageRow)
         {
             string uniqueCarouselId = $"imageCarousel-{item.GetHashCode()}";
-            <div class="mt-3">
-                @Html.Partial("Partials/homePage/_imageCarousel", imageRow.ImageCarouselRowItems, new ViewDataDictionary(ViewContext.ViewData) { { "CarouselId", uniqueCarouselId } })
-            </div>
+    <div class="mt-3">
+        @Html.Partial("Partials/homePage/_imageCarousel", imageRow.ImageCarouselRowItems, new ViewDataDictionary(ViewContext.ViewData) { { "CarouselId", uniqueCarouselId } })
+    </div>
         }
     }
 </div>
+

@@ -20,7 +20,7 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 {
 	/// <summary>SecondPage</summary>
 	[PublishedModel("incubadoras")]
-	public partial class Incubadoras : PublishedContentModel, IHeaderProperties, IRichTextHeadlineRow
+	public partial class Incubadoras : PublishedContentModel, IFooterItems, IHeaderProperties, IRichTextFooterRow, IRichTextHeadlineRow
 	{
 		// helpers
 #pragma warning disable 0109 // new is redundant
@@ -50,12 +50,52 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		// properties
 
 		///<summary>
+		/// Footer Items
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("footerItems")]
+		public virtual global::Umbraco.Cms.Core.Models.Blocks.BlockListModel FooterItems => this.Value<global::Umbraco.Cms.Core.Models.Blocks.BlockListModel>(_publishedValueFallback, "footerItems");
+
+		///<summary>
 		/// Incubadora General Content
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
 		[ImplementPropertyType("incubadoraGeneralContent")]
 		public virtual global::Umbraco.Cms.Core.Models.Blocks.BlockListModel IncubadoraGeneralContent => this.Value<global::Umbraco.Cms.Core.Models.Blocks.BlockListModel>(_publishedValueFallback, "incubadoraGeneralContent");
+
+		///<summary>
+		/// Footer Item Image
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("footerItemImage")]
+		public virtual global::Umbraco.Cms.Core.Models.MediaWithCrops FooterItemImage => global::Umbraco.Cms.Web.Common.PublishedModels.FooterItems.GetFooterItemImage(this, _publishedValueFallback);
+
+		///<summary>
+		/// Footer Item Text 1
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("footerItemText1")]
+		public virtual global::Umbraco.Cms.Core.Strings.IHtmlEncodedString FooterItemText1 => global::Umbraco.Cms.Web.Common.PublishedModels.FooterItems.GetFooterItemText1(this, _publishedValueFallback);
+
+		///<summary>
+		/// Footer Item Text 2
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("footerItemText2")]
+		public virtual global::Umbraco.Cms.Core.Strings.IHtmlEncodedString FooterItemText2 => global::Umbraco.Cms.Web.Common.PublishedModels.FooterItems.GetFooterItemText2(this, _publishedValueFallback);
+
+		///<summary>
+		/// Footer Item URL
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("footerItemURL")]
+		public virtual global::Umbraco.Cms.Core.Models.Link FooterItemUrl => global::Umbraco.Cms.Web.Common.PublishedModels.FooterItems.GetFooterItemUrl(this, _publishedValueFallback);
 
 		///<summary>
 		/// Bottom Header Image 1
@@ -87,6 +127,36 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
 		[ImplementPropertyType("topHeaderImage")]
 		public virtual global::Umbraco.Cms.Core.Models.MediaWithCrops TopHeaderImage => global::Umbraco.Cms.Web.Common.PublishedModels.HeaderProperties.GetTopHeaderImage(this, _publishedValueFallback);
+
+		///<summary>
+		/// Footer Font Size
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
+		[ImplementPropertyType("footerFontSize")]
+		public virtual int FooterFontSize => global::Umbraco.Cms.Web.Common.PublishedModels.RichTextFooterRow.GetFooterFontSize(this, _publishedValueFallback);
+
+		///<summary>
+		/// Footer Headline: Edit the headline title
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("footerHeadline")]
+		public virtual global::Umbraco.Cms.Core.Strings.IHtmlEncodedString FooterHeadline => global::Umbraco.Cms.Web.Common.PublishedModels.RichTextFooterRow.GetFooterHeadline(this, _publishedValueFallback);
+
+		///<summary>
+		/// Footer Headline Color
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("footerHeadlineColor")]
+		public virtual string FooterHeadlineColor => global::Umbraco.Cms.Web.Common.PublishedModels.RichTextFooterRow.GetFooterHeadlineColor(this, _publishedValueFallback);
+
+		///<summary>
+		/// Footer Headline Hide: Select to true if you need to hide the text
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
+		[ImplementPropertyType("footerHeadlineHide")]
+		public virtual bool FooterHeadlineHide => global::Umbraco.Cms.Web.Common.PublishedModels.RichTextFooterRow.GetFooterHeadlineHide(this, _publishedValueFallback);
 
 		///<summary>
 		/// Edit Text: Edit the headline title

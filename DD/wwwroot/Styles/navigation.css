@@ -7,7 +7,7 @@ html{
     font-size: 62.5%;
 }
 /*desktop and tablet style*/
-@media (min-width: 930px){
+@media (min-width: 970px){
     #open-menu {
         display: none;
     }
@@ -38,7 +38,7 @@ html{
         text-decoration: none;
         font-size: clamp(0.8rem, 2vw,1.6rem);
         padding: 1rem;
-        font-family: "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+/*        font-family: "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;*/
         text-transform: uppercase;
     }
     #navigation li a:hover {
@@ -55,7 +55,7 @@ html{
     }
 }
 /* Smartphone styles */
-@media (max-width: 930px) {
+@media (max-width: 970px) {
     #open-menu {
         display: block;
         background-color: #4471c4;
