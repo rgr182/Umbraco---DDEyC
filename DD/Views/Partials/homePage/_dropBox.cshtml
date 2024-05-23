@@ -1,39 +1,71 @@
-﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ISearchComboProperties>
+@using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
+@using Umbraco.Cms.Core.Models.PublishedContent;
+@using Umbraco.Cms.Web.Common.PublishedModels;
 @{
     Layout = null;
+    var Hide = Model.HideSearchComboContents;
+    var uniqueId = Guid.NewGuid().ToString().Replace("-", "");
+    var blocksList = Model.SearchComboContents.ToList();
+    var defaultText = Model.DefaultSearchComboText ?? "Selecciona una opción";
+    var ComboBox1Title = Model.ComboBox1Title ?? "Quién eres?";
+    var ComboBox2Title = Model.ComboBox2Title ?? "Qué buscas?";
+    var data = new
+    {
+        blocksList = blocksList.Select(b => new
+        {
+            content = new
+            {
+                ComboBoxUserName = ((ComboBoxUserType)b.Content).ComboBoxUserName.ToString(),
+                ComboBoxUserMatches = ((ComboBoxUserType)b.Content).ComboBoxUserMatches.Select(matchContent =>
+                {
+                    var match = (ComboBoxMatchElement)matchContent.Content;
+                    return new
+                    {
+                        ComboBoxMatchElementText = match.ComboBoxMatchElementText.ToString(),
+                        ComboBoxMatchElementUrl = match.ComboBoxMatchElementUrl.Url.ToString()
+                    };
+                })
+            }
+        })
+    };
+    var json = Json.Serialize(data);
 }
+
 <!DOCTYPE html>
 <html>
 <head>
     @await Html.PartialAsync("~/Views/Partials/_metaData.cshtml")
     <link rel="stylesheet" href="~/Styles/dropbox.css" />
+    <script src="~/Scripts/searchCombo.js"></script>
 </head>
-<body>
-    <div class="DropboxContainer">
-        <label class="title">Quién eres?</label>
-        <select class="dropboxItem">
-            <option selected>Selecciona una opción</option>
-            <option>Estudiante</option>
-            <option>Empleado</option>
-            <option>Emprendedor</option>
-            <option>Micro o pequeño empresario</option>
-            <option>Empresario</option>
-            <option>Productor</option>
-        </select>
-        <label class="title">Qué buscas?</label>
-        <select class="dropboxItem">
-            <option selected>Selecciona una opción</option>
-            <option>Emprender</option>
-            <option>Dar a conocer mis productos</option>
-            <option>Aumentar mis ventas</option>
-            <option>Capacitar a mi personal</option>
-            <option>Conocer más sobre los permisos y licencias</option>
-            <option>Fortalecer mi negocio</option>
-            <option>Apoyo economico para compra de equipo</option>
-            <option>Financiamiento para mi negocio</option>
-            <option>Asesoría personalizada</option>
-        </select>
-        <a href="#" class="searchButton"><i class="fas fa-search"></i></a>
-    </div>
-</body>
+@if (!Hide)
+{
+    <body>
+        <div class="DropboxContainer">
+            <label class="title">Quién eres?</label>
+            <select id="parent-dropdown-@uniqueId" class="dropboxItem">
+                <option selected>@defaultText</option>
+                @foreach (var item in Model.SearchComboContents)
+                {
+                    if (item.Content is ComboBoxUserType userType)
+                    {
+                        <option value="@userType.ComboBoxUserName">@userType.ComboBoxUserName</option>
+                    }
+                }
+            </select>
+            <label class="title">Qué buscas?</label>
+            <select id="child-dropdown-@uniqueId" class="dropboxItem">
+                <option selected>@defaultText</option>
+            </select>
+            <a id="search-icon-@uniqueId" href="#" class="searchButton"><i class="fas fa-search"></i></a>
+        </div>
+    </body>
+}
+<script>
+    const DefaultText = '@defaultText';
+    const uniqueId = '@uniqueId';
+    const searchComboContents = JSON.parse('@Html.Raw(json)');
+    initSearchCombo(uniqueId, searchComboContents, DefaultText);
+</script>
 </html>
