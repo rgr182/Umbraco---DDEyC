@@ -11,7 +11,10 @@
 @foreach (var item in Model.ContentPageBlocks)
 {
 
+   if(item.Content is ContentModels.LogoItems logoItem){
+    @await Html.PartialAsync("Partials/blocklistItems/_logoItem", logoItem)
     
+   } 
     if(item.Content is ContentModels.RichTextItems text){
         richTextStyle = string.Empty;
 
