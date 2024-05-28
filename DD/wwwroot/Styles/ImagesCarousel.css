@@ -1,9 +1,9 @@
 /* Estilos para las imágenes del carrusel */
 #carousel_image {
-    max-width: 875px !important; 
-    max-height: 600px !important;
-    min-width: 875px !important; 
-    min-height: 309.12px !important; 
+    max-width: 875px !important;
+    max-height: 750px !important; 
+    min-width: 875px !important;
+    min-height: 309.12px !important;
     display: block;
     margin-left: auto;
     margin-right: auto;
