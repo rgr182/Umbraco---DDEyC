@@ -173,3 +173,12 @@ body {
     color: #03438b;
     background-color: #fcfcfc;
 }
+.social-media-btn-row {    
+    width: 90%;
+}
+@media screen and (min-width: 768px) {
+    .social-media-btn-row {
+        width: 50%;
+    }
+    
+}

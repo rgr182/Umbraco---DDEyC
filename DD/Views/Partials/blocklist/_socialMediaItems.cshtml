@@ -26,41 +26,41 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <div class="social-media-links">
-        <ul class="row justify-content-md-center m-4">
-            @foreach (var item in socials)
-            {
-                var social = item.Content as ContentModels.SocialMediaItems;
-                <div class="col-md-auto">
-                    <a href="@social.SocialMediaItemUrl.Url" target="_blank" rel="noopener noreferrer" class="btn btn-outline-info social-media-btn">
-                        @{
-                            var baseUrl = social.SocialMediaItemUrl.Url.ToLowerInvariant();
-                            string iconName;
-                            if (baseUrl.Contains("facebook.com"))
-                            {
-                                iconName = "fa-brands fa-facebook";
-                            }
-                            else if (baseUrl.Contains("instagram.com"))
-                            {
-                                iconName = "fa-brands fa-instagram";
-                            }
-                            else if (baseUrl.Contains("twitter.com") || baseUrl.Contains("x.com"))
-                            {
-                                iconName = "fa-brands fa-x-twitter";
-                            }
-                            else if (baseUrl.Contains("linkedin.com"))
-                            {
-                                iconName = "fa-brands fa-linkedin";
-                            }
-                            else
-                            {
-                                iconName = "fa-solid fa-link"; // default icon
-                            }
-                        }
-                        <i class=" @iconName"></i>
-                    </a>
-                </div>
+        <ul class="row justify-content-center mb-4 social-media-btn-row d-flex mx-auto">
+          @foreach (var item in socials)
+{
+    var social = item.Content as ContentModels.SocialMediaItems;
+    <div class="col-auto ">
+        <a href="@social.SocialMediaItemUrl.Url" target="_blank" rel="noopener noreferrer" class="btn btn-outline-info social-media-btn">
+            @{
+                var baseUrl = social.SocialMediaItemUrl.Url.ToLowerInvariant();
+                string iconName;
+                if (baseUrl.Contains("facebook.com"))
+                {
+                    iconName = "fa-brands fa-facebook";
+                }
+                else if (baseUrl.Contains("instagram.com"))
+                {
+                    iconName = "fa-brands fa-instagram";
+                }
+                else if (baseUrl.Contains("twitter.com") || baseUrl.Contains("x.com"))
+                {
+                    iconName = "fa-brands fa-x-twitter";
+                }
+                else if (baseUrl.Contains("linkedin.com"))
+                {
+                    iconName = "fa-brands fa-linkedin";
+                }
+                else
+                {
+                    iconName = "fa-solid fa-link"; // default icon
+                }
             }
-        </ul>
+            <i class=" @iconName"></i>
+        </a>
+    </div>
+}
+       </ul>
     </div>
 
 }
