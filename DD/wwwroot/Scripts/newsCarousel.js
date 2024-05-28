@@ -16,7 +16,6 @@ function renderCarouselLayout(blocksList, defaultImageUrl, carouselId, carouselI
     carouselInner.innerHTML = '';
 
     if (isMobile) {
-        console.log ('Mobile');
         renderMobileLayout(blocksList, defaultImageUrl, carouselId, carouselInner, carouselIndicators);
     } else {
         renderDesktopLayout(blocksList, defaultImageUrl, carouselId, carouselInner, carouselIndicators);
