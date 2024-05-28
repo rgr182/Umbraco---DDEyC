@@ -1,9 +1,9 @@
 /* Estilos para las imágenes del carrusel */
 #carousel_image {
-    max-width: 875px !important;
-    max-height: 750px !important; 
-    min-width: 875px !important;
-    min-height: 309.12px !important;
+    max-width: 840px !important; /* Incremento del 20% de 700px */
+    max-height: 600.6px !important; /* Incremento del 20% de 393px */
+    min-width: 560px !important; /* Decremento del 20% de 700px */
+    min-height: 314.4px !important; /* Decremento del 20% de 393px */
     display: block;
     margin-left: auto;
     margin-right: auto;
@@ -18,24 +18,21 @@
 }
 
 html {
-    font-size: 62.5%; /* Configuración base de tamaño de fuente para usar rems */
+    font-size: 62.5%; /* Base de 10px para facilitar el uso de rem */
 }
 
 /* Estilos para desktop y tablet */
 @media (min-width: 970px) {
     #open-menu {
-        display: none; /* Ocultar el menú de apertura en pantallas grandes */
+        display: none; /* Ocultar menú en pantallas grandes */
     }
-
-    /* Puedes agregar aquí más ajustes para desktop y tablet */
 }
 
 /* Estilos para smartphone */
 @media (max-width: 969px) {
-    /* Ajustar las imágenes del carrusel para pantallas pequeñas */
     #carousel_image {
-        max-width: 100% !important; /* Ajustar ancho al 100% del contenedor */
-        height: auto !important; /* Mantener la proporción de la imagen */
+        max-width: 100% !important; /* Ancho máximo al 100% del contenedor */
+        height: auto !important; /* Mantener proporción de la imagen */
     }
 
     #open-menu {
@@ -43,7 +40,7 @@ html {
         background-color: #4471c4;
         color: white;
         font-size: 1rem; /* Tamaño de fuente reducido */
-        padding-left: 0.5rem; /* Espaciado reducido */
+        padding-left: 0.5rem; /* Padding reducido */
         padding-top: 0.35rem;
     }
 
@@ -55,30 +52,28 @@ html {
         padding-left: 0.3rem; /* Padding izquierdo reducido */
         padding-right: 0.3rem; /* Padding derecho reducido */
     }
-
-    /* Puedes agregar aquí más ajustes para smartphone */
 }
 
 /* Estilos para las flechas de navegación del carrusel */
 .carousel-control-prev {
-    left: -10%; /* Acercar hacia la izquierda un 10% */
+    left: -10%; /* Acercar flecha izquierda un 10% */
 }
 
 .carousel-control-next {
-    right: -10%; /* Acercar hacia la derecha un 10% */
+    right: -10%; /* Acercar flecha derecha un 10% */
 }
 
 .carousel-control-prev-icon,
 .carousel-control-next-icon {
-    width: 2.5rem; /* Aumentar tamaño de las flechas */
-    height: 2.5rem; /* Aumentar tamaño de las flechas */
-    background-color: transparent; /* Eliminar fondo */
+    width: 2.5rem; /* Tamaño de las flechas */
+    height: 2.5rem; /* Tamaño de las flechas */
+    background-color: transparent; /* Fondo transparente */
 }
 
     .carousel-control-prev-icon::before,
     .carousel-control-next-icon::before {
         color: #ffffff; /* Color blanco para las flechas */
-        font-size: 2.5rem; /* Aumentar tamaño del icono de flecha */
+        font-size: 2.5rem; /* Tamaño de los iconos de las flechas */
     }
 
 /* Estilos para los indicadores de paginación */
