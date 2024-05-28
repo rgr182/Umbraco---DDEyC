@@ -20,7 +20,7 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 {
 	/// <summary>Landing Page</summary>
 	[PublishedModel("landingPage")]
-	public partial class LandingPage : PublishedContentModel, IHeaderProperties, IHomeRedirectButtonProperties, IRichTextFooterRow, IRichTextHeadlineRow, ISearchComboProperties
+	public partial class LandingPage : PublishedContentModel, IFooterProperties, IHeaderProperties, IHomeRedirectButtonProperties, IRichTextFooterRow, IRichTextHeadlineRow, ISearchComboProperties
 	{
 		// helpers
 #pragma warning disable 0109 // new is redundant
@@ -58,14 +58,6 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		public virtual global::Umbraco.Cms.Core.Models.Blocks.BlockListItem<global::Umbraco.Cms.Web.Common.PublishedModels.VideoEmbedElement> EmbededVideo => this.Value<global::Umbraco.Cms.Core.Models.Blocks.BlockListItem<global::Umbraco.Cms.Web.Common.PublishedModels.VideoEmbedElement>>(_publishedValueFallback, "embededVideo");
 
 		///<summary>
-		/// Footer Items
-		///</summary>
-		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
-		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("footerItems")]
-		public virtual global::Umbraco.Cms.Core.Models.Blocks.BlockListModel FooterItems => this.Value<global::Umbraco.Cms.Core.Models.Blocks.BlockListModel>(_publishedValueFallback, "footerItems");
-
-		///<summary>
 		/// Image Carousel
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
@@ -88,6 +80,22 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
 		[ImplementPropertyType("richTextAndImages")]
 		public virtual global::Umbraco.Cms.Core.Models.Blocks.BlockListModel RichTextAndImages => this.Value<global::Umbraco.Cms.Core.Models.Blocks.BlockListModel>(_publishedValueFallback, "richTextAndImages");
+
+		///<summary>
+		/// footer Items
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("footerItems")]
+		public virtual global::Umbraco.Cms.Core.Models.Blocks.BlockListModel FooterItems => global::Umbraco.Cms.Web.Common.PublishedModels.FooterProperties.GetFooterItems(this, _publishedValueFallback);
+
+		///<summary>
+		/// footer Social Media Items
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("footerSocialMediaItems")]
+		public virtual global::Umbraco.Cms.Core.Models.Blocks.BlockListModel FooterSocialMediaItems => global::Umbraco.Cms.Web.Common.PublishedModels.FooterProperties.GetFooterSocialMediaItems(this, _publishedValueFallback);
 
 		///<summary>
 		/// Bottom Header Image 1
