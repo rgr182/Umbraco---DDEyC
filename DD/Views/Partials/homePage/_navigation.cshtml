@@ -13,7 +13,6 @@
         return GetVisibleChildren(node).Concat(GetVisibleChildren(node).SelectMany(GetVisibleDescendants));
     }
     var allVisiblePages = GetVisibleDescendants(rootNode);
-
     var navigationConfig = Configuration.GetSection("Navigation");
     var hasChildLinks = navigationConfig.Get<List<string>>();
 }
@@ -40,9 +39,21 @@
                                 <ul class="dropdown">
                                     @foreach (var childLink in item.Children())
                                     {
-                                        <li>
+                                        var visibleGrandChildren = childLink.Children().Where(x => x.IsVisible());
+                                        <li class="has-subdropdown">
                                             <a href="@childLink.Url()">@childLink.Name</a>
-                                            @*TODO: add dropdowns in navigationBar*@
+                                            @if (visibleGrandChildren.Any())
+                                            {
+                                                <button class="dropdown-arrow fas fa-chevron-down"></button>
+                                                <ul class="sub-dropdown">
+                                                    @foreach (var grandChildLink in visibleGrandChildren)
+                                                    {
+                                                        <li>
+                                                            <a href="@grandChildLink.Url()">@grandChildLink.Name</a>
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            }
                                         </li>
                                     }
                                 </ul>
