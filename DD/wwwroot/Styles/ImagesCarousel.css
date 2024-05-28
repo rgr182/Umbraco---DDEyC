@@ -1,126 +1,71 @@
-/* Estilos específicos para el carrusel de imágenes con ID específico */
-#imagesCarousel .carousel {
-    position: relative;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+/* Estilos para las imágenes del carrusel */
+#carousel_image {
+    max-width: 692px !important; /* 80% de 865px */
+    max-height: 268.8px !important; /* 80% de 336px */
 }
 
-#imagesCarousel .carousel-indicators li {
-    background-color: #fff;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-}
-
-#imagesCarousel .carousel-control-prev,
-#imagesCarousel .carousel-control-next {
-    align-items: center;
-    height: auto;
-    width: 8%;
-    outline: rgb(0, 0, 0);
-    background: none;
-    cursor: pointer;
-}
-
-#imagesCarousel .carousel-control-prev-icon,
-#imagesCarousel .carousel-control-next-icon {
-    font-size: 55px;
-    color: red;
-}
-
-#imagesCarousel .carousel-item {
-    min-height: 250px;  
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-#imagesCarousel .carousel-item img {
-    max-height: 300px;/
-    min-height: 100%;  
-    width: auto;
-    object-fit: contain;
-}
-
-#imagesCarousel .carousel-item-content {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 100%;
-    padding: 0 15px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-#imagesCarousel .text-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    padding: 10px;
-    max-height: 12em;
-    position: relative;
-    color: white;
-}
-
-#imagesCarousel .text-content p {
+/* Estilos generales */
+* {
+    box-sizing: border-box;
+    padding: 0;
     margin: 0;
-    line-height: 1.2;
-    max-height: 10.2em;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 6;
-    -webkit-box-orient: vertical;
 }
 
-#imagesCarousel .text-content::after {
-    content: "...";
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    padding: 0 5px;
-    background-color: rgba(255, 255, 255, 0.8);
-    color: #333;
-    font-weight: bold;
-    display: none;
+html {
+    font-size: 62.5%; /* Configuración base de tamaño de fuente para usar rems */
 }
 
-#imagesCarousel .text-content.overflow::after {
-    display: block;
+/* Estilos para desktop y tablet */
+@media (min-width: 970px) {
+    #open-menu {
+        display: none; /* Ocultar el menú de apertura en pantallas grandes */
+    }
+
+    /* Puedes agregar aquí más ajustes para desktop y tablet */
 }
 
-/* Responsive styles */
-@media (max-width: 767px) {
-    #imagesCarousel .carousel-item {
-        min-height: 320px;
+/* Estilos para smartphone */
+@media (max-width: 969px) {
+    /* Ajustar las imágenes del carrusel para pantallas pequeñas */
+    #carousel_image {
+        max-width: 100% !important; /* Ajustar ancho al 100% del contenedor */
+        height: auto !important; /* Mantener la proporción de la imagen */
     }
 
-    #imagesCarousel .carousel-item img {
-        min-height: 200px; 
-        max-height: 260px; 
+    /* Mostrar el menú de apertura en pantallas pequeñas */
+    #open-menu {
+        display: block;
+        background-color: #4471c4;
+        color: white;
+        font-size: 1rem; /* Tamaño de fuente reducido */
+        padding-left: 0.5rem; /* Espaciado reducido */
+        padding-top: 0.35rem;
     }
 
-    #imagesCarousel .carousel-item-content {
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
+    /* Estilos para el icono de barras del menú */
+    #bars {
+        width: 1.5rem; /* Tamaño reducido */
+        border: solid 0.05rem white; /* Borde reducido */
+        border-radius: 20%;
+        padding: 0.05rem; /* Padding reducido */
+        padding-left: 0.3rem; /* Padding izquierdo reducido */
+        padding-right: 0.3rem; /* Padding derecho reducido */
     }
 
-    #imagesCarousel .carousel-img-container {
-        flex: 1;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        max-height: 50%;
-    }
-
-    #imagesCarousel .carousel-img {
-        max-height: 100%;
-        max-width: 100%;
-        object-fit: contain;
-    }
+    /* Puedes agregar aquí más ajustes para smartphone */
 }
+
+/* Estilos para las flechas de navegación del carrusel */
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    width: 2.5rem; /* Aumentar tamaño de las flechas */
+    height: 2.5rem; /* Aumentar tamaño de las flechas */
+    background-color: transparent; /* Eliminar fondo */
+}
+
+    /* Asegurar que las flechas sean blancas y más grandes */
+    .carousel-control-prev-icon::before,
+    .carousel-control-next-icon::before {
+        color: #ffffff; /* Color blanco para las flechas */
+        font-size: 2.5rem; /* Aumentar tamaño del icono de flecha */
+    }

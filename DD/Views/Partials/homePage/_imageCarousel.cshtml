@@ -1,9 +1,9 @@
-﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<IEnumerable<BlockListItem>>;
-@using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
-@using Umbraco.Cms.Core.Models.Blocks;
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<IEnumerable<BlockListItem>>
+@using ContentModels = Umbraco.Cms.Web.Common.PublishedModels
+@using Umbraco.Cms.Core.Models.Blocks
 @{
     var blocksList = Model.ToList();
-    string imageCarouselId = ViewData["CarouselId"]?.ToString() ?? "newsCarousel-" + Guid.NewGuid().ToString();    
+    string imageCarouselId = ViewData["CarouselId"]?.ToString() ?? "newsCarousel-" + Guid.NewGuid().ToString();
 }
 
 <head>
@@ -13,16 +13,14 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-8">
-            <div id="@imageCarouselId" class="carousel slide" data-bs-ride="">
+            <div id="@imageCarouselId" class="carousel slide" data-bs-ride="carousel">
                 <ol class="carousel-indicators">
                     @{
                         var index = 0;
-
                         foreach (var block in blocksList)
                         {
                             var content = (ContentModels.ImageCarouselItems)block.Content;
-                            <li data-bs-target="#@imageCarouselId" data-bs-slide-to="@index" class="@(index == 0 ? "active" : "")">
-                            </li>
+                            <li data-bs-target="#@imageCarouselId" data-bs-slide-to="@index" class="@(index == 0 ? "active" : "")"></li>
                             index++;
                         }
                     }
@@ -31,29 +29,27 @@
                     @foreach (var block in blocksList)
                     {
                         var content = (ContentModels.ImageCarouselItems)block.Content;
-                        <div class="carousel-item image-only @(block == blocksList.First() ? "active" : "")">
+                        <div class="carousel-item @(block == blocksList.First() ? "active" : "")">
                             <div class="carousel-item-content">
                                 @if (content.ImageCarouselItem is not null)
                                 {
                                     <a href="@content.ImageCarouselItemUrl?.Url">
-                                        <img src="@content.ImageCarouselItem.Url()" class="d-block w-100" alt="...">
+                                        <img id="carousel_image" src="@content.ImageCarouselItem.Url()" class="d-block" alt="...">
                                     </a>
                                 }
                                 else
                                 {
-                                    <img src="~/assets/default.webp" class="d-block w-100" alt="...">
+                                    <img id="carousel_image" src="~/assets/default.webp" class="d-block" alt="...">
                                 }
                             </div>
                         </div>
                     }
                 </div>
-                <button class="carousel-control-prev" type="button" data-bs-target="#@imageCarouselId"
-                    data-bs-slide="prev">
+                <button class="carousel-control-prev" type="button" data-bs-target="#@imageCarouselId" data-bs-slide="prev">
                     <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                     <span class="visually-hidden">Previous</span>
                 </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#@imageCarouselId"
-                    data-bs-slide="next">
+                <button class="carousel-control-next" type="button" data-bs-target="#@imageCarouselId" data-bs-slide="next">
                     <span class="carousel-control-next-icon" aria-hidden="true"></span>
                     <span class="visually-hidden">Next</span>
                 </button>
