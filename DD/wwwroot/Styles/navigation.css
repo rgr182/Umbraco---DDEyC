@@ -97,7 +97,8 @@ html{
             padding-bottom: 1rem;
         }
     /* Styles for dropdown arrows and menus */
-    .has-dropdown, .has-subdropdown {
+    .has-dropdown, 
+    .has-subdropdown {
         position: relative;
     }
     .dropdown-arrow {
@@ -111,9 +112,9 @@ html{
     #navigation ul li:hover .dropdown-arrow {
         transform: translateY(-50%) rotate(180deg);
     }
-    .dropdown, .subdropdown {
+    .dropdown, 
+    .sub-dropdown {
         position: absolute;
-        padding: 0.3rem;
         width: 90%;
         background-color: #054c93;
         z-index: 10;
@@ -131,24 +132,14 @@ html{
         text-decoration: none;
         text-transform: uppercase;
     }
-    #navigation ul ul {
+    #navigation ul ul{
         border: solid .1rem #6c9dc2;
         transition: 0.7s ease;
         background-color: #054c93;
     }
-    .sub-dropdown-arrow {
-        position: absolute;
-        right: 1rem;
-        top: 20%;
-        transform: translateY(-20%);
-        font-size: 2rem;
-        transition: transform 0.5s ease;
-    }
-    #navigation ul ul li:hover .sub-dropdown-arrow {
-        transform: translateY(-20%) rotate(180deg);
-    }
+
     /* Styles for subdropdown arrows and menus */
-    #navigation ul ul ul li {
+    #navigation ul ul ul li{
         transition: 0.7s ease;
         background-color: #4471c4;
     }
