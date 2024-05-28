@@ -1,7 +1,7 @@
 /* Estilos para las imágenes del carrusel */
 #carousel_image {
     max-width: 840px !important; /* Incremento del 20% de 700px */
-    max-height: 600.6px !important; /* Incremento del 20% de 393px */
+    max-height: 700.6px !important; /* Incremento del 20% de 393px */
     min-width: 560px !important; /* Decremento del 20% de 700px */
     min-height: 314.4px !important; /* Decremento del 20% de 393px */
     display: block;
