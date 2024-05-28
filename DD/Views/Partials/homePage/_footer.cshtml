@@ -26,7 +26,7 @@
 }
 
 <head>
-    <link href="~/Styles/ContentCarousel.css" rel="stylesheet" />
+    <link href="~/Styles/footer-carousel.css" rel="stylesheet" />
 </head>
 
 <div id="footerCarousel" class="carousel slide" data-bs-ride="carousel">
@@ -84,17 +84,17 @@
                         <div class="carousel-item @(isActive)">
                             <div class="carousel-item-content">
                                 <div class="row">
-                                    <div class="col-12"> <!-- Adjust column size for mobile -->
+                                    <div class="col-6"> <!-- Adjust column size for mobile -->
                                         <div class="d-flex align-items-center">
-                                            <div class="carousel-image-container">
+                                            <div class="carousel-img-container">
                                                 <a href="@content.FooterItemUrl?.Url">
                                                     <img src="@imageUrl" class="d-block w-100 object-fit-cover" alt="..." style="max-width: 200px;"> <!-- Adjust max-width for smaller images -->
                                                 </a>
                                             </div>
                                             <div style="margin-left: 20px;"> <!-- Add more margin for spacing -->
                                                 <div class="carousel-text">
-                                                    <p class="carousel-text-ellipsis" style="font-size: 14px;">@content.FooterItemText1</p> <!-- Adjust font size -->
-                                                    <p class="carousel-text-ellipsis" style="font-size: 14px;">@content.FooterItemText2</p> <!-- Adjust font size -->
+                                                    <p class="text-ellipsis" style="font-size: 14px;">@content.FooterItemText1</p> <!-- Adjust font size -->
+                                                    <p class="text-ellipsis" style="font-size: 14px;">@content.FooterItemText2</p> <!-- Adjust font size -->
                                                 </div>
                                             </div>
                                         </div>
@@ -125,15 +125,15 @@
                                         var imageUrl = string.IsNullOrWhiteSpace(content.FooterItemImage?.Url()) ? defaultImageUrl : content.FooterItemImage?.Url();
                                         <div class="col-md-4"> <!-- Adjust column size for desktop -->
                                             <div class="d-flex align-items-center">
-                                                <div class="carousel-image-container">
+                                                <div class="carousel-img-container">
                                                     <a href="@content.FooterItemUrl?.Url">
                                                         <img src="@imageUrl" class="d-block w-100 object-fit-cover" alt="..." style="max-width: 200px;"> <!-- Adjust max-width for smaller images -->
                                                     </a>
                                                 </div>
                                                 <div style="margin-left: 20px;"> <!-- Add more margin for spacing -->
                                                     <div class="carousel-text">
-                                                        <p class="carousel-text-ellipsis" style="font-size: 14px;">@content.FooterItemText1</p> <!-- Adjust font size -->
-                                                        <p class="carousel-text-ellipsis" style="font-size: 14px;">@content.FooterItemText2</p> <!-- Adjust font size -->
+                                                        <p class="text-ellipsis" style="font-size: 14px;">@content.FooterItemText1</p> <!-- Adjust font size -->
+                                                        <p class="text-ellipsis" style="font-size: 14px;">@content.FooterItemText2</p> <!-- Adjust font size -->
                                                     </div>
                                                 </div>
                                             </div>
