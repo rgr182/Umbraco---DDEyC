@@ -40,8 +40,10 @@ document.addEventListener('click', (e) => {
         dropdownArrows.forEach((arrow) => {
             const dropdownMenu = arrow.nextElementSibling;
             if (dropdownMenu) {
-                dropdownMenu.style.display = 'none';
+                dropdownMenu.classList.remove('active');
+                arrow.classList.remove('active');
             } 
         });
     }
 });
+
