@@ -28,8 +28,7 @@
 }
 
 #imagesCarousel .carousel-item {
-    min-height: 300px;
-    min-height: fit-content; /
+    min-height: 450px;  /* Altura mínima general del elemento */
     position: relative;
     overflow: hidden;
     display: flex;
@@ -38,7 +37,8 @@
 }
 
 #imagesCarousel .carousel-item img {
-    max-height: 300px;
+    max-height: 300px; /* Altura máxima predeterminada para imágenes */
+    min-height: 100%;  /* Altura mínima para adaptar al contenedor */
     width: auto;
     object-fit: contain;
 }
@@ -100,7 +100,8 @@
     }
 
     #imagesCarousel .carousel-item img {
-        min-height: 200px; 
+        min-height: 200px; /* Ajuste de altura mínima en dispositivos móviles */
+        max-height: 260px; /* Limita la altura máxima en móviles */
     }
 
     #imagesCarousel .carousel-item-content {
