@@ -1,10 +1,27 @@
-﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage;
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<IEnumerable<BlockListItem>>;
 @using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
 @using Umbraco.Cms.Core.Models.Blocks;
 
 @{
-    var blocks = Model.Value<IEnumerable<BlockListItem>>("footerItems");
-    var blocksList = blocks.ToList();
+    const string DefaultFooterNodeName = "DefaultFooter";
+    const string HomeName = "Home";
+    const string FooterItemsPropertyName = "footerItems";
+
+    // Get Home Node
+    var rootNode = Umbraco.ContentAtRoot().Where(x => x.Name == HomeName).FirstOrDefault();
+
+    // Get Default Footer Properties
+    var defaultFooterNode = rootNode.Children.FirstOrDefault(x => x.Name == DefaultFooterNodeName);
+
+    // Get default footer items
+    var blocksList = Model.ToList(); 
+    var defaultBlocksList = defaultFooterNode?.Value<IEnumerable<BlockListItem>>(FooterItemsPropertyName);
+
+    if (blocksList is null || !blocksList.Any())
+    {
+        blocksList = defaultBlocksList?.ToList();
+    }
+
     var defaultImageUrl = Url.Content("~/assets/default.webp");
 }
 
@@ -59,6 +76,7 @@
             @foreach (var block in blocksList)
             {
                 var content = (ContentModels.FooterItems)block.Content;
+                
                 var imageUrl = string.IsNullOrWhiteSpace(content.FooterItemImage?.Url()) ? defaultImageUrl : content.FooterItemImage?.Url();
                 var isActive = index == 0 ? "active" : "";
                 <text>
@@ -138,3 +156,4 @@
     window.addEventListener('resize', handleResizeFooter);
     window.addEventListener('DOMContentLoaded', renderFooterLayout); // Call initially to set the correct layout
 </script>
+<script src="~/Scripts/imageErrorHandler.js"></script>

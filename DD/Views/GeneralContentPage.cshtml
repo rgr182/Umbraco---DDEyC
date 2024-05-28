@@ -56,5 +56,18 @@
         @Html.Partial("Partials/blocklistItems/_embededVideo", videoEmbed)
         </div>
     }
+    
 } 
+
+
+    <div class="mt-3">
+    @await Html.PartialAsync("Partials/homePage/_footer", Model.FooterItems)
+    </div>
+
+ 
+        
+        <div class="mt-3">
+        @await Html.PartialAsync("Partials/blocklist/_socialMediaItems", Model.FooterSocialMediaItems)
+        </div>
+ 
  
