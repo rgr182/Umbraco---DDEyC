@@ -1,0 +1,8 @@
+﻿.rich-content-div {
+    text-align: center;
+}
+
+.rich-content-div > div {
+    display: inline-block;
+    text-align: justify;
+}
