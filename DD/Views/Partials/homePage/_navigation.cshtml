@@ -34,14 +34,14 @@
                         if (hasChildLinks.Contains(item.Name))
                         {
                             <li class="has-dropdown">
-                                <a>@item.Name</a>
+                                <a class="parent-link" href="@item.Url()">@item.Name</a>
                                 <button class="dropdown-arrow fas fa-chevron-down"></button>
                                 <ul class="dropdown">
                                     @foreach (var childLink in item.Children())
                                     {
                                         var visibleGrandChildren = childLink.Children().Where(x => x.IsVisible());
                                         <li class="has-subdropdown">
-                                            <a href="@childLink.Url()">@childLink.Name</a>
+                                            <a class="parent-link" href="@childLink.Url()">@childLink.Name</a>
                                             @if (visibleGrandChildren.Any())
                                             {
                                                 <button class="dropdown-arrow fas fa-chevron-down"></button>
@@ -65,5 +65,19 @@
         </div>
     </nav>
     <script src="~/Scripts/mobileMenuToggle.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var parentLinks = document.querySelectorAll('.parent-link');
+            parentLinks.forEach(function (link) {
+                link.addEventListener('click', function (event) {
+                    event.preventDefault(); // Evita la navegación
+                    var dropdown = link.nextElementSibling; // Encuentra el siguiente elemento de dropdown
+                    if (dropdown && dropdown.classList.contains('dropdown')) {
+                        dropdown.classList.toggle('open'); // Muestra/oculta el dropdown
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>
