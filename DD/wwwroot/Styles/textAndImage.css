@@ -5,11 +5,12 @@
 }
 
 .column-title {
-    font-size: 20px;
+    font-size: 36px;
     font-weight: bold;
     margin-bottom: 10px;
 }
 
 .text-start {
+    font-size: 27px;
     text-align: start;
 }
