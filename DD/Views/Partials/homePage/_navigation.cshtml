@@ -34,14 +34,14 @@
                         if (hasChildLinks.Contains(item.Name))
                         {
                             <li class="has-dropdown">
-                                <a href="@item.Url()">@item.Name</a>
+                                <a class="parent-link">@item.Name</a>
                                 <button class="dropdown-arrow fas fa-chevron-down"></button>
                                 <ul class="dropdown">
                                     @foreach (var childLink in item.Children())
                                     {
                                         var visibleGrandChildren = childLink.Children().Where(x => x.IsVisible());
                                         <li class="has-subdropdown">
-                                            <a href="@childLink.Url()">@childLink.Name</a>
+                                            <a class="child-link" href="@childLink.Url()">@childLink.Name</a>
                                             @if (visibleGrandChildren.Any())
                                             {
                                                 <button class="dropdown-arrow fas fa-chevron-down"></button>
@@ -65,5 +65,37 @@
         </div>
     </nav>
     <script src="~/Scripts/mobileMenuToggle.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var parentLinks = document.querySelectorAll('.parent-link');
+
+            parentLinks.forEach(function (link) {
+                link.addEventListener('click', function (event) {
+                    var parentLi = event.target.closest('li');
+                    var dropdown = parentLi.querySelector('.dropdown');
+
+                    if (dropdown) {
+                        event.preventDefault();
+                        dropdown.classList.toggle('open');
+                    }
+                });
+            });
+
+            var childLinks = document.querySelectorAll('.child-link');
+
+            childLinks.forEach(function (link) {
+                link.addEventListener('click', function (event) {
+                    var parentLi = event.target.closest('li');
+                    var subDropdown = parentLi.querySelector('.sub-dropdown');
+
+                    if (subDropdown) {
+                        event.preventDefault();
+                        subDropdown.classList.toggle('open');
+                    }
+                });
+            });
+        });
+
+    </script>
 </body>
 </html>

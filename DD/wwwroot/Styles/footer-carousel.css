@@ -110,8 +110,9 @@
 /* Responsive styles */
 /* Mobile view styles */
 @media (max-width: 767px) {
-    #footerCarousel .carousel-item.text-and-image-carousel {
-        min-height: 320px;
+    #footerCarousel .carousel-item {
+        min-height: 335px;
+        max-height: 360px;
     }
 
     #footerCarousel .carousel-item.image-only {

@@ -10,8 +10,26 @@
 /* Anchord Styles */
 
 .rich-content-text a {
-    color: #E4007C; /* Soft Mexican pink for links, ensures good visibility */
+    color: #FFA726; /* Color mango brillante para enlaces */
     text-decoration: none;
+}
+
+.rich-content-text a:hover {
+    color: #FF9800; /* Mango más brillante para el efecto hover */
+    text-decoration: underline;
+}
+
+.rich-content-text a:active {
+    color: #FB8C00; /* Mango aún más brillante cuando el enlace está activo */
+}
+
+.rich-content-text a:visited {
+    color: #FF7043; /* Mango brillante diferente para los enlaces visitados */
+}
+
+.rich-content-text a:focus {
+    outline: 2px solid #FFC107; /* Borde mango claro y brillante para el enfoque */
+    outline-offset: 2px;
 }
 
 .rich-content-text a:hover {

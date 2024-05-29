@@ -64,7 +64,6 @@ td {
     padding: 0;
     border: 0;
     outline: 0;
-    /*font-size: 100%;*/
     vertical-align: baseline;
     background: transparent;
 }
@@ -75,6 +74,7 @@ header {
 
 /* Global styles */
 body {
+    overflow-x: hidden;
     font-family: 'Montserrat', sans-serif;
     font-size: 16px;
     line-height: 1.5;
@@ -83,7 +83,10 @@ body {
 }
 
 /* Add your custom styles here */
-
+.row{
+    margin-left: 0;
+    margin-right: 0;
+}
 /* Video embed */
 /* Styles for desktop */
 .video-embed {
