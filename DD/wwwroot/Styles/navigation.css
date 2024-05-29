@@ -3,10 +3,11 @@
     padding: 0;
     margin: 0;
 }
-
 html {
     font-size: 62.5%;
 }
+
+
 /* Desktop and tablet style */
 @media (min-width: 970px) {
     #open-menu {
@@ -39,9 +40,9 @@ html {
         transition: 0.7s ease;
     }
 
-        #navigation ul li:hover > ul {
-            display: block;
-        }
+    #navigation ul li:hover > ul {
+        display: block;
+    }
 
     #navigation ul a {
         display: block;
@@ -66,15 +67,22 @@ html {
         padding: 0;
     }
 
-        #navigation ul ul li {
-            width: 25rem;
-            transition: 0.7s ease;
-        }
+    #navigation ul ul li {
+        width: 25rem;
+        transition: 0.7s ease;
+    }
 
-        #navigation ul ul ul {
-            left: 100%;
-            top: 0;
-        }
+    #navigation ul ul ul {
+        left: 100%;
+        top: 0;
+    }
+    .dropdown, .sub-dropdown {
+        display: none;
+    }
+
+    .dropdown.open, .sub-dropdown.open {
+        display: block;
+    }
 }
 
 /* Smartphone styles */
