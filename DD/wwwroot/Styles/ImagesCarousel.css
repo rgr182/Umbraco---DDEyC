@@ -54,8 +54,14 @@ html {
     }
 }
 
+/* Estilos para las flechas de navegación del carrusel */
+.carousel-control-prev.iwkms {
+    left: -10%; /* Acercar flecha izquierda un 10% */
+}
 
-
+.carousel-control-next.iwkms {
+    right: -10%; /* Acercar flecha derecha un 10% */
+}
 
 .carousel-control-prev-icon,
 .carousel-control-next-icon {
