@@ -31,7 +31,9 @@
         // If the font size is not empty/null, add it to the style
         if (text.FontSize != null && text.FontSize != 0)
         {
-            richTextStyle += $"font-size:{text.FontSize}px;";
+        richTextStyle += $"font-size:{text.FontSize}px ;";
+        }else{
+            richTextStyle += $"font-size:27px;";
         }
         // Render the text
         <div class="rich-content-div mt-3" style="@richTextStyle">
