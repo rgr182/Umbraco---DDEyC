@@ -113,5 +113,5 @@ html {
 
 /* Espaciado adicional para evitar empalme con el contenido de abajo */
 .carousel {
-    padding-bottom: 100px; /* Aumentar el espacio fijo debajo del carrusel */
+    padding-bottom: 25px; /* Aumentar el espacio fijo debajo del carrusel */
 }
