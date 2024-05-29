@@ -83,7 +83,10 @@ body {
 }
 
 /* Add your custom styles here */
-
+.row{
+    margin-left: 0;
+    margin-right: 0;
+}
 /* Video embed */
 /* Styles for desktop */
 .video-embed {
