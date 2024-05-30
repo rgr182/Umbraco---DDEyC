@@ -114,6 +114,14 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		public virtual global::Umbraco.Cms.Core.Models.MediaWithCrops BottomHeaderImage2 => global::Umbraco.Cms.Web.Common.PublishedModels.HeaderProperties.GetBottomHeaderImage2(this, _publishedValueFallback);
 
 		///<summary>
+		/// Header Image Url
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("headerImageUrl")]
+		public virtual global::Umbraco.Cms.Core.Models.Link HeaderImageUrl => global::Umbraco.Cms.Web.Common.PublishedModels.HeaderProperties.GetHeaderImageUrl(this, _publishedValueFallback);
+
+		///<summary>
 		/// Hide Header Images
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
