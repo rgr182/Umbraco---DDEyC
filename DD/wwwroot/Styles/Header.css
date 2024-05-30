@@ -9,14 +9,18 @@ html {
 
 .centered-col {
     margin:1rem;
-    width: 100%;
     text-align: center;
     display:flex;
     justify-content:space-between;
 }
+
 .logo-img {
     max-height: auto;
     max-width: 20%;
+}
+.shieldLogo{
+    width:25%;
+    height:90%;
 }
 .rainbow-box{
     width:100%;
