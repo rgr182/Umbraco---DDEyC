@@ -3,24 +3,31 @@
     padding: 0;
     margin: 0;
 }
+
 html {
     font-size: 62.5%;
 }
 
 .centered-col {
-    margin:1rem;
-    width: 100%;
+    margin: 1rem;
     text-align: center;
-    display:flex;
-    justify-content:space-between;
+    display: flex;
+    justify-content: space-between;
 }
+
 .logo-img {
     max-height: auto;
     max-width: 20%;
 }
-.rainbow-box{
-    width:100%;
-    height:1rem;
+
+.shieldLogo {
+    width: 25%;
+    height: 90%;
+}
+
+.rainbow-box {
+    width: 100%;
+    height: 1rem;
     background-image: linear-gradient(to right, red, orange, yellow, green, cyan, purple, violet);
 }
 
