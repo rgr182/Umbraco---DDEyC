@@ -21,39 +21,6 @@ html {
     font-size: 62.5%; /* Base de 10px para facilitar el uso de rem */
 }
 
-/* Estilos para desktop y tablet */
-@media (min-width: 970px) {
-    #open-menu {
-        display: none; /* Ocultar menú en pantallas grandes */
-    }
-}
-
-/* Estilos para smartphone */
-@media (max-width: 969px) {
-    #carousel_image {
-        max-width: 100% !important; /* Ancho máximo al 100% del contenedor */
-        height: auto !important; /* Mantener proporción de la imagen */
-    }
-
-    #open-menu {
-        display: block;
-        background-color: #4471c4;
-        color: white;
-        font-size: 1rem; /* Tamaño de fuente reducido */
-        padding-left: 0.5rem; /* Padding reducido */
-        padding-top: 0.35rem;
-    }
-
-    #bars {
-        width: 1.5rem; /* Tamaño reducido */
-        border: solid 0.05rem white; /* Borde reducido */
-        border-radius: 20%;
-        padding: 0.05rem; /* Padding reducido */
-        padding-left: 0.3rem; /* Padding izquierdo reducido */
-        padding-right: 0.3rem; /* Padding derecho reducido */
-    }
-}
-
 /* Estilos para las flechas de navegación del carrusel */
 .carousel-control-prev {
     left: -10%; /* Acercar flecha izquierda un 10% */
