@@ -9,11 +9,13 @@ html {
 
 
 /* Desktop and tablet style */
-@media (min-width: 970px) {
+@media (min-width: 1010px) {
     #open-menu {
         display: none;
     }
-
+    .homeButton {
+        font-size: 1.8rem;
+    }
     #navigation ul {
         display: flex;
         background-color: #4471c4;
@@ -28,7 +30,7 @@ html {
     }
 
     #navigation ul a {
-        font-size: 16px !important;
+        font-size: 1.6rem;
     }
 
     .dropdown-arrow, .sub-dropdown-arrow {
@@ -68,7 +70,8 @@ html {
     }
 
     #navigation ul ul li {
-        width: 25rem;
+        min-width:25rem;
+        width: auto;
         transition: 0.7s ease;
     }
 
@@ -86,25 +89,23 @@ html {
 }
 
 /* Smartphone styles */
-@media (max-width: 969px) {
+@media (max-width: 1009px) {
     #open-menu {
         display: block;
         background-color: #4471c4;
         color: white;
-        font-size: 2rem;
-        padding-left: 1rem;
-        padding-top: 0.7rem;
     }
 
     #bars {
-        width: 3rem;
         border: solid 0.1rem white;
         border-radius: 20%;
-        padding: 0.1rem;
-        padding-left: 0.6rem;
-        padding-right: 0.6rem;
+        margin: 0.5rem;
+        font-size:1.5rem;
     }
-
+    .homeButton{
+        margin:0.8rem;
+        font-size:2rem;
+    }
     #navigation ul {
         display: none;
         background-color: #4471c4;

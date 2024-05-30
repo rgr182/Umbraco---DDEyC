@@ -27,6 +27,9 @@
         <div>
             <a id="open-menu"><i id="bars" class="fas fa-bars"></i></a>
             <ul>
+                <li>
+                    <a href="@rootNode.Url()"><i class="homeButton fa-solid fa-house"></i></a>
+                </li>
                 @if (allVisiblePages != null && allVisiblePages.Any())
                 {
                     foreach (var item in allVisiblePages)
@@ -34,7 +37,8 @@
                         if (hasChildLinks.Contains(item.Name))
                         {
                             <li class="has-dropdown">
-                                <a class="parent-link">@item.Name</a>
+                                
+                                <a class="parent-link" href="@item.Url()">@item.Name</a>
                                 <button class="dropdown-arrow fas fa-chevron-down"></button>
                                 <ul class="dropdown">
                                     @foreach (var childLink in item.Children())
