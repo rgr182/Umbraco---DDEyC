@@ -16,6 +16,7 @@ html {
 }
 
 .logo-img {
+    max-height: auto;
     max-width: 20%;
 }
 
