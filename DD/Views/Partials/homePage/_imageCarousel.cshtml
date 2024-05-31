@@ -32,7 +32,7 @@
                     {
                         var content = (ContentModels.ImageCarouselItems)block.Content;
                         <div class="carousel-item image-only @(block == blocksList.First() ? "active" : "")">
-                            <div class="carousel-item-content">
+                            <div class="carousel-item-content img-carousel">
                                 @if (content.ImageCarouselItem is not null)
                                 {
                                     <a href="@content.ImageCarouselItemUrl?.Url">
