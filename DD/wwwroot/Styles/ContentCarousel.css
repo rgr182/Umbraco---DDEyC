@@ -111,7 +111,9 @@
     .text-content.overflow::after {
         display: block;
     }
-
+    .carousel-indicators.img-carousel {
+        bottom: -5rem;
+    }
 /* Responsive styles */
 /* Mobile view styles */
 @media (max-width: 767px) {
@@ -140,9 +142,7 @@
         flex-direction: row;
         height: 100%;
     }
-    .carousel-indicators.img-carousel {
-        bottom: -5rem;
-    }
+   
 
     .text-content {
         flex: 1;
