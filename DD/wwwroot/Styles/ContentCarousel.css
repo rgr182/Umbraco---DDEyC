@@ -22,6 +22,12 @@
     overflow: hidden;
 }
 
+.carousel-item-content img {
+    width: 90% !important;
+    position: relative;
+    left: 7%;
+}
+
 .carousel-img-container {
     max-width: 500px;
 }
@@ -39,18 +45,18 @@
     justify-content: center;
 }
 
-.carousel-item-content .row {
-    width: 100%;
-}
+    .carousel-item-content .row {
+        width: 100%;
+    }
 
-.carousel-item-content .col-md-6 {
-    display: flex;
-    align-items: center;
-}
+    .carousel-item-content .col-md-6 {
+        display: flex;
+        align-items: center;
+    }
 
-.carousel-item-content .col-6 {
-    flex: 1;
-}
+    .carousel-item-content .col-6 {
+        flex: 1;
+    }
 
 .carousel-control-prev,
 .carousel-control-next {
@@ -79,32 +85,32 @@
     position: relative;
 }
 
-.text-content p {
-    margin: 0;
-    line-height: 1.2;
-    max-height: 10.2em;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 6;
-    -webkit-box-orient: vertical;
-}
+    .text-content p {
+        margin: 0;
+        line-height: 1.2;
+        max-height: 10.2em;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 6;
+        -webkit-box-orient: vertical;
+    }
 
-.text-content::after {
-    content: "...";
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    padding: 0 5px;
-    background-color: rgba(255, 255, 255, 0.8);
-    color: #333;
-    font-weight: bold;
-    display: none;
-}
+    .text-content::after {
+        content: "...";
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        padding: 0 5px;
+        background-color: rgba(255, 255, 255, 0.8);
+        color: #333;
+        font-weight: bold;
+        display: none;
+    }
 
-.text-content.overflow::after {
-    display: block;
-}
+    .text-content.overflow::after {
+        display: block;
+    }
 
 /* Responsive styles */
 /* Mobile view styles */
@@ -135,42 +141,45 @@
         height: 100%;
     }
 
+    .carousel-indicators {
+        bottom: -5rem;
+    }
+
     .text-content {
         flex: 1;
         display: flex;
         flex-direction: column;
-
         padding: 10px;
         max-height: 50%;
         position: relative;
     }
 
-    .text-content p {
-        margin: 0;
-        line-height: 1.2;
-        max-height: 9em;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: -webkit-box;
-        -webkit-line-clamp: 6;
-        -webkit-box-orient: vertical;
-    }
+        .text-content p {
+            margin: 0;
+            line-height: 1.2;
+            max-height: 9em;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 6;
+            -webkit-box-orient: vertical;
+        }
 
-    .text-content::after {
-        content: "...";
-        position: absolute;
-        bottom: 0;
-        right: 0;
-        padding: 0 5px;
-        background-color: rgba(255, 255, 255, 0.8);
-        color: #333;
-        font-weight: bold;
-        display: none;
-    }
+        .text-content::after {
+            content: "...";
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            padding: 0 5px;
+            background-color: rgba(255, 255, 255, 0.8);
+            color: #333;
+            font-weight: bold;
+            display: none;
+        }
 
-    .text-content.overflow::after {
-        display: block;
-    }
+        .text-content.overflow::after {
+            display: block;
+        }
 
     .carousel-img-container {
         flex: 1;
@@ -185,5 +194,4 @@
         max-width: 100%;
         object-fit: contain;
     }
-    
 }
