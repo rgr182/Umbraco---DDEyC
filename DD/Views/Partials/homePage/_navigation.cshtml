@@ -19,16 +19,20 @@
 <!DOCTYPE html>
 <html>
 <head>
-    @await Html.PartialAsync("~/Views/Partials/_metaData.cshtml")
+    @* @await Html.PartialAsync("~/Views/Partials/_metaData.cshtml") *@
     <link rel="stylesheet" href="~/Styles/navigation.css" />
 </head>
 <body>
     <nav id="navigation">
         <div>
-            <a id="open-menu"><i id="bars" class="fas fa-bars"></i></a>
+            <a id="open-menu">
+                <i id="bars" class="fas fa-bars"></i>
+            </a>
             <ul>
                 <li>
-                    <a href="@rootNode.Url()"><i class="homeButton fa-solid fa-house"></i></a>
+                    <a href="@rootNode.Url()">
+                        <i class="homeButton fa-solid fa-house"></i>
+                    </a>
                 </li>
                 @if (allVisiblePages != null && allVisiblePages.Any())
                 {
