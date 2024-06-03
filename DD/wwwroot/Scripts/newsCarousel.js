@@ -1,6 +1,7 @@
 let prevWindowWidth = window.innerWidth;
 function initNewsCarousel(data) {
     const { blocksList, defaultImageUrl, carouselId } = data;
+   
     const carouselInner = document.querySelector(`#${carouselId} .carousel-inner`);
     const carouselIndicators = document.querySelector(`#${carouselId} .carousel-indicators`);
 
@@ -14,7 +15,6 @@ function renderCarouselLayout(blocksList, defaultImageUrl, carouselId, carouselI
     const isMobile = window.innerWidth <= 767;
     carouselIndicators.innerHTML = '';
     carouselInner.innerHTML = '';
-
     if (isMobile) {
         renderMobileLayout(blocksList, defaultImageUrl, carouselId, carouselInner, carouselIndicators);
     } else {
@@ -26,7 +26,6 @@ function renderMobileLayout(blocksList, defaultImageUrl, carouselId, carouselInn
     blocksList.forEach((block, index) => {
         const { content, imageUrl } = block;
         const isActive = index === 0 ? 'active' : '';
-
         const carouselItemHTML = `
             <div class="carousel-item text-and-image-carousel ${isActive}">
             <div class="carousel-item-content">
@@ -36,8 +35,8 @@ function renderMobileLayout(blocksList, defaultImageUrl, carouselId, carouselInn
                                 <p>${content.NewsCarouselItemText1}</p>
                                 <p>${content.NewsCarouselItemText2}</p>
                             </div>
-                            <div class="text-center carousel-img-container">
-                                <a href="${content.NewsCarouselItemUrl?.Url}">
+                            <div class="text-center carousel-img-container not-footer">
+                                <a href="${content.NewsCarouselItemUrl}">
                                     <img src="${imageUrl}" class="img-fluid carousel-img" alt="..."
                                         onerror="handleImageError(this, '${defaultImageUrl}')">
                                 </a>
@@ -81,15 +80,14 @@ function renderDesktopColumns(blocksList, startIndex, defaultImageUrl) {
     for (let j = 0; j < 2 && startIndex + j < blocksList.length; j++) {
         const block = blocksList[startIndex + j];
         const { content, imageUrl } = block;
-
         columnsHTML += `
             <div class="col-md-6 d-flex align-items-center flex-wrap">
                 <div class="col-6 text-content">
                     <p class="text-ellipsis">${content.NewsCarouselItemText1}</p>
                     <p class="text-ellipsis">${content.NewsCarouselItemText2}</p>
                 </div>
-                <div class="col-6 text-center carousel-img-container">
-                    <a href="${content.NewsCarouselItemUrl?.Url}">
+                <div class="col-6 text-center carousel-img-container not-footer">
+                    <a href="${content.NewsCarouselItemUrl}">
                         <img src="${imageUrl}" class="img-fluid carousel-img" alt="..."
                             onerror="handleImageError(this, '${defaultImageUrl}')">
                     </a>

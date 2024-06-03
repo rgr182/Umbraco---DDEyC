@@ -1,7 +1,21 @@
 @using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
 
 @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ContentModels.RichTextAndImageItems>
-
+@{
+     var TextStyle = string.Empty;
+     var TitleStyle = string.Empty;
+      if (Model.RichTextAndImageTextSize > 0)
+        {
+            TextStyle += $"font-size:{Model.RichTextAndImageTextSize}px;";
+        }else{
+            TextStyle += $"font-size:20px;";
+        }
+    if(Model.RichTextAndImageTitleSize>0){
+        TitleStyle += $"font-size:{Model.RichTextAndImageTitleSize}px;";
+    }else{
+        TitleStyle += $"font-size:28px;";
+    }
+}
 <head>
     <link href="~/Styles/textAndImage.css" rel="stylesheet">
 </head>
@@ -10,11 +24,11 @@
         <div class="col text-start">
             @if (!String.IsNullOrWhiteSpace(Model.RichTextAndImageTitle))
             {
-                <h3 class="column-title">@Model.RichTextAndImageTitle</h3>
+                <h3 class="column-title" style="@TitleStyle">@Model.RichTextAndImageTitle</h3>
             }
 
-            <div>
-                <p class="card-text ">@Html.Raw(Model.RichTextAndImageItemText)</p>
+            <div style="@TextStyle">
+                <p class="card-text " >@Html.Raw(Model.RichTextAndImageItemText)</p>
             </div>
         </div>
          @if (Model.RichTextAndImageItemImage is not null)

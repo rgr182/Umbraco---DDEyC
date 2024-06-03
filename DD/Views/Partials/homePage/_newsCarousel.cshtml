@@ -36,7 +36,7 @@
             content = new {
                 NewsCarouselItemText1 = ((ContentModels.NewsCarouselItems)b.Content).NewsCarouselItemText1.ToString(),
                 NewsCarouselItemText2 = ((ContentModels.NewsCarouselItems)b.Content).NewsCarouselItemText2.ToString(),
-                // Add other properties here
+                NewsCarouselItemUrl =((ContentModels.NewsCarouselItems)b.Content).NewsCarouselItemUrl.Url,
             },
             imageUrl = string.IsNullOrWhiteSpace(((ContentModels.NewsCarouselItems)b.Content).NewsCarouselItemImage?.Url()) ? defaultImageUrl : ((ContentModels.NewsCarouselItems)b.Content).NewsCarouselItemImage?.Url()
         }),
