@@ -28,7 +28,7 @@
     left: 7%;
 }
 
-.carousel-img-container {
+.carousel-img-container.not-footer{
     max-width: 500px;
 }
 
