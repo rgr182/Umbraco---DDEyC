@@ -7,8 +7,13 @@
         text-align: justify;
     }
 
-/* Anchord Styles */
+.general-content
+{
+    width: 80%;
+    margin: auto;
+}
 
+/* Anchord Styles */
 .rich-content-text a {
     color: #E4007C; /* Soft Mexican pink for links, ensures good visibility */
     text-decoration: none;
