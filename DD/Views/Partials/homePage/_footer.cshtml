@@ -53,8 +53,8 @@
 <script>
      function handleResizeFooter() {
         const currentWindowWidth = window.innerWidth;
-        const isTablet = currentWindowWidth >= 768 && currentWindowWidth <= 991;
-        const isMobile = currentWindowWidth <= 767;
+        isTablet = currentWindowWidth >= 768 && currentWindowWidth <= 991;
+        isMobile = currentWindowWidth <= 767;
         const wasTablet = prevWidth >= 768 && prevWidth <= 991;
         const wasMobile = prevWidth <= 767;
 
@@ -67,8 +67,7 @@
 
    
    function renderFooterLayout() {
-        const isTablet = window.innerWidth >= 768 && window.innerWidth <= 991;
-        const isMobile = window.innerWidth <= 767;
+        
         const carouselInner = document.querySelector('#footerCarousel .carousel-inner');
         const carouselIndicators = document.querySelector('#footerCarousel .carousel-indicators');
         carouselIndicators.innerHTML = '';
@@ -200,7 +199,8 @@
     }
 
     let prevWidth = window.innerWidth;
-
+    let isTablet = false;
+    let isMobile = false;
     window.addEventListener('load', renderFooterLayout);
     window.addEventListener('resize', handleResizeFooter);
     window.addEventListener('DOMContentLoaded', renderFooterLayout); // Call initially to set the correct layout
