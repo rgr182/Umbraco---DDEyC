@@ -74,11 +74,25 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		public virtual global::Umbraco.Cms.Core.Models.Link RichTextAndImageItemUrl => this.Value<global::Umbraco.Cms.Core.Models.Link>(_publishedValueFallback, "richTextAndImageItemUrl");
 
 		///<summary>
+		/// Rich Text and Image Text Size
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
+		[ImplementPropertyType("richTextAndImageTextSize")]
+		public virtual int RichTextAndImageTextSize => this.Value<int>(_publishedValueFallback, "richTextAndImageTextSize");
+
+		///<summary>
 		/// Rich Text and Image Title
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
 		[ImplementPropertyType("richTextAndImageTitle")]
 		public virtual string RichTextAndImageTitle => this.Value<string>(_publishedValueFallback, "richTextAndImageTitle");
+
+		///<summary>
+		/// Rich Text And Image Title size
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
+		[ImplementPropertyType("richTextAndImageTitleSize")]
+		public virtual int RichTextAndImageTitleSize => this.Value<int>(_publishedValueFallback, "richTextAndImageTitleSize");
 	}
 }
