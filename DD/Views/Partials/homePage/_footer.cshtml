@@ -6,6 +6,7 @@
     const string DefaultFooterNodeName = "DefaultFooter";
     const string HomeName = "Home";
     const string FooterItemsPropertyName = "footerItems";
+    var paddingString = "";
 
     // Get Home Node
     var rootNode = Umbraco.ContentAtRoot().Where(x => x.Name == HomeName).FirstOrDefault();
@@ -50,19 +51,23 @@
 </div>
 
 <script>
-    function handleResizeFooter() {
+     function handleResizeFooter() {
         const currentWindowWidth = window.innerWidth;
+        const isTablet = currentWindowWidth >= 768 && currentWindowWidth <= 991;
         const isMobile = currentWindowWidth <= 767;
+        const wasTablet = prevWidth >= 768 && prevWidth <= 991;
         const wasMobile = prevWidth <= 767;
 
-        if (isMobile !== wasMobile) {
+        if (isTablet !== wasTablet || isMobile !== wasMobile) {
             renderFooterLayout();
         }
 
         prevWidth = currentWindowWidth;
     }
 
-    function renderFooterLayout() {
+   
+   function renderFooterLayout() {
+        const isTablet = window.innerWidth >= 768 && window.innerWidth <= 991;
         const isMobile = window.innerWidth <= 767;
         const carouselInner = document.querySelector('#footerCarousel .carousel-inner');
         const carouselIndicators = document.querySelector('#footerCarousel .carousel-indicators');
@@ -84,14 +89,14 @@
                         <div class="carousel-item @(isActive)">
                             <div class="carousel-item-content">
                                 <div class="row">
-                                    <div class="col-12"> <!-- Adjust column size for mobile -->
-                                        <div class="image-container align-items-center">
+                                    <div class="col-12 w-100"> <!-- Adjust column size for mobile -->
+                                        <div class="image-container align-items-center w-100">
                                             <div class="carousel-img-container">
                                                 <a href="@content.FooterItemUrl?.Url">
                                                     <img src="@imageUrl" class="d-block object-fit-cover carousel-image" alt="..." > <!-- Adjust max-width for smaller images -->
                                                 </a>
                                             </div>
-                                            <div style="margin-left: 20px;"> <!-- Add more margin for spacing -->
+                                            <div class="mt-2 md-2"> <!-- Add more margin for spacing -->
                                                 <div class="carousel-text">
                                                     <p class="text-ellipsis" style="font-size: 14px;">@content.FooterItemText1</p> <!-- Adjust font size -->
                                                     <p class="text-ellipsis" style="font-size: 14px;">@content.FooterItemText2</p> <!-- Adjust font size -->
@@ -108,7 +113,51 @@
                 </text>
                 index++;
             }
-        } else {
+        } else if (isTablet) {
+
+            // Render tablet layout
+            @for (int i = 0; i < blocksList.Count; i += 2)
+            {
+                var isFirst = i == 0;
+                <text>
+                    carouselInner.insertAdjacentHTML('beforeend', `
+                        <div class="carousel-item @(isFirst ? "active" : "")">
+                            <div class="row">
+                                @for (int j = 0; j < 2 && i + j < blocksList.Count; j++)
+                                {
+                                    if (j%2 ==0){
+                                        paddingString= "padding: 0 0 0 12%";
+                                    }else{
+                                        paddingString= "padding: 0 12% 0 0";
+                                    }
+
+                                    var block = blocksList[i + j];
+                                    var content = (ContentModels.FooterItems)block.Content;
+                                    var imageUrl = string.IsNullOrWhiteSpace(content.FooterItemImage?.Url()) ? defaultImageUrl : content.FooterItemImage?.Url();
+                                    <div class="col-md-6">
+                                        <div class="align-items-center text-center" style="@paddingString">
+                                            <div class="carousel-img-container">
+                                                <a href="@content.FooterItemUrl?.Url">
+                                                    <img src="@imageUrl" class="d-block object-fit-cover carousel-image" alt="..." /> <!-- Adjust max-width for smaller images -->
+                                                </a>
+                                            </div>
+                                            <div>
+                                                <div class="carousel-text">
+                                                    <p class="text-ellipsis" style="font-size: 16px;">@content.FooterItemText1</p>
+                                                    <p class="text-ellipsis" style="font-size: 16px;">@content.FooterItemText2</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    `);
+                    carouselIndicators.insertAdjacentHTML('beforeend', `
+                        <li data-bs-target="#footerCarousel" data-bs-slide-to="@(i / 2)" class="@(i==0 ? "active" : "")"></li>`);
+                </text>
+            }
+        }  else {
             // Render desktop layout
             @for (int i = 0; i < blocksList.Count; i += 3)
             {

@@ -35,7 +35,7 @@ function renderMobileLayout(blocksList, defaultImageUrl, carouselId, carouselInn
                                 <p>${content.NewsCarouselItemText1}</p>
                                 <p>${content.NewsCarouselItemText2}</p>
                             </div>
-                            <div class="text-center carousel-img-container">
+                            <div class="text-center carousel-img-container not-footer">
                                 <a href="${content.NewsCarouselItemUrl}">
                                     <img src="${imageUrl}" class="img-fluid carousel-img" alt="..."
                                         onerror="handleImageError(this, '${defaultImageUrl}')">
@@ -86,7 +86,7 @@ function renderDesktopColumns(blocksList, startIndex, defaultImageUrl) {
                     <p class="text-ellipsis">${content.NewsCarouselItemText1}</p>
                     <p class="text-ellipsis">${content.NewsCarouselItemText2}</p>
                 </div>
-                <div class="col-6 text-center carousel-img-container">
+                <div class="col-6 text-center carousel-img-container not-footer">
                     <a href="${content.NewsCarouselItemUrl}">
                         <img src="${imageUrl}" class="img-fluid carousel-img" alt="..."
                             onerror="handleImageError(this, '${defaultImageUrl}')">
