@@ -45,8 +45,8 @@
                         if (hasChildLinks.Contains(item.Name))
                         {
                             <li class="has-dropdown">
-                                <a class="parent-link" href="@item.Url()">@item.Name</a>
-                                <button class="dropdown-arrow fas fa-chevron-down"></button>
+                                    <a class="parent-link" href="@item.Url()">@item.Name</a>
+                                    <button class="dropdown-arrow fas fa-chevron-down"></button>
                                 <ul class="dropdown">
                                     @foreach (var childLink in item.Children())
                                     {

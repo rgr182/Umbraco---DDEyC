@@ -101,16 +101,17 @@
     #navigation ul li {
         display: flex;
         justify-content: space-between;
-        align-items: center;
         padding-bottom: 3px;
     }
     .has-dropdown, .has-subdropdown {
+        display:flex;
+        flex-direction:column;
         position: relative;
         padding:10px;
     }
-
     .dropdown-arrow {
-        right: 5px;
+        position:absolute;
+        right: 10px;
         font-size: 20px;
         transition: transform .7s ease;
     }
@@ -118,10 +119,7 @@
         transform: rotate(180deg);
     }
     .dropdown, .sub-dropdown {
-        position: absolute;
-        top:100%;
-        left:0%;
-        width:100%;
+        position:relative;
         background-color: #054c93;
         z-index: 10;
     }
@@ -138,10 +136,10 @@
         text-transform: uppercase;
     }
     #navigation ul ul {
-        border: solid 3px #4471c4;
         background-color: #054c93;
     }
     #navigation ul ul ul li {
+        padding:10px;
         background-color: #4471c4;
     }
 }
