@@ -49,31 +49,33 @@
         <span class="visually-hidden">Next</span>
     </button>
 </div>
-
 <script>
-     function handleResizeFooter() {
-        const currentWindowWidth = window.innerWidth;
-        isTablet = currentWindowWidth >= 768 && currentWindowWidth <= 991;
-        isMobile = currentWindowWidth <= 767;
-        const wasTablet = prevWidth >= 768 && prevWidth <= 991;
-        const wasMobile = prevWidth <= 767;
+    let prevWidth = window.innerWidth;
+    let isMobile = prevWidth <= 767;
+    let isTablet = prevWidth >= 768 && prevWidth <= 991;
 
-        if (isTablet !== wasTablet || isMobile !== wasMobile) {
+    function handleResizeFooter() {
+        const currentWindowWidth = window.innerWidth;
+        const newIsMobile = currentWindowWidth <= 767;
+        const newIsTablet = currentWindowWidth >= 768 && currentWindowWidth <= 991;
+
+        if (isMobile !== newIsMobile || isTablet !== newIsTablet) {
+            isMobile = newIsMobile;
+            isTablet = newIsTablet;
             renderFooterLayout();
         }
 
         prevWidth = currentWindowWidth;
     }
 
-   
-   function renderFooterLayout() {
-        
+    function renderFooterLayout() {
         const carouselInner = document.querySelector('#footerCarousel .carousel-inner');
         const carouselIndicators = document.querySelector('#footerCarousel .carousel-indicators');
         carouselIndicators.innerHTML = '';
         carouselInner.innerHTML = '';
 
         if (isMobile) {
+           
             @{
                 int index = 0;
             }
@@ -113,7 +115,6 @@
                 index++;
             }
         } else if (isTablet) {
-
             // Render tablet layout
             @for (int i = 0; i < blocksList.Count; i += 2)
             {
@@ -156,9 +157,8 @@
                         <li data-bs-target="#footerCarousel" data-bs-slide-to="@(i / 2)" class="@(i==0 ? "active" : "")"></li>`);
                 </text>
             }
-        }  else {
-            // Render desktop layout
-            @for (int i = 0; i < blocksList.Count; i += 3)
+        } else {
+           @for (int i = 0; i < blocksList.Count; i += 3)
             {
                 var isFirst = i == 0;
                 <text>
@@ -198,10 +198,7 @@
         }
     }
 
-    let prevWidth = window.innerWidth;
-    let isTablet = false;
-    let isMobile = false;
     window.addEventListener('load', renderFooterLayout);
     window.addEventListener('resize', handleResizeFooter);
-    window.addEventListener('DOMContentLoaded', renderFooterLayout); // Call initially to set the correct layout
+    window.addEventListener('DOMContentLoaded', renderFooterLayout);
 </script>
