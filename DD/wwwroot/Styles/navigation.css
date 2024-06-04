@@ -4,7 +4,7 @@
         display: none;
     }
     .homeButton {
-        font-size: 1.8rem;
+        display:none;
     }
     #navigation ul {
         display: flex;
@@ -12,26 +12,21 @@
         justify-content: space-evenly;
         list-style: none;
     }
-
     #navigation ul li {
         position: relative;
         display: inline-flex;
         z-index: 10;
     }
-
     #navigation ul a {
         font-size: 1.6rem;
     }
-
     .dropdown-arrow, .sub-dropdown-arrow {
         display: none;
     }
-
     #navigation ul li:hover {
         background-color: #6c9dc2;
         transition: 0.7s ease;
     }
-
     #navigation ul li:hover > ul {
         display: block;
     }
@@ -73,26 +68,27 @@
 }
 /* Smartphone styles */
 @media (max-width: 1009px) {
-    #open-menu {
-        display: flex;
-        justify-content: end;
-        background-color: #4471c4;
-        color: white;
+    .hideHome{
+        display:none;
     }
-
+    .mobileMenu {
+        display:flex;
+        justify-content:space-between;
+        background-color: #4471c4;
+    }
     #bars {
-        width:15px;
+        width: 15px;
         border: solid 2px white;
         border-radius: 20%;
-        padding:3px;
+        padding: 2px;
         margin: 8px;
+        color: white;
     }
-    .homeButton{
-        display:block;
-        position: absolute;
-        top:7.5%;
-        margin:8px;
-        font-size:20px;
+    .homeButton {
+        color: white;
+        margin: 8px;
+        padding:2px;
+        font-size: 20px;
     }
     #navigation ul {
         display: none;
@@ -103,32 +99,34 @@
         display: block;
     }
     #navigation ul li {
-        display: block;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-bottom: 3px;
     }
     .has-dropdown, .has-subdropdown {
         position: relative;
-        padding: 5px;
+        padding:10px;
     }
+
     .dropdown-arrow {
-        position: absolute;
-        right: 1rem;
-        top: 50%;
-        transform: translateY(-50%);
-        font-size: 2rem;
-        transition: transform 0.5s ease;
+        right: 5px;
+        font-size: 20px;
+        transition: transform .7s ease;
     }
     #navigation ul li:hover .dropdown-arrow {
-        transform: translateY(-50%) rotate(180deg);
+        transform: rotate(180deg);
     }
     .dropdown, .sub-dropdown {
         position: absolute;
-        width: 100%;
+        top:100%;
+        left:0%;
+        width:100%;
         background-color: #054c93;
         z-index: 10;
     }
     #navigation ul li:active {
         background-color: #6c9dc2;
-        transition: 0.7s ease;
     }
     #navigation li a:active {
         font-weight: bold;
@@ -140,12 +138,10 @@
         text-transform: uppercase;
     }
     #navigation ul ul {
-        border: solid 0.1rem #6c9dc2;
-        transition: 0.7s ease;
+        border: solid 3px #4471c4;
         background-color: #054c93;
     }
     #navigation ul ul ul li {
-        transition: 0.7s ease;
         background-color: #4471c4;
     }
 }

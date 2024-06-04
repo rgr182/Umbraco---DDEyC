@@ -10,20 +10,19 @@
         }
     };
     // Alternar la visibilidad del menú de navegación al hacer clic en el botón de menú
-    document.querySelector('#open-menu').addEventListener('click', () => {
+    document.querySelector('#open-menu').addEventListener('click', (e) => {
         toggleNavigationMenu();
         e.stopPropagation();
     });
     // Alternar la visibilidad de los submenús al hacer clic en el dropdown-arrow
     document.querySelectorAll('.dropdown-arrow').forEach(arrow => {
-        arrow.addEventListener('click', (e) => {
-            const dropdownMenu = e.target.nextElementSibling;
-            if (dropdownMenu.style.display === 'block') {
-                dropdownMenu.style.display = 'none';
+        arrow.addEventListener('click', () => {
+            if (arrow.style.display === 'block') {
+                arrow.style.display = 'none';
             } else {
-                dropdownMenu.style.display = 'block';
+                arrow.style.display = 'block';
             }
-            e.stopPropagation();
+            console.log(arrow.style.display);
         });
     });
     // Ajustar la visibilidad del menú de navegación al redimensionar la ventana
@@ -49,6 +48,7 @@
             }
         }
     });
+
     // bloqueo de menús con hijos
     const toggleDropdown = function (event, dropdownClass) {
         const parentLi = event.target.closest('li');
@@ -73,4 +73,6 @@
     };
     setupLinks('.parent-link', '.dropdown');
     setupLinks('.child-link', '.sub-dropdown');
+
 });
+
