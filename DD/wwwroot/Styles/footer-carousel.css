@@ -107,9 +107,20 @@
     -webkit-line-clamp: 8;
     -webkit-box-orient: vertical;
 }
+@media (min-width: 1380px) {
+    #footerCarousel .carousel-item {
+        min-height: 270px;
+        overflow: hidden;
+        
+    }
+
+    #footerCarousel .carousel-item-content {
+        top: 40%;
+    }
+}
 @media (min-width: 768px) {
 #footerCarousel .carousel-item-content{
-    padding: 0 5% 0 5%
+    padding: 0 5% 0 7.5%
 }
 
 }
