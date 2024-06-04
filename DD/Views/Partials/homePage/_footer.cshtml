@@ -52,12 +52,12 @@
 <script>
     let prevWidth = window.innerWidth;
     let isMobile = prevWidth <= 767;
-    let isTablet = prevWidth >= 768 && prevWidth <= 991;
+    let isTablet = prevWidth >= 768 && prevWidth <= 1380;
 
     function handleResizeFooter() {
         const currentWindowWidth = window.innerWidth;
         const newIsMobile = currentWindowWidth <= 767;
-        const newIsTablet = currentWindowWidth >= 768 && currentWindowWidth <= 991;
+        const newIsTablet = currentWindowWidth >= 768 && currentWindowWidth <= 1380;
 
         if (isMobile !== newIsMobile || isTablet !== newIsTablet) {
             isMobile = newIsMobile;
@@ -88,7 +88,7 @@
                 <text>
                     carouselInner.insertAdjacentHTML('beforeend', `
                         <div class="carousel-item @(isActive)">
-                            <div class="carousel-item-content">
+                            <div class="carousel-item-content h-100">
                                 <div class="row">
                                     <div class="col-12 w-100"> <!-- Adjust column size for mobile -->
                                         <div class="image-container align-items-center w-100">
