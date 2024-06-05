@@ -49,32 +49,33 @@
         <span class="visually-hidden">Next</span>
     </button>
 </div>
-
 <script>
-     function handleResizeFooter() {
-        const currentWindowWidth = window.innerWidth;
-        const isTablet = currentWindowWidth >= 768 && currentWindowWidth <= 991;
-        const isMobile = currentWindowWidth <= 767;
-        const wasTablet = prevWidth >= 768 && prevWidth <= 991;
-        const wasMobile = prevWidth <= 767;
+    let prevWidth = window.innerWidth;
+    let isMobile = prevWidth <= 767;
+    let isTablet = prevWidth >= 768 && prevWidth <= 1380;
 
-        if (isTablet !== wasTablet || isMobile !== wasMobile) {
+    function handleResizeFooter() {
+        const currentWindowWidth = window.innerWidth;
+        const newIsMobile = currentWindowWidth <= 767;
+        const newIsTablet = currentWindowWidth >= 768 && currentWindowWidth <= 1380;
+
+        if (isMobile !== newIsMobile || isTablet !== newIsTablet) {
+            isMobile = newIsMobile;
+            isTablet = newIsTablet;
             renderFooterLayout();
         }
 
         prevWidth = currentWindowWidth;
     }
 
-   
-   function renderFooterLayout() {
-        const isTablet = window.innerWidth >= 768 && window.innerWidth <= 991;
-        const isMobile = window.innerWidth <= 767;
+    function renderFooterLayout() {
         const carouselInner = document.querySelector('#footerCarousel .carousel-inner');
         const carouselIndicators = document.querySelector('#footerCarousel .carousel-indicators');
         carouselIndicators.innerHTML = '';
         carouselInner.innerHTML = '';
 
         if (isMobile) {
+           
             @{
                 int index = 0;
             }
@@ -87,7 +88,7 @@
                 <text>
                     carouselInner.insertAdjacentHTML('beforeend', `
                         <div class="carousel-item @(isActive)">
-                            <div class="carousel-item-content">
+                            <div class="carousel-item-content h-100">
                                 <div class="row">
                                     <div class="col-12 w-100"> <!-- Adjust column size for mobile -->
                                         <div class="image-container align-items-center w-100">
@@ -97,7 +98,7 @@
                                                 </a>
                                             </div>
                                             <div class="mt-2 md-2"> <!-- Add more margin for spacing -->
-                                                <div class="carousel-text">
+                                                <div class="carousel-text h-100">
                                                     <p class="text-ellipsis" style="font-size: 14px;">@content.FooterItemText1</p> <!-- Adjust font size -->
                                                     <p class="text-ellipsis" style="font-size: 14px;">@content.FooterItemText2</p> <!-- Adjust font size -->
                                                 </div>
@@ -114,7 +115,6 @@
                 index++;
             }
         } else if (isTablet) {
-
             // Render tablet layout
             @for (int i = 0; i < blocksList.Count; i += 2)
             {
@@ -157,9 +157,8 @@
                         <li data-bs-target="#footerCarousel" data-bs-slide-to="@(i / 2)" class="@(i==0 ? "active" : "")"></li>`);
                 </text>
             }
-        }  else {
-            // Render desktop layout
-            @for (int i = 0; i < blocksList.Count; i += 3)
+        } else {
+           @for (int i = 0; i < blocksList.Count; i += 3)
             {
                 var isFirst = i == 0;
                 <text>
@@ -176,7 +175,7 @@
                                             <div class="d-flex align-items-center">
                                                 <div class="carousel-img-container">
                                                     <a href="@content.FooterItemUrl?.Url">
-                                                        <img src="@imageUrl" class="d-block object-fit-cover" alt="..." style="max-width: 200px;"> <!-- Adjust max-width for smaller images -->
+                                                        <img src="@imageUrl" class="d-block object-fit-cover carousel-image" alt="..."> <!-- Adjust max-width for smaller images -->
                                                     </a>
                                                 </div>
                                                 <div style="margin-left: 20px;"> <!-- Add more margin for spacing -->
@@ -199,9 +198,7 @@
         }
     }
 
-    let prevWidth = window.innerWidth;
-
     window.addEventListener('load', renderFooterLayout);
     window.addEventListener('resize', handleResizeFooter);
-    window.addEventListener('DOMContentLoaded', renderFooterLayout); // Call initially to set the correct layout
+    window.addEventListener('DOMContentLoaded', renderFooterLayout);
 </script>

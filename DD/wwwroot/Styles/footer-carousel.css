@@ -99,7 +99,31 @@
 #footerCarousel .text-content.overflow::after {
     display: block;
 }
+#footerCarousel .carousel-text{
+    max-height: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 8;
+    -webkit-box-orient: vertical;
+}
+@media (min-width: 1380px) {
+    #footerCarousel .carousel-item {
+        min-height: 270px;
+        overflow: hidden;
+        
+    }
 
+    #footerCarousel .carousel-item-content {
+        top: 40%;
+    }
+}
+@media (min-width: 768px) {
+#footerCarousel .carousel-item-content{
+    padding: 0 5% 0 7.5%
+}
+
+}
 /* Responsive styles */
 /* Mobile view styles */
 @media (max-width: 767px) {
