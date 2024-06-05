@@ -114,9 +114,13 @@
     .carousel-indicators.img-carousel {
         bottom: -5rem;
     }
+
 /* Responsive styles */
-/* Mobile view styles */
 @media (max-width: 767px) {
+    .col-8.mt-5.mb-5 {
+        width: 100%;
+    }
+
     .carousel-item.text-and-image-carousel {
         min-height: 320px;
     }
@@ -142,7 +146,6 @@
         flex-direction: row;
         height: 100%;
     }
-   
 
     .text-content {
         flex: 1;
