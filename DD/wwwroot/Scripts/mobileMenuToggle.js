@@ -1,7 +1,6 @@
 ﻿document.addEventListener('DOMContentLoaded', function () {
     // despliega la barra de navegación
     const navigationMenu = document.querySelector('#navigation ul');
-
     const toggleNavigationMenu = () => {
         if (navigationMenu.style.display === 'none' || navigationMenu.style.display === '') {
             navigationMenu.style.display = 'block';
@@ -22,8 +21,8 @@
             } else {
                 arrow.style.display = 'block';
             }
-            console.log(arrow.style.display);
         });
+        console.log(arrow.style.display);
     });
     // Ajustar la visibilidad del menú de navegación al redimensionar la ventana
     window.addEventListener('resize', () => {
@@ -48,7 +47,6 @@
             }
         }
     });
-
     // bloqueo de menús con hijos
     const toggleDropdown = function (event, dropdownClass) {
         const parentLi = event.target.closest('li');
@@ -62,7 +60,6 @@
     };
     const setupLinks = function (linkSelector, dropdownClass) {
         const links = document.querySelectorAll(linkSelector);
-
         links.forEach(function (link) {
             link.addEventListener('click', function (event) {
                 toggleDropdown(event, dropdownClass);
@@ -73,6 +70,4 @@
     };
     setupLinks('.parent-link', '.dropdown');
     setupLinks('.child-link', '.sub-dropdown');
-
 });
-
