@@ -23,8 +23,7 @@
                 arrow.style.display = 'none';
             } else {
                 arrow.style.display = 'block';
-            }
-            console.log(arrow.style.display);
+            }            
         });
     });
 
