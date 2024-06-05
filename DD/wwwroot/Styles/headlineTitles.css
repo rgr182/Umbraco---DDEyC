@@ -19,5 +19,7 @@ html {
         width: 100%;
         text-align: center;
     }
-
+    .headlineTitle.newsTitle{
+        margin-left: 3rem;
+    }
 }
