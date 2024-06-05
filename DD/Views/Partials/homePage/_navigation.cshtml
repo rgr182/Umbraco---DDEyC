@@ -19,14 +19,25 @@
 <!DOCTYPE html>
 <html>
 <head>
-    @await Html.PartialAsync("~/Views/Partials/_metaData.cshtml")
     <link rel="stylesheet" href="~/Styles/navigation.css" />
 </head>
 <body>
     <nav id="navigation">
         <div>
-            <a id="open-menu"><i id="bars" class="fas fa-bars"></i></a>
+            <div class="mobileMenu">
+                <a href="@rootNode.Url()">
+                    <i class="homeButton fa-solid fa-house"></i>
+                </a>
+                <a id="open-menu">
+                    <i id="bars" class="fas fa-bars"></i>
+                </a>
+            </div>
             <ul>
+                <li >
+                    <a href="@rootNode.Url()">
+                        <i class="hideHome fa-solid fa-house"></i>
+                    </a>
+                </li>
                 @if (allVisiblePages != null && allVisiblePages.Any())
                 {
                     foreach (var item in allVisiblePages)
@@ -34,8 +45,8 @@
                         if (hasChildLinks.Contains(item.Name))
                         {
                             <li class="has-dropdown">
-                                <a class="parent-link">@item.Name</a>
-                                <button class="dropdown-arrow fas fa-chevron-down"></button>
+                                    <a class="parent-link" href="@item.Url()">@item.Name</a>
+                                    <button class="dropdown-arrow fas fa-chevron-down"></button>
                                 <ul class="dropdown">
                                     @foreach (var childLink in item.Children())
                                     {
@@ -44,7 +55,7 @@
                                             <a class="child-link" href="@childLink.Url()">@childLink.Name</a>
                                             @if (visibleGrandChildren.Any())
                                             {
-                                                <button class="dropdown-arrow fas fa-chevron-down"></button>
+                                                <button class="dropdown-arrow fas fa-chevron-down" ></button>
                                                 <ul class="sub-dropdown">
                                                     @foreach (var grandChildLink in visibleGrandChildren)
                                                     {
@@ -65,37 +76,5 @@
         </div>
     </nav>
     <script src="~/Scripts/mobileMenuToggle.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var parentLinks = document.querySelectorAll('.parent-link');
-
-            parentLinks.forEach(function (link) {
-                link.addEventListener('click', function (event) {
-                    var parentLi = event.target.closest('li');
-                    var dropdown = parentLi.querySelector('.dropdown');
-
-                    if (dropdown) {
-                        event.preventDefault();
-                        dropdown.classList.toggle('open');
-                    }
-                });
-            });
-
-            var childLinks = document.querySelectorAll('.child-link');
-
-            childLinks.forEach(function (link) {
-                link.addEventListener('click', function (event) {
-                    var parentLi = event.target.closest('li');
-                    var subDropdown = parentLi.querySelector('.sub-dropdown');
-
-                    if (subDropdown) {
-                        event.preventDefault();
-                        subDropdown.classList.toggle('open');
-                    }
-                });
-            });
-        });
-
-    </script>
 </body>
 </html>
