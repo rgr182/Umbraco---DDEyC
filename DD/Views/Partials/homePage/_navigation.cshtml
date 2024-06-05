@@ -22,59 +22,61 @@
     <link rel="stylesheet" href="~/Styles/navigation.css" />
 </head>
 <body>
-    <nav id="navigation">
-        <div>
-            <div class="mobileMenu">
-                <a href="@rootNode.Url()">
-                    <i class="homeButton fa-solid fa-house"></i>
-                </a>
-                <a id="open-menu">
-                    <i id="bars" class="fas fa-bars"></i>
-                </a>
-            </div>
-            <ul>
-                <li >
+    <div class="navigation-container">
+        <nav id="navigation">
+            <div>
+                <div class="mobileMenu">
                     <a href="@rootNode.Url()">
-                        <i class="hideHome fa-solid fa-house"></i>
+                        <i class="homeButton fa-solid fa-house"></i>
                     </a>
-                </li>
-                @if (allVisiblePages != null && allVisiblePages.Any())
-                {
-                    foreach (var item in allVisiblePages)
+                    <a id="open-menu">
+                        <i id="bars" class="fas fa-bars"></i>
+                    </a>
+                </div>
+                <ul>
+                    <li>
+                        <a href="@rootNode.Url()">
+                            <i class="hideHome fa-solid fa-house"></i>
+                        </a>
+                    </li>
+                    @if (allVisiblePages != null && allVisiblePages.Any())
                     {
-                        if (hasChildLinks.Contains(item.Name))
+                        foreach (var item in allVisiblePages)
                         {
-                            <li class="has-dropdown">
+                            if (hasChildLinks.Contains(item.Name))
+                            {
+                                <li class="has-dropdown">
                                     <a class="parent-link" href="@item.Url()">@item.Name</a>
                                     <button class="dropdown-arrow fas fa-chevron-down"></button>
-                                <ul class="dropdown">
-                                    @foreach (var childLink in item.Children())
-                                    {
-                                        var visibleGrandChildren = childLink.Children().Where(x => x.IsVisible());
-                                        <li class="has-subdropdown">
-                                            <a class="child-link" href="@childLink.Url()">@childLink.Name</a>
-                                            @if (visibleGrandChildren.Any())
-                                            {
-                                                <button class="dropdown-arrow fas fa-chevron-down" ></button>
-                                                <ul class="sub-dropdown">
-                                                    @foreach (var grandChildLink in visibleGrandChildren)
-                                                    {
-                                                        <li>
-                                                            <a href="@grandChildLink.Url()">@grandChildLink.Name</a>
-                                                        </li>
-                                                    }
-                                                </ul>
-                                            }
-                                        </li>
-                                    }
-                                </ul>
-                            </li>
+                                    <ul class="dropdown">
+                                        @foreach (var childLink in item.Children())
+                                        {
+                                            var visibleGrandChildren = childLink.Children().Where(x => x.IsVisible());
+                                            <li class="has-subdropdown">
+                                                <a class="child-link" href="@childLink.Url()">@childLink.Name</a>
+                                                @if (visibleGrandChildren.Any())
+                                                {
+                                                    <button class="dropdown-arrow fas fa-chevron-down"></button>
+                                                    <ul class="sub-dropdown">
+                                                        @foreach (var grandChildLink in visibleGrandChildren)
+                                                        {
+                                                            <li>
+                                                                <a href="@grandChildLink.Url()">@grandChildLink.Name</a>
+                                                            </li>
+                                                        }
+                                                    </ul>
+                                                }
+                                            </li>
+                                        }
+                                    </ul>
+                                </li>
+                            }
                         }
                     }
-                }
-            </ul>
-        </div>
-    </nav>
+                </ul>
+            </div>
+        </nav>
+    </div>
     <script src="~/Scripts/mobileMenuToggle.js"></script>
 </body>
 </html>

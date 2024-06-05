@@ -10,11 +10,9 @@ html {
 .headlineTitle{
     width:60%;
     margin-top:3rem;
-    margin-left:8%;
+    margin-left:3rem;
 }
-.headlineTitle.newsTitle{
-    margin-left: 3rem;
-}
+
 @media (max-width: 768px) {
     .headlineTitle {
         margin-left: 0;
