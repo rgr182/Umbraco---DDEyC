@@ -1,36 +1,29 @@
 ﻿.rich-content-div {
     text-align: center;
 }
-
     .rich-content-div > div {
         text-align: justify;
     }
-
 .general-content
 {
     width: 80%;
     margin: auto;
 }
-
 /* Anchord Styles */
 .rich-content-text a {
     color: #E4007C; /* Soft Mexican pink for links, ensures good visibility */
     text-decoration: none;
 }
-
 .rich-content-text a:hover {
     color: #FF007F; /* Brighter pink for hover effect to highlight link state */
     text-decoration: underline;
 }
-
 .rich-content-text a:active {
     color: #D5006F; /* Intense pink when the link is active */
 }
-
 .rich-content-text a:visited {
     color: #C51162; /* Darker shade of Mexican pink for visited links to indicate they have been clicked */
 }
-
 .rich-content-text a:focus {
     outline: 2px solid #FF69B4; /* Light pink border for focus, increasing accessibility */
     outline-offset: 2px;

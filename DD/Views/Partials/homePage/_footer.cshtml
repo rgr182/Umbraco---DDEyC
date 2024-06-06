@@ -31,6 +31,7 @@
 </head>
 
 <div id="footerCarousel" class="carousel slide" data-bs-ride="carousel">
+    <h2 class="footerTitle">@defaultFooterNode.Value("FooterTitle")</h2>
     <ol class="carousel-indicators">
         <!-- Carousel indicators will be rendered here -->
     </ol>
@@ -201,4 +202,14 @@
     window.addEventListener('load', renderFooterLayout);
     window.addEventListener('resize', handleResizeFooter);
     window.addEventListener('DOMContentLoaded', renderFooterLayout);
+
+    // Check if we are on the root page to modify margin
+    document.addEventListener('DOMContentLoaded', function () {
+        if (window.location.pathname === '/' || window.location.pathname === '/home') {
+            const footerTitle = document.querySelector('.footerTitle');
+            if (footerTitle) {
+                footerTitle.style.margin = '3%';
+            }
+        }
+    });
 </script>
