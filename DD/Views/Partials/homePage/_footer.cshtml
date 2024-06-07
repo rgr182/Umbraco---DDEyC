@@ -25,7 +25,9 @@
             blocksList = defaultBlocksList?.ToList();
             }
         }
-
+        if (!blocksList.Any()){
+            blocksList = Enumerable.Empty<BlockListItem>();
+        }
 
     var defaultImageUrl = Url.Content("~/assets/default.webp");
 }
