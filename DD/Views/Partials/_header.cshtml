@@ -29,9 +29,6 @@
     <link href="~/Styles/Header.css" rel="stylesheet" />
 </head>
 <header>
-     <div>
-        @headerImageUrl1
-    </div>
     @if (!Model.HideHeaderImages)
     {
         <div>
@@ -39,19 +36,19 @@
                 <div class="col centered-col">
                     @if (bottomHeaderImage1 != null)
                     {
-                        <a href="@headerImageUrl1">
+                        <a href="@headerImageUrl1" class="header-atag">
                         <img src="@bottomHeaderImage1.Url()" class="logo-img" alt="ChihuahuaGobiernoMunicipal">
                         </a>
                     }
                     @if (topHeaderImage != null)
                     {
-                        <a href="@headerImageUrl2">
+                        <a href="@headerImageUrl2" class="header-atag">
                         <img src="@topHeaderImage.Url()" class="logo-img" alt="Logo 1">
                         </a>
                     }
                     @if (bottomHeaderImage2 != null)
                     {
-                        <a href="@headerImageUrl3">
+                        <a href="@headerImageUrl3" class="header-atag">
                         <img src="@bottomHeaderImage2.Url()" class="logo-img" alt="Logo 3">
                         </a>
                     }
