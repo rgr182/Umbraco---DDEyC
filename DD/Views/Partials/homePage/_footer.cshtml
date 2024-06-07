@@ -13,12 +13,16 @@
 
     // Get Default Footer Properties
     var defaultFooterNode = rootNode.Children.FirstOrDefault(x => x.Name == DefaultFooterNodeName);
-
-    // Get default footer items
-    var blocksList = Model.ToList(); 
     var defaultBlocksList = defaultFooterNode?.Value<IEnumerable<BlockListItem>>(FooterItemsPropertyName);
+    List<BlockListItem> blocksList;
+        if (Model is null){
+            blocksList = defaultBlocksList?.ToList();
+        }else{
+            blocksList = Model.ToList();
+        }
+    // Get default footer items
 
-    if (blocksList is null || !blocksList.Any())
+    if (!blocksList.Any())
     {
         blocksList = defaultBlocksList?.ToList();
     }
