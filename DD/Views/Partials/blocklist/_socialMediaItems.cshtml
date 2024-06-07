@@ -4,19 +4,18 @@
 @{
     const string DefaultSocialMediaNodeName = "DefaultFooter";
     const string HomeName = "Home";
-    const string DSMIN= "footerSocialMediaItems";
+    const string DSMIN = "footerSocialMediaItems";
     // Get Home Node
     var rootNode = Umbraco.ContentAtRoot().Where(x => x.Name == HomeName).FirstOrDefault();
     // Get Default Social Media Properties
     var defaultSocialMediaNode = rootNode.Children.FirstOrDefault(x => x.Name == DefaultSocialMediaNodeName);
     // Get default social media items
-    var socials = Model.ToList(); 
-    var defaultSocials = defaultSocialMediaNode?.Value<IEnumerable<BlockListItem>>(DSMIN);
-        //Print all the values in defaultSocials (it is an enumerable of BlockListItem)        
+    IEnumerable<BlockListItem> socials = Model?.ToList() ?? Enumerable.Empty<BlockListItem>();
+    IEnumerable<BlockListItem> defaultSocials = defaultSocialMediaNode?.Value<IEnumerable<BlockListItem>>(DSMIN) ?? Enumerable.Empty<BlockListItem>();
 
-    if (socials is null || !socials.Any())
+    if (!socials.Any())
     {
-        socials = defaultSocials?.ToList();
+        socials = defaultSocials.ToList();
     }
 }
 

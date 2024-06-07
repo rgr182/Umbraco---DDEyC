@@ -13,15 +13,21 @@
 
     // Get Default Footer Properties
     var defaultFooterNode = rootNode.Children.FirstOrDefault(x => x.Name == DefaultFooterNodeName);
-
-    // Get default footer items
-    var blocksList = Model.ToList(); 
     var defaultBlocksList = defaultFooterNode?.Value<IEnumerable<BlockListItem>>(FooterItemsPropertyName);
-
-    if (blocksList is null || !blocksList.Any())
-    {
-        blocksList = defaultBlocksList?.ToList();
-    }
+    List<BlockListItem> blocksList;
+        if (Model is null){
+            blocksList = defaultBlocksList?.ToList();
+        }else{
+            blocksList = Model.ToList();
+    // Get default footer items
+        if (!blocksList.Any())
+            {
+            blocksList = defaultBlocksList?.ToList();
+            }
+        }
+        if (!blocksList.Any()){
+            blocksList = Enumerable.Empty<BlockListItem>();
+        }
 
     var defaultImageUrl = Url.Content("~/assets/default.webp");
 }
