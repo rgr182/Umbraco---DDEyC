@@ -22,26 +22,36 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 	/// <summary>Header Properties</summary>
 	public partial interface IHeaderProperties : IPublishedElement
 	{
-		/// <summary>Bottom Header Image 1</summary>
+		/// <summary>Header Image 2</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
 		global::Umbraco.Cms.Core.Models.MediaWithCrops BottomHeaderImage1 { get; }
 
-		/// <summary>Bottom Header Image 2</summary>
+		/// <summary>Header Image 3</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
 		global::Umbraco.Cms.Core.Models.MediaWithCrops BottomHeaderImage2 { get; }
 
-		/// <summary>Header Image Url</summary>
+		/// <summary>Header Image Url 1</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		global::Umbraco.Cms.Core.Models.Link HeaderImageUrl { get; }
+		global::Umbraco.Cms.Core.Models.Link HeaderImageUrl1 { get; }
+
+		/// <summary>Header Image Url 2</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		global::Umbraco.Cms.Core.Models.Link HeaderImageUrl2 { get; }
+
+		/// <summary>Header Image Url 3</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		global::Umbraco.Cms.Core.Models.Link HeaderImageUrl3 { get; }
 
 		/// <summary>Hide Header Images</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
 		bool HideHeaderImages { get; }
 
-		/// <summary>Top Header Image</summary>
+		/// <summary>Header Image 1</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
 		global::Umbraco.Cms.Core.Models.MediaWithCrops TopHeaderImage { get; }
@@ -79,43 +89,69 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		// properties
 
 		///<summary>
-		/// Bottom Header Image 1
+		/// Header Image 2
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
 		[ImplementPropertyType("bottomHeaderImage1")]
 		public virtual global::Umbraco.Cms.Core.Models.MediaWithCrops BottomHeaderImage1 => GetBottomHeaderImage1(this, _publishedValueFallback);
 
-		/// <summary>Static getter for Bottom Header Image 1</summary>
+		/// <summary>Static getter for Header Image 2</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
 		[return: global::System.Diagnostics.CodeAnalysis.MaybeNull]
 		public static global::Umbraco.Cms.Core.Models.MediaWithCrops GetBottomHeaderImage1(IHeaderProperties that, IPublishedValueFallback publishedValueFallback) => that.Value<global::Umbraco.Cms.Core.Models.MediaWithCrops>(publishedValueFallback, "bottomHeaderImage1");
 
 		///<summary>
-		/// Bottom Header Image 2
+		/// Header Image 3
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
 		[ImplementPropertyType("bottomHeaderImage2")]
 		public virtual global::Umbraco.Cms.Core.Models.MediaWithCrops BottomHeaderImage2 => GetBottomHeaderImage2(this, _publishedValueFallback);
 
-		/// <summary>Static getter for Bottom Header Image 2</summary>
+		/// <summary>Static getter for Header Image 3</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
 		[return: global::System.Diagnostics.CodeAnalysis.MaybeNull]
 		public static global::Umbraco.Cms.Core.Models.MediaWithCrops GetBottomHeaderImage2(IHeaderProperties that, IPublishedValueFallback publishedValueFallback) => that.Value<global::Umbraco.Cms.Core.Models.MediaWithCrops>(publishedValueFallback, "bottomHeaderImage2");
 
 		///<summary>
-		/// Header Image Url
+		/// Header Image Url 1
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("headerImageUrl")]
-		public virtual global::Umbraco.Cms.Core.Models.Link HeaderImageUrl => GetHeaderImageUrl(this, _publishedValueFallback);
+		[ImplementPropertyType("headerImageUrl1")]
+		public virtual global::Umbraco.Cms.Core.Models.Link HeaderImageUrl1 => GetHeaderImageUrl1(this, _publishedValueFallback);
 
-		/// <summary>Static getter for Header Image Url</summary>
+		/// <summary>Static getter for Header Image Url 1</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
 		[return: global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		public static global::Umbraco.Cms.Core.Models.Link GetHeaderImageUrl(IHeaderProperties that, IPublishedValueFallback publishedValueFallback) => that.Value<global::Umbraco.Cms.Core.Models.Link>(publishedValueFallback, "headerImageUrl");
+		public static global::Umbraco.Cms.Core.Models.Link GetHeaderImageUrl1(IHeaderProperties that, IPublishedValueFallback publishedValueFallback) => that.Value<global::Umbraco.Cms.Core.Models.Link>(publishedValueFallback, "headerImageUrl1");
+
+		///<summary>
+		/// Header Image Url 2
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("headerImageUrl2")]
+		public virtual global::Umbraco.Cms.Core.Models.Link HeaderImageUrl2 => GetHeaderImageUrl2(this, _publishedValueFallback);
+
+		/// <summary>Static getter for Header Image Url 2</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
+		[return: global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		public static global::Umbraco.Cms.Core.Models.Link GetHeaderImageUrl2(IHeaderProperties that, IPublishedValueFallback publishedValueFallback) => that.Value<global::Umbraco.Cms.Core.Models.Link>(publishedValueFallback, "headerImageUrl2");
+
+		///<summary>
+		/// Header Image Url 3
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("headerImageUrl3")]
+		public virtual global::Umbraco.Cms.Core.Models.Link HeaderImageUrl3 => GetHeaderImageUrl3(this, _publishedValueFallback);
+
+		/// <summary>Static getter for Header Image Url 3</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
+		[return: global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		public static global::Umbraco.Cms.Core.Models.Link GetHeaderImageUrl3(IHeaderProperties that, IPublishedValueFallback publishedValueFallback) => that.Value<global::Umbraco.Cms.Core.Models.Link>(publishedValueFallback, "headerImageUrl3");
 
 		///<summary>
 		/// Hide Header Images
@@ -129,14 +165,14 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		public static bool GetHideHeaderImages(IHeaderProperties that, IPublishedValueFallback publishedValueFallback) => that.Value<bool>(publishedValueFallback, "hideHeaderImages");
 
 		///<summary>
-		/// Top Header Image
+		/// Header Image 1
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
 		[ImplementPropertyType("topHeaderImage")]
 		public virtual global::Umbraco.Cms.Core.Models.MediaWithCrops TopHeaderImage => GetTopHeaderImage(this, _publishedValueFallback);
 
-		/// <summary>Static getter for Top Header Image</summary>
+		/// <summary>Static getter for Header Image 1</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
 		[return: global::System.Diagnostics.CodeAnalysis.MaybeNull]
 		public static global::Umbraco.Cms.Core.Models.MediaWithCrops GetTopHeaderImage(IHeaderProperties that, IPublishedValueFallback publishedValueFallback) => that.Value<global::Umbraco.Cms.Core.Models.MediaWithCrops>(publishedValueFallback, "topHeaderImage");

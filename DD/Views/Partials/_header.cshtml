@@ -1,3 +1,4 @@
+@using Umbraco.Cms.Core.Models;
 @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<IHeaderProperties>
 @{
     const string DefaultHeaderNodeName = "DefaultHeader";
@@ -6,6 +7,9 @@
     const string BH1 = "BottomHeaderImage1";
     const string BH2 = "BottomHeaderImage2";
     const string BH3 = "BottomHeaderImage3";
+    const string HIUrl1 = "HeaderImageUrl1";
+    const string HIUrl2 = "HeaderImageUrl2";
+    const string HIUrl3 = "HeaderImageUrl3";
     //Get Home Node
     var rootNode = Umbraco.ContentAtRoot().Where(x => x.Name == HomeName).FirstOrDefault();
     //Get Default Header Properties
@@ -16,11 +20,18 @@
     defaultHeaderPropertiesNode?.Value<IPublishedContent>(BH1);
     var bottomHeaderImage2 = Model.BottomHeaderImage2 ??
     defaultHeaderPropertiesNode?.Value<IPublishedContent>(BH2);
-}
+
+    var headerImageUrl1 = Model.HeaderImageUrl1?.Url ?? defaultHeaderPropertiesNode?.Value<Umbraco.Cms.Core.Models.Link>(HIUrl1)?.Url ?? "#";
+    var headerImageUrl2 = Model.HeaderImageUrl2?.Url ?? defaultHeaderPropertiesNode?.Value<Umbraco.Cms.Core.Models.Link>(HIUrl2)?.Url ?? "#";
+    var headerImageUrl3 = Model.HeaderImageUrl3?.Url ?? defaultHeaderPropertiesNode?.Value<Umbraco.Cms.Core.Models.Link>(HIUrl3)?.Url ?? "#";
+        }
 <head>
     <link href="~/Styles/Header.css" rel="stylesheet" />
 </head>
 <header>
+     <div>
+        @headerImageUrl1
+    </div>
     @if (!Model.HideHeaderImages)
     {
         <div>
@@ -28,15 +39,21 @@
                 <div class="col centered-col">
                     @if (bottomHeaderImage1 != null)
                     {
+                        <a href="@headerImageUrl1">
                         <img src="@bottomHeaderImage1.Url()" class="logo-img" alt="ChihuahuaGobiernoMunicipal">
+                        </a>
                     }
                     @if (topHeaderImage != null)
                     {
+                        <a href="@headerImageUrl2">
                         <img src="@topHeaderImage.Url()" class="logo-img" alt="Logo 1">
+                        </a>
                     }
                     @if (bottomHeaderImage2 != null)
                     {
+                        <a href="@headerImageUrl3">
                         <img src="@bottomHeaderImage2.Url()" class="logo-img" alt="Logo 3">
+                        </a>
                     }
                 </div>
             </div>
