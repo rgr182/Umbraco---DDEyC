@@ -58,6 +58,30 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		public virtual global::Umbraco.Cms.Core.Models.Blocks.BlockListModel ContentPageBlocks => this.Value<global::Umbraco.Cms.Core.Models.Blocks.BlockListModel>(_publishedValueFallback, "contentPageBlocks");
 
 		///<summary>
+		/// footer Items
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("footerItems")]
+		public virtual global::Umbraco.Cms.Core.Models.Blocks.BlockListModel FooterItems => global::Umbraco.Cms.Web.Common.PublishedModels.FooterProperties.GetFooterItems(this, _publishedValueFallback);
+
+		///<summary>
+		/// footer Social Media Items
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("footerSocialMediaItems")]
+		public virtual global::Umbraco.Cms.Core.Models.Blocks.BlockListModel FooterSocialMediaItems => global::Umbraco.Cms.Web.Common.PublishedModels.FooterProperties.GetFooterSocialMediaItems(this, _publishedValueFallback);
+
+		///<summary>
+		/// footerTitle: Enter the footer Title
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("footerTitle")]
+		public virtual global::Umbraco.Cms.Core.Strings.IHtmlEncodedString FooterTitle => global::Umbraco.Cms.Web.Common.PublishedModels.FooterProperties.GetFooterTitle(this, _publishedValueFallback);
+
+		///<summary>
 		/// Header Image 2
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]

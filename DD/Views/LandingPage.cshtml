@@ -39,6 +39,9 @@
 		}
 	</div>
 </div>
+@* <div class="footer-headline-lp">
+	@await Html.PartialAsync("Partials/homePage/_footerHeadline")
+</div> *@
 <div class="mt-3">
 	<h2 class="titleFooter">@Model.FooterTitle</h2>
 	@await Html.PartialAsync("Partials/homePage/_footer", Model.FooterItems)
