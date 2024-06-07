@@ -32,6 +32,7 @@
 .carousel-img-container.not-footer{
     max-width: 500px;
     max-height: 250px;
+    overflow: hidden;
 }
 
 .carousel-item-content {
