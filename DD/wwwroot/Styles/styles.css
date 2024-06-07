@@ -191,3 +191,21 @@ body {
     }
     
 }
+
+/*footerTitle*/
+/*Desktop style*/
+@media (min-width: 768px) {
+    .titleFooter {
+        display: flex;
+        margin-left: 2%;
+        text-transform: uppercase;
+    }
+}
+/*Mobile style*/
+@media (max-width:767px) {
+    .titleFooter {
+        display: flex;
+        justify-content: center;
+        text-transform: uppercase;
+    }
+}
