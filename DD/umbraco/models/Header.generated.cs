@@ -50,7 +50,7 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		// properties
 
 		///<summary>
-		/// Bottom Header Image 1
+		/// Header Image 2
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
@@ -58,7 +58,7 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		public virtual global::Umbraco.Cms.Core.Models.MediaWithCrops BottomHeaderImage1 => global::Umbraco.Cms.Web.Common.PublishedModels.HeaderProperties.GetBottomHeaderImage1(this, _publishedValueFallback);
 
 		///<summary>
-		/// Bottom Header Image 2
+		/// Header Image 3
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
@@ -66,12 +66,28 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		public virtual global::Umbraco.Cms.Core.Models.MediaWithCrops BottomHeaderImage2 => global::Umbraco.Cms.Web.Common.PublishedModels.HeaderProperties.GetBottomHeaderImage2(this, _publishedValueFallback);
 
 		///<summary>
-		/// Header Image Url
+		/// Header Image Url 1
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("headerImageUrl")]
-		public virtual global::Umbraco.Cms.Core.Models.Link HeaderImageUrl => global::Umbraco.Cms.Web.Common.PublishedModels.HeaderProperties.GetHeaderImageUrl(this, _publishedValueFallback);
+		[ImplementPropertyType("headerImageUrl1")]
+		public virtual global::Umbraco.Cms.Core.Models.Link HeaderImageUrl1 => global::Umbraco.Cms.Web.Common.PublishedModels.HeaderProperties.GetHeaderImageUrl1(this, _publishedValueFallback);
+
+		///<summary>
+		/// Header Image Url 2
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("headerImageUrl2")]
+		public virtual global::Umbraco.Cms.Core.Models.Link HeaderImageUrl2 => global::Umbraco.Cms.Web.Common.PublishedModels.HeaderProperties.GetHeaderImageUrl2(this, _publishedValueFallback);
+
+		///<summary>
+		/// Header Image Url 3
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("headerImageUrl3")]
+		public virtual global::Umbraco.Cms.Core.Models.Link HeaderImageUrl3 => global::Umbraco.Cms.Web.Common.PublishedModels.HeaderProperties.GetHeaderImageUrl3(this, _publishedValueFallback);
 
 		///<summary>
 		/// Hide Header Images
@@ -81,7 +97,7 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		public virtual bool HideHeaderImages => global::Umbraco.Cms.Web.Common.PublishedModels.HeaderProperties.GetHideHeaderImages(this, _publishedValueFallback);
 
 		///<summary>
-		/// Top Header Image
+		/// Header Image 1
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]

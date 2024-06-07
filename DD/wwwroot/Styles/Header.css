@@ -16,10 +16,12 @@ html {
 }
 
 .logo-img {
-    max-height: auto;
-    max-width: 20%;
+    width: 100%;
 }
-
+.header-atag{
+    width: 20%;
+    height: auto;
+}
 .rainbow-box {
     width: 100%;
     height: 1rem;
