@@ -19,13 +19,13 @@
             blocksList = defaultBlocksList?.ToList();
         }else{
             blocksList = Model.ToList();
-        }
     // Get default footer items
+        if (!blocksList.Any())
+            {
+            blocksList = defaultBlocksList?.ToList();
+            }
+        }
 
-    if (!blocksList.Any())
-    {
-        blocksList = defaultBlocksList?.ToList();
-    }
 
     var defaultImageUrl = Url.Content("~/assets/default.webp");
 }
