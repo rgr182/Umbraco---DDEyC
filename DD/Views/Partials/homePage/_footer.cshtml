@@ -15,7 +15,7 @@
     var defaultBlocksList = defaultFooterNode?.Value<IEnumerable<BlockListItem>>(FooterItemsPropertyName);
 
     var footerTitle = string.Empty;
-    footerTitle = string.IsNullOrEmpty(Model?.FooterTitle.ToString()) ? defaultFooterTitle : Model.FooterTitle.ToString();
+    footerTitle = string.IsNullOrEmpty(Model?.FooterTitle?.ToString()) ? defaultFooterTitle : Model.FooterTitle.ToString();
 
     List<BlockListItem> blocksList;
     if (Model is null)
@@ -24,17 +24,11 @@
     }
     else
     {
-        blocksList = Model.FooterItems.ToList();
-        // Get default footer items
-        if (!blocksList.Any())
-        {
-            blocksList = defaultBlocksList?.ToList();
-        }
+            var footerItems = Model.FooterItems?.ToList() ?? defaultBlocksList.ToList();   
+            blocksList = (!footerItems.Any()) ? [] : footerItems;
+        
     }
-    if (!blocksList.Any())
-    {
-        blocksList = [];
-    }
+    
     var defaultImageUrl = Url.Content("~/assets/default.webp");
 }
 <head>
