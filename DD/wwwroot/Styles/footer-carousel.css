@@ -109,8 +109,8 @@
         padding: 0 5% 0 7.5%
     }
     .footerTitle {
-        display: flex;
-        margin-left: 10%;
+        font-size:18px;
+        display:flex;
         text-transform: uppercase;
     }
 }
@@ -189,7 +189,7 @@
     }
     .footerTitle {
         display: flex;
-        justify-content:center;
+        justify-content: center;
         text-transform: uppercase;
     }
 }

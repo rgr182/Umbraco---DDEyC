@@ -28,21 +28,3 @@
     outline: 2px solid #FF69B4; /* Light pink border for focus, increasing accessibility */
     outline-offset: 2px;
 }
-
-/*footerTitle*/
-/*Desktop style*/
-@media (min-width: 768px){
-    .footerTitle {
-        display: flex;
-        margin-left: 10%;
-        text-transform: uppercase;
-    }
-}
-/*Mobile style*/
-@media (max-width:767px) {
-    .footerTitle {
-        display: flex;
-        justify-content: center;
-        text-transform: uppercase;
-    }
-}

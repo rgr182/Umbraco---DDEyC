@@ -1,56 +1,59 @@
-﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<IEnumerable<BlockListItem>>;
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<IFooterProperties>;
 @using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
 @using Umbraco.Cms.Core.Models.Blocks;
-
 @{
     const string DefaultFooterNodeName = "DefaultFooter";
     const string HomeName = "Home";
     const string FooterItemsPropertyName = "footerItems";
+    const string FooterTitlePropertyName = "footerTitle";
     var paddingString = "";
-
     // Get Home Node
     var rootNode = Umbraco.ContentAtRoot().Where(x => x.Name == HomeName).FirstOrDefault();
-
     // Get Default Footer Properties
     var defaultFooterNode = rootNode.Children.FirstOrDefault(x => x.Name == DefaultFooterNodeName);
+    var defaultFooterTitle = defaultFooterNode?.Value<string>(FooterTitlePropertyName) ?? "Contacto y Ubicaciones.";
     var defaultBlocksList = defaultFooterNode?.Value<IEnumerable<BlockListItem>>(FooterItemsPropertyName);
-    List<BlockListItem> blocksList;
-        if (Model is null){
-            blocksList = defaultBlocksList?.ToList();
-        }else{
-            blocksList = Model.ToList();
-    // Get default footer items
-        if (!blocksList.Any())
-            {
-            blocksList = defaultBlocksList?.ToList();
-            }
-        }
-        if (!blocksList.Any()){
-            blocksList = [];
-        }
 
+    var footerTitle = string.Empty;
+    footerTitle = string.IsNullOrEmpty(Model?.FooterTitle.ToString()) ? defaultFooterTitle : Model.FooterTitle.ToString();
+
+    List<BlockListItem> blocksList;
+    if (Model is null)
+    {
+        blocksList = defaultBlocksList?.ToList();
+    }
+    else
+    {
+        blocksList = Model.FooterItems.ToList();
+        // Get default footer items
+        if (!blocksList.Any())
+        {
+            blocksList = defaultBlocksList?.ToList();
+        }
+    }
+    if (!blocksList.Any())
+    {
+        blocksList = [];
+    }
     var defaultImageUrl = Url.Content("~/assets/default.webp");
 }
-
 <head>
     <link href="~/Styles/footer-carousel.css" rel="stylesheet" />
 </head>
-
+<div class="footerTitle">
+    @Html.Raw(footerTitle)
+</div>
 <div id="footerCarousel" class="carousel slide" data-bs-ride="carousel">
-        <h2 class="footerTitle">@defaultFooterNode.Value("FooterTitle")</h2>
     <ol class="carousel-indicators">
         <!-- Carousel indicators will be rendered here -->
     </ol>
-
     <div class="carousel-inner">
         <!-- Carousel content will be rendered here -->
     </div>
-
     <button class="carousel-control-prev" type="button" data-bs-target="#footerCarousel" data-bs-slide="prev">
         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
         <span class="visually-hidden">Previous</span>
     </button>
-
     <button class="carousel-control-next" type="button" data-bs-target="#footerCarousel" data-bs-slide="next">
         <span class="carousel-control-next-icon" aria-hidden="true"></span>
         <span class="visually-hidden">Next</span>
@@ -60,27 +63,22 @@
     let prevWidth = window.innerWidth;
     let isMobile = prevWidth <= 767;
     let isTablet = prevWidth >= 768 && prevWidth <= 1380;
-
     function handleResizeFooter() {
         const currentWindowWidth = window.innerWidth;
         const newIsMobile = currentWindowWidth <= 767;
         const newIsTablet = currentWindowWidth >= 768 && currentWindowWidth <= 1380;
-
         if (isMobile !== newIsMobile || isTablet !== newIsTablet) {
             isMobile = newIsMobile;
             isTablet = newIsTablet;
             renderFooterLayout();
         }
-
         prevWidth = currentWindowWidth;
     }
-
     function renderFooterLayout() {
         const carouselInner = document.querySelector('#footerCarousel .carousel-inner');
         const carouselIndicators = document.querySelector('#footerCarousel .carousel-indicators');
         carouselIndicators.innerHTML = '';
         carouselInner.innerHTML = '';
-
         if (isMobile) {
            
             @{
@@ -101,7 +99,7 @@
                                         <div class="image-container align-items-center w-100">
                                             <div class="carousel-img-container">
                                                 <a href="@content.FooterItemUrl?.Url">
-                                                    <img src="@imageUrl" class="d-block object-fit-cover carousel-image" alt="..." > <!-- Adjust max-width for smaller images -->
+                                                                    <img src="@imageUrl" class="d-block object-fit-cover carousel-image" alt="..." > <!-- Adjust max-width for smaller images -->
                                                 </a>
                                             </div>
                                             <div class="mt-2 md-2"> <!-- Add more margin for spacing -->
@@ -145,7 +143,7 @@
                                         <div class="align-items-center text-center" style="@paddingString">
                                             <div class="carousel-img-container">
                                                 <a href="@content.FooterItemUrl?.Url">
-                                                    <img src="@imageUrl" class="d-block object-fit-cover carousel-image" alt="..." /> <!-- Adjust max-width for smaller images -->
+                                                                            <img src="@imageUrl" class="d-block object-fit-cover carousel-image" alt="..." /> <!-- Adjust max-width for smaller images -->
                                                 </a>
                                             </div>
                                             <div>
@@ -182,7 +180,7 @@
                                             <div class="d-flex align-items-center">
                                                 <div class="carousel-img-container">
                                                     <a href="@content.FooterItemUrl?.Url">
-                                                        <img src="@imageUrl" class="d-block object-fit-cover carousel-image" alt="..."> <!-- Adjust max-width for smaller images -->
+                                                                                <img src="@imageUrl" class="d-block object-fit-cover carousel-image" alt="..."> <!-- Adjust max-width for smaller images -->
                                                     </a>
                                                 </div>
                                                 <div style="margin-left: 20px;"> <!-- Add more margin for spacing -->
@@ -204,19 +202,7 @@
             }
         }
     }
-
     window.addEventListener('load', renderFooterLayout);
     window.addEventListener('resize', handleResizeFooter);
     window.addEventListener('DOMContentLoaded', renderFooterLayout);
-
-    // Check if we are on the root page to modify margin
-    document.addEventListener('DOMContentLoaded', function () {
-        const footerTitles = document.querySelectorAll('.footerTitle');
-        footerTitles.forEach(function (footerTitle) {
-            if (window.location.pathname === '/' || window.location.pathname === '/home') {
-                footerTitle.style.margin = '2%';
-            }
-        });
-    });
-
 </script>

@@ -11,11 +11,9 @@
 <div>
     @await Html.PartialAsync("Partials/homePage/_navigation.cshtml")
 </div>
-
 <div class="general-content">
     @foreach (var item in Model.ContentPageBlocks)
     {
-
         if (item.Content is ContentModels.LogoItems logoItem)
         {
             @await Html.PartialAsync("Partials/blocklistItems/_logoItem", logoItem)
@@ -72,16 +70,11 @@
                 @Html.Partial("Partials/blocklistItems/_embededVideo", videoEmbed)
             </div>
         }
-
     }
+    <div class="mt-3">
+        @await Html.PartialAsync("Partials/homePage/_footer")
+    </div>
 </div>
-
-<div class="mt-3">
-    <h2 class="footerTitle">@Model.FooterTitle</h2>
-    @await Html.PartialAsync("Partials/homePage/_footer", Model.FooterItems)
-    
-</div>
-
 <div class="mt-3">
     @await Html.PartialAsync("Partials/blocklist/_socialMediaItems", Model.FooterSocialMediaItems)
 </div>

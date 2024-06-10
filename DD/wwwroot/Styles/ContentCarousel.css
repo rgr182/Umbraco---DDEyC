@@ -18,7 +18,7 @@
 .carousel-item {
     min-height: 340px;
     max-height: 360px;
-    width: 98%;
+    width: 100%;
     position: relative;
     overflow: hidden;
 }
