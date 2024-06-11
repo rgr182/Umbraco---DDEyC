@@ -23,7 +23,7 @@
                 arrow.style.display = 'none';
             } else {
                 arrow.style.display = 'block';
-            }            
+            }
         });
     });
 

@@ -94,6 +94,7 @@
         display: none;
         background-color: #4471c4;
         list-style: none;
+        transition: 1s ease;
     }
     #navigation ul li:hover > ul {
         display: block;
