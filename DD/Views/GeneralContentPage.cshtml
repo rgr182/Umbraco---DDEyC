@@ -3,8 +3,13 @@
 @using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
 @{
     Layout = "Main.cshtml";
+    const string footerPropertiesAlias = "footerProperties";
     var richTextStyle = string.Empty;
+    // Footer items only exists in footer properties, if it is null, pass a null model
+    // otherwise, bind from currenty model
+ var footerProperties = Model.Value<IFooterProperties>(footerPropertiesAlias) ?? null;
 }
+
 <head>
     <link rel="stylesheet" href="~/Styles/GeneralContentPage.css" />
 </head>
@@ -72,10 +77,21 @@
         }
     }
     <div class="mt-3">
+    @if(footerProperties != null)
+    {
         @await Html.PartialAsync("Partials/homePage/_footer")
+    }else
+    {
+        @await Html.PartialAsync("Partials/homePage/_footer",  null)
+    }
     </div>
 </div>
-<div class="mt-3">
-    @await Html.PartialAsync("Partials/blocklist/_socialMediaItems", Model.FooterSocialMediaItems)
-</div>
+@if(footerProperties != null)
+    {
+        @await Html.PartialAsync("Partials/homePage/_socialMediaItems")
+    }else
+    {
+        @await Html.PartialAsync("Partials/homePage/_socialMediaItems", null)
+    }
+    </div>
 

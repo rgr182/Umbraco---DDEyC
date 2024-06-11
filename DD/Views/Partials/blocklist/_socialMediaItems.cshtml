@@ -1,4 +1,4 @@
-@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<IEnumerable<BlockListItem>>;
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<IFooterProperties>;
 @using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
 @using Umbraco.Cms.Core.Models.Blocks;
 @{
@@ -10,12 +10,12 @@
     // Get Default Social Media Properties
     var defaultSocialMediaNode = rootNode.Children.FirstOrDefault(x => x.Name == DefaultSocialMediaNodeName);
     // Get default social media items
-    IEnumerable<BlockListItem> socials = Model?.ToList() ?? Enumerable.Empty<BlockListItem>();
+    IEnumerable<BlockListItem> socials = Model?.FooterSocialMediaItems.ToList() ?? Enumerable.Empty<BlockListItem>();
     IEnumerable<BlockListItem> defaultSocials = defaultSocialMediaNode?.Value<IEnumerable<BlockListItem>>(DSMIN) ?? Enumerable.Empty<BlockListItem>();
 
     if (!socials.Any())
     {
-        socials = defaultSocials.ToList();
+        socials = defaultSocials.ToList() ?? Enumerable.Empty<BlockListItem>();
     }
 }
 
