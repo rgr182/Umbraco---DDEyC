@@ -24,8 +24,13 @@
     }
     else
     {
-            var footerItems = Model.FooterItems?.ToList() ?? defaultBlocksList.ToList();   
-            blocksList = (!footerItems.Any()) ? [] : footerItems;
+            var currentModelList = (Model.FooterItems is not null && Model.FooterItems.Any()) ? Model.FooterItems.ToList() : [];
+            var defaultFooterItems = defaultBlocksList.ToList();   
+            if( currentModelList.Any() ){
+                blocksList = currentModelList;
+            } else {
+                blocksList = defaultFooterItems ?? [];
+            }
         
     }
     
