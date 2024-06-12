@@ -1,4 +1,4 @@
-﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<IFooterProperties>;
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<object>;
 @using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
 @using Umbraco.Cms.Core.Models.Blocks;
 @{
@@ -14,18 +14,25 @@
     var defaultFooterTitle = defaultFooterNode?.Value<string>(FooterTitlePropertyName) ?? "Contacto y Ubicaciones.";
     var defaultBlocksList = defaultFooterNode?.Value<IEnumerable<BlockListItem>>(FooterItemsPropertyName);
 
-    var footerTitle = string.Empty;
-    footerTitle = string.IsNullOrEmpty(Model?.FooterTitle?.ToString()) ? defaultFooterTitle : Model.FooterTitle.ToString();
-
     List<BlockListItem> blocksList;
-    if (Model is null)
+    var footerTitle = string.Empty;
+
+    if (Model is null || Model is not IFooterProperties)
     {
-        blocksList = defaultBlocksList?.ToList();
+        blocksList = defaultBlocksList?.ToList() ?? [];
+        footerTitle = defaultFooterTitle ?? string.Empty;
     }
     else
     {
-            var footerItems = Model.FooterItems?.ToList() ?? defaultBlocksList.ToList();   
-            blocksList = (!footerItems.Any()) ? [] : footerItems;
+        IFooterProperties model = (IFooterProperties)Model;
+        footerTitle = string.IsNullOrEmpty(model?.FooterTitle?.ToString()) ? defaultFooterTitle : model.FooterTitle.ToString();
+        var currentModelList = (model.FooterItems is not null && model.FooterItems.Any()) ? model.FooterItems.ToList() : [];
+        var defaultFooterItems = defaultBlocksList.ToList();   
+        if( currentModelList.Any() ){
+            blocksList = currentModelList;
+        } else {
+            blocksList = defaultFooterItems ?? [];
+        }
         
     }
     
@@ -34,7 +41,7 @@
 <head>
     <link href="~/Styles/footer-carousel.css" rel="stylesheet" />
 </head>
-<div class="footerTitle">
+<div class="footerTitle m-3">
     @Html.Raw(footerTitle)
 </div>
 <div id="footerCarousel" class="carousel slide" data-bs-ride="carousel">
