@@ -24,13 +24,18 @@
     }
     else
     {
-            var currentModelList = (Model.FooterItems is not null && Model.FooterItems.Any()) ? Model.FooterItems.ToList() : [];
-            var defaultFooterItems = defaultBlocksList.ToList();   
-            if( currentModelList.Any() ){
-                blocksList = currentModelList;
-            } else {
-                blocksList = defaultFooterItems ?? [];
-            }
+        IFooterProperties model = (IFooterProperties)Model;
+        footerTitle = string.IsNullOrEmpty(model?.FooterTitle?.ToString()) ? defaultFooterTitle : model.FooterTitle.ToString();
+        var currentModelList = (model.FooterItems is not null && model.FooterItems.Any()) ? model.FooterItems.ToList() : [];
+        var defaultFooterItems = defaultBlocksList.ToList();
+        if (currentModelList.Any())
+        {
+            blocksList = currentModelList;
+        }
+        else
+        {
+            blocksList = defaultFooterItems ?? [];
+        }
         
     }
     
