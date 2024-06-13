@@ -3,14 +3,12 @@
 @{
     Layout = null;
     var rootNode = Umbraco.ContentAtRoot().FirstOrDefault();
-
-    // Método para obtener los hijos visibles
+    // Method to get visible children
     IEnumerable<IPublishedContent> GetVisibleChildren(IPublishedContent node)
     {
         return node.Children().Where(x => x.IsVisible());
     }
-
-    // Método para obtener los hijos visibles de las páginas con hijos visibles
+    // Method to get visible children of pages with visible children
     IEnumerable<IPublishedContent> GetVisibleChildrenOfPagesWithVisibleChildren(IPublishedContent node)
     {
         var childrenOfPagesWithVisibleChildren = new List<IPublishedContent>();
@@ -24,10 +22,8 @@
         }
         return childrenOfPagesWithVisibleChildren;
     }
-
     var visibleChildrenOfPagesWithVisibleChildren = GetVisibleChildrenOfPagesWithVisibleChildren(rootNode);
 }
-
 <!DOCTYPE html>
 <html>
 <head>
