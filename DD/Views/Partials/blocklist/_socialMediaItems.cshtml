@@ -21,12 +21,6 @@
         var socialsList= ((IFooterProperties)Model)?.FooterSocialMediaItems?.ToList() ?? Enumerable.Empty<BlockListItem>();
         socials =socialsList.Any() ? socialsList : defaultSocials;
     }
-    else
-    {
-        // Get social media items from model
-        var socialsList = ((IFooterProperties)Model)?.FooterSocialMediaItems?.ToList() ?? Enumerable.Empty<BlockListItem>();
-        socials = socialsList.Any() ? socialsList : defaultSocials;
-    }
 }
 
 
