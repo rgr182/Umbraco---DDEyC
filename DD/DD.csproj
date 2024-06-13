@@ -4,6 +4,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+  <PropertyGroup>
+  <launchSettingsProfile>launchSettings</launchSettingsProfile>
+</PropertyGroup>
   <ItemGroup>
     <Content Include="wwwroot\media\mvkajess\logo-idea_mesa-de-trabajo-1.png" />
     <Content Include="wwwroot\media\mxpe1vlr\**" />
