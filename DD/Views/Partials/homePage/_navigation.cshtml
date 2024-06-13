@@ -1,26 +1,20 @@
 @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
-@using Umbraco.Cms.Core.Models.PublishedContent
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
 @{
     Layout = null;
     var rootNode = Umbraco.ContentAtRoot().FirstOrDefault();
-    // Método para obtener los hijos visibles
     IEnumerable<IPublishedContent> GetVisibleChildren(IPublishedContent node)
     {
         return node.Children().Where(x => x.IsVisible());
     }
-    // Método para obtener los descendientes visibles filtrados
-    IEnumerable<IPublishedContent> GetFilteredVisibleDescendants(IPublishedContent node)
+    IEnumerable<IPublishedContent> GetVisibleDescendants(IPublishedContent node)
     {
-        var visibleDescendants = GetVisibleChildren(node).Concat(GetVisibleChildren(node).SelectMany(GetVisibleChildren));
-        // Buscar la página "DDEYC"
-        var ddeycPage = visibleDescendants.FirstOrDefault(x => x.Name == "DDEYC");
-        if (ddeycPage != null)
-        {
-            return GetVisibleChildren(ddeycPage);
-        }
-        return Enumerable.Empty<IPublishedContent>();
+        return GetVisibleChildren(node).Concat(GetVisibleChildren(node).SelectMany(GetVisibleDescendants));
     }
-    var allVisiblePages = GetFilteredVisibleDescendants(rootNode);
+    var allVisiblePages = GetVisibleDescendants(rootNode);
+    var navigationConfig = Configuration.GetSection("Navigation");
+    var hasChildLinks = navigationConfig.Get<List<string>>();
 }
 <!DOCTYPE html>
 <html>
@@ -49,14 +43,13 @@
                     {
                         foreach (var item in allVisiblePages)
                         {
-                            var hasChildLinks = item.Children().Any(x => x.IsVisible());
-                            if (hasChildLinks)
+                            if (hasChildLinks.Contains(item.Name))
                             {
                                 <li class="has-dropdown">
                                     <a class="parent-link" href="@item.Url()">@item.Name</a>
                                     <button class="dropdown-arrow fas fa-chevron-down"></button>
                                     <ul class="dropdown">
-                                        @foreach (var childLink in item.Children().Where(x => x.IsVisible()))
+                                        @foreach (var childLink in item.Children())
                                         {
                                             var visibleGrandChildren = childLink.Children().Where(x => x.IsVisible());
                                             <li class="has-subdropdown">
@@ -76,12 +69,6 @@
                                             </li>
                                         }
                                     </ul>
-                                </li>
-                            }
-                            else
-                            {
-                                <li>
-                                    <a href="@item.Url()">@item.Name</a>
                                 </li>
                             }
                         }
