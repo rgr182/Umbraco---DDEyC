@@ -3,25 +3,31 @@
 @{
     Layout = null;
     var rootNode = Umbraco.ContentAtRoot().FirstOrDefault();
+
     // Método para obtener los hijos visibles
     IEnumerable<IPublishedContent> GetVisibleChildren(IPublishedContent node)
     {
         return node.Children().Where(x => x.IsVisible());
     }
-    // Método para obtener los descendientes visibles filtrados
-    IEnumerable<IPublishedContent> GetFilteredVisibleDescendants(IPublishedContent node)
+
+    // Método para obtener los hijos visibles de las páginas con hijos visibles
+    IEnumerable<IPublishedContent> GetVisibleChildrenOfPagesWithVisibleChildren(IPublishedContent node)
     {
-        var visibleDescendants = GetVisibleChildren(node).Concat(GetVisibleChildren(node).SelectMany(GetVisibleChildren));
-        // Buscar la página "DDEYC"
-        var ddeycPage = visibleDescendants.FirstOrDefault(x => x.Name == "DDEYC");
-        if (ddeycPage != null)
+        var childrenOfPagesWithVisibleChildren = new List<IPublishedContent>();
+        foreach (var child in GetVisibleChildren(node))
         {
-            return GetVisibleChildren(ddeycPage);
+            var visibleChildren = GetVisibleChildren(child);
+            if (visibleChildren.Any())
+            {
+                childrenOfPagesWithVisibleChildren.AddRange(visibleChildren);
+            }
         }
-        return Enumerable.Empty<IPublishedContent>();
+        return childrenOfPagesWithVisibleChildren;
     }
-    var allVisiblePages = GetFilteredVisibleDescendants(rootNode);
+
+    var visibleChildrenOfPagesWithVisibleChildren = GetVisibleChildrenOfPagesWithVisibleChildren(rootNode);
 }
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -45,9 +51,9 @@
                             <i class="hideHome fa-solid fa-house"></i>
                         </a>
                     </li>
-                    @if (allVisiblePages != null && allVisiblePages.Any())
+                    @if (visibleChildrenOfPagesWithVisibleChildren != null && visibleChildrenOfPagesWithVisibleChildren.Any())
                     {
-                        foreach (var item in allVisiblePages)
+                        foreach (var item in visibleChildrenOfPagesWithVisibleChildren)
                         {
                             var hasChildLinks = item.Children().Any(x => x.IsVisible());
                             if (hasChildLinks)
