@@ -28,7 +28,7 @@ function renderMobileLayout(blocksList, defaultImageUrl, carouselId, carouselInn
         const isActive = index === 0 ? 'active' : '';
         const carouselItemHTML = `
             <div class="carousel-item text-and-image-carousel ${isActive}">
-            <div class="carousel-item-content">
+            <div class="carousel-item-content news-carousel">
                     <div class="row">
                         <div class="col-12">
                             <div class="text-content">
@@ -58,8 +58,8 @@ function renderDesktopLayout(blocksList, defaultImageUrl, carouselId, carouselIn
     for (let i = 0; i < blocksList.length; i += 2) {
         const isFirst = i === 0;
         const carouselItemHTML = `
-            <div class="carousel-item text-and-image-carousel ${isFirst ? 'active' : ''}">
-                <div class="carousel-item-content">
+            <div class="carousel-item news-carousel text-and-image-carousel ${isFirst ? 'active' : ''}">
+                <div class="carousel-item-content news-carousel">
                     <div class="row">
                         ${renderDesktopColumns(blocksList, i, defaultImageUrl)}
                     </div>
