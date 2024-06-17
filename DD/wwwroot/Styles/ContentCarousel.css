@@ -28,8 +28,20 @@
     position: relative;
     left: 5%;
 }
-.carousel-img-container {
+.carousel-img-container.not-footer {
     max-width: 500px;
+    max-height: 250px;
+    overflow: hidden;
+}
+    .carousel-img-container {
+    max-width: 500px;
+}
+.carousel-item.news-carousel {
+    min-height: 260px;
+    max-height: 320px;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
 }
 .carousel-item-content {
     position: absolute;
@@ -43,6 +55,10 @@
     align-items: center;
     justify-content: center;
 }
+    .carousel-item-content.news-carousel {
+        top: 35%;
+        left: 50%;
+    }
     .carousel-item-content .row {
         width: 100%;
     }
@@ -60,10 +76,7 @@
     width: 8%;
     outline: rgb(0, 0, 0);
 }
-.carousel-control-next-icon:after {
-    font-size: 55px;
-    color: red;
-}
+.carousel-control-next-icon:after,
 .carousel-control-prev-icon:after {
     font-size: 55px;
     color: red;
@@ -76,30 +89,30 @@
     max-height: 12em;
     position: relative;
 }
-    .text-content p {
-        margin: 0;
-        line-height: 1.2;
-        max-height: 10.2em;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: -webkit-box;
-        -webkit-line-clamp: 6;
-        -webkit-box-orient: vertical;
-    }
-    .text-content::after {
-        content: "...";
-        position: absolute;
-        bottom: 0;
-        right: 0;
-        padding: 0 5px;
-        background-color: rgba(255, 255, 255, 0.8);
-        color: #333;
-        font-weight: bold;
-        display: none;
-    }
-    .text-content.overflow::after {
-        display: block;
-    }
+.text-content p {
+    margin: 0;
+    line-height: 1.2;
+    max-height: 10.2em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 6;
+    -webkit-box-orient: vertical;
+}
+.text-content::after {
+    content: "...";
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    padding: 0 5px;
+    background-color: rgba(255, 255, 255, 0.8);
+    color: #333;
+    font-weight: bold;
+    display: none;
+}
+.text-content.overflow::after {
+    display: block;
+}
 .carousel-indicators.img-carousel {
     bottom: -5rem;
 }
