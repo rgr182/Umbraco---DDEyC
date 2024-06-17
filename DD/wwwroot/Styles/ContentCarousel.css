@@ -33,9 +33,6 @@
     max-height: 250px;
     overflow: hidden;
 }
-    .carousel-img-container {
-    max-width: 500px;
-}
 .carousel-item.news-carousel {
     min-height: 260px;
     max-height: 320px;
@@ -55,20 +52,20 @@
     align-items: center;
     justify-content: center;
 }
-    .carousel-item-content.news-carousel {
-        top: 35%;
-        left: 50%;
-    }
-    .carousel-item-content .row {
-        width: 100%;
-    }
-    .carousel-item-content .col-md-6 {
-        display: flex;
-        align-items: center;
-    }
-    .carousel-item-content .col-6 {
-        flex: 1;
-    }
+.carousel-item-content.news-carousel {
+    top: 35%;
+    left: 50%;
+}
+.carousel-item-content .row {
+    width: 100%;
+}
+.carousel-item-content .col-md-6 {
+    display: flex;
+    align-items: center;
+}
+.carousel-item-content .col-6 {
+    flex: 1;
+}
 .carousel-control-prev,
 .carousel-control-next {
     align-items: center;
@@ -114,10 +111,14 @@
     display: block;
 }
 .carousel-indicators.img-carousel {
-    bottom: -5rem;
+    bottom: -3rem;
 }
 /* Responsive styles */
-/* Mobile view styles */
+@media(max-width: 1200px){
+    .carousel-indicators.img-carousel {
+        bottom: 0rem;
+    }
+}
 @media (max-width: 767px) {
     .carousel-item.text-and-image-carousel {
         min-height: 280px;
@@ -157,30 +158,30 @@
         max-height: 50%;
         position: relative;
     }
-        .text-content p {
-            margin: 0;
-            line-height: 1.2;
-            max-height: 9em;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            display: -webkit-box;
-            -webkit-line-clamp: 6;
-            -webkit-box-orient: vertical;
-        }
-        .text-content::after {
-            content: "...";
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            padding: 0 5px;
-            background-color: rgba(255, 255, 255, 0.8);
-            color: #333;
-            font-weight: bold;
-            display: none;
-        }
-        .text-content.overflow::after {
-            display: block;
-        }
+    .text-content p {
+        margin: 0;
+        line-height: 1.2;
+        max-height: 9em;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 6;
+        -webkit-box-orient: vertical;
+    }
+    .text-content::after {
+        content: "...";
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        padding: 0 5px;
+        background-color: rgba(255, 255, 255, 0.8);
+        color: #333;
+        font-weight: bold;
+        display: none;
+    }
+    .text-content.overflow::after {
+        display: block;
+    }
     .carousel-img-container {
         flex: 1;
         display: flex;
@@ -192,5 +193,8 @@
         max-height: 100%;
         max-width: 100%;
         object-fit: contain;
+    }
+    .carousel-indicators.img-carousel {
+        bottom: -3rem;
     }
 }
