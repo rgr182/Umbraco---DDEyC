@@ -27,7 +27,6 @@
     width: 90% !important;
     position: relative;
     left: 5%;
-
 }
 .carousel-img-container {
     max-width: 500px;
@@ -108,7 +107,11 @@
 /* Mobile view styles */
 @media (max-width: 767px) {
     .carousel-item.text-and-image-carousel {
-        min-height: 320px;
+        min-height: 280px;
+    }
+    .carousel-item-content.news-carousel
+    {
+        top: 40%
     }
     .carousel-item.image-only {
         min-height: 150px;
