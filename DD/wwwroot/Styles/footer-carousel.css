@@ -94,6 +94,9 @@
     -webkit-line-clamp: 8;
     -webkit-box-orient: vertical;
 }
+.footerTitle {
+    font-size: 21px;
+}
 @media (min-width: 1380px) {
     #footerCarousel .carousel-item {
         min-height: 270px;
@@ -109,7 +112,6 @@
         padding: 0 5% 0 7.5%
     }
     .footerTitle {
-        font-size:18px;
         display:flex;
         text-transform: uppercase;
     }
