@@ -21,5 +21,6 @@ html {
     }
     .headlineTitle.newsTitle{
         margin-left: 3rem;
+        width: 80%;
     }
 }
