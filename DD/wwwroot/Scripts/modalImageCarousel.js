@@ -7,7 +7,7 @@
     carouselImages.forEach(function (img) {
         img.onclick = function () {
             if (window.innerWidth <= 767) {
-                modal.style.display = "block";
+                modal.style.display = "flex";
                 modalImg.src = this.src;
                 document.body.style.overflow = "hidden";
             }
