@@ -16,7 +16,6 @@ html {
 @media (max-width: 768px) {
     .headlineTitle {
         margin-left: 0;
-        width: 100%;
         text-align: center;
     }
     .headlineTitle.newsTitle{
