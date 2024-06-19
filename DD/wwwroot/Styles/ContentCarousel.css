@@ -206,18 +206,24 @@
 }
 .modal-content {
     margin: auto;
-    display: block;
+    display: flex;
+    justify-content:center;
+    align-items:center;
     width: 90%;
-    max-width: 700px;
 }
     .modal-content img {
         width: 100%;
         height: auto;
+        max-width: 100%;
+        object-fit: contain;
     }
 .modal-close {
     position: absolute;
     top: 15px;
     right: 35px;
+    font-size: 40px;
+    font-weight: bold;
+    transition: 0.3s;
 }
     .modal-close:hover,
     .modal-close:focus {
