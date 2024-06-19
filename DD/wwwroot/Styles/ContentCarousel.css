@@ -123,11 +123,11 @@
         top: 40%
     }
     .carousel-item.image-only {
-        min-height: 400px;
+        min-height: 300px;
         width:100%;
     }
     .carousel-item.image-only img {
-        max-height: 400px;
+        max-height: 300px;
         object-fit:cover;
     }
     .carousel-item-content {
