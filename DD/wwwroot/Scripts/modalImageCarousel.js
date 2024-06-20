@@ -1,28 +1,47 @@
 ﻿document.addEventListener('DOMContentLoaded', function () {
-    var modal = document.getElementById("imageModal");
-    var modalImg = document.getElementById("modalImage");
-    var carouselImages = document.querySelectorAll('.carousel-item img');
-    var span = document.getElementsByClassName("modal-close")[0];
-
-    carouselImages.forEach(function (img) {
-        img.onclick = function () {
-            if (window.innerWidth <= 767) {
-                modal.style.display = "flex";
-                modalImg.src = this.src;
-                document.body.style.overflow = "hidden";
-            }
+    const modal = document.getElementById("imageModal");
+    const modalImg = document.getElementById("modalImage");
+    const carouselImages = document.querySelectorAll('.carousel-item img');
+    const closeButton = document.querySelector(".modal-close");
+    let touchStartTime;
+    let touchTimeout;
+    function openModal(img) {
+        if (window.innerWidth <= 767) {
+            modal.style.display = "flex";
+            modalImg.src = img.src;
+            document.body.style.overflow = "hidden";
         }
-    });
-
-    span.onclick = function () {
+    }
+    function closeModal() {
         modal.style.display = "none";
         document.body.style.overflow = "auto";
     }
-
-    modal.onclick = function (event) {
-        if (event.target == modal) {
-            modal.style.display = "none";
-            document.body.style.overflow = "auto";
-        }
+    if (modal && modalImg && closeButton) {
+        carouselImages.forEach(img => {
+            const link = img.parentElement; // assuming <img> is wrapped in <a>
+            img.addEventListener('touchstart', function (e) {
+                touchStartTime = Date.now();
+                touchTimeout = setTimeout(() => {
+                    openModal(img);
+                }, 500); // 500 ms for long press
+            });
+            img.addEventListener('touchend', function (e) {
+                clearTimeout(touchTimeout);
+                if (Date.now() - touchStartTime < 500) {
+                    link.click(); // trigger the link's click event
+                }
+            });
+            img.addEventListener('touchmove', function (e) {
+                clearTimeout(ttouchTimeout);
+            });
+        });
+        closeButton.addEventListener('click', function () {
+            closeModal();
+        });
+        modal.addEventListener('click', function (event) {
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
     }
 });
