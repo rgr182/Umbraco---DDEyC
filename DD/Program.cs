@@ -20,6 +20,7 @@ builder.Services.AddHttpContextAccessor();
 
 WebApplication app = builder.Build();
 app.UseStaticFiles();
+ app.UseMiddleware<DDEyC.Middleware.ViewAnalyticsMiddleware>();
 await app.BootUmbracoAsync();
 
 
@@ -35,5 +36,4 @@ app.UseUmbraco()
         u.UseBackOfficeEndpoints();
         u.UseWebsiteEndpoints();
     });
- app.UseMiddleware<DDEyC.Middleware.ViewAnalyticsMiddleware>();
 await app.RunAsync();
