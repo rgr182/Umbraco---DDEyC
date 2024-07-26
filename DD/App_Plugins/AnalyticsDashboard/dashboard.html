@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html ng-app="umbraco">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics Dashboard</title>
+    <link rel="stylesheet" href="/App_Plugins/AnalyticsDashboard/analyticsDashboard.css">
+</head>
+<body>
+    <div ng-controller="AnalyticsDashboardController as vm" class="dashboard-container">
+        <h1 class="dashboard-title">Analytics Dashboard</h1>
+
+        <div class="date-picker-container">
+            <div class="date-picker-group">
+                <label for="start-date" class="date-picker-label">Start Date</label>
+                <input id="start-date" 
+                       class="date-picker-input"
+                       type="date" 
+                       ng-model="vm.dateFilter.startDate" 
+                       ng-change="vm.updateStartDate(vm.dateFilter.startDate)">
+            </div>
+            <div class="date-picker-group">
+                <label for="end-date" class="date-picker-label">End Date</label>
+                <input id="end-date" 
+                       class="date-picker-input"
+                       type="date" 
+                       ng-model="vm.dateFilter.endDate" 
+                       ng-change="vm.updateEndDate(vm.dateFilter.endDate)">
+            </div>
+            <button class="update-button" ng-click="vm.loadPageViews()">Update</button>
+        </div>
+
+        <div class="chart-container">
+            <h2 class="chart-title">Page Views Chart</h2>
+            <div style="height: 400px; width: 100%;">
+                <canvas id="pageViewsChart"></canvas>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <h2 class="chart-title">Detailed Page Views</h2>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>URL</th>
+                        <th>Views</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="view in vm.groupedPageViews" 
+                        ng-class="{'total-row': view.isTotal}">
+                        <td>{{ view.date }}</td>
+                        <td>{{ view.url }}</td>
+                        <td>{{ view.views }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Include necessary scripts here -->
+    <script src="/umbraco/lib/jquery/jquery.min.js"></script>
+    <script src="/umbraco/lib/angular/angular.min.js"></script>
+    <script src="/App_Plugins/AnalyticsDashboard/dashboard.controller.js"></script>
+</body>
+</html>

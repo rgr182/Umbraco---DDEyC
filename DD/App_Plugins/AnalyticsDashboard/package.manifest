@@ -1,0 +1,14 @@
+{
+    "dashboards": [
+        {
+            "alias": "analyticsDashboard",
+            "view": "/App_Plugins/AnalyticsDashboard/dashboard.html",
+            "sections": [ "analytics" ],
+            "weight": 0
+        }
+    ],
+    "javascript": [
+        "~/App_Plugins/AnalyticsDashboard/dashboard.controller.js",
+        "~/App_Plugins/AnalyticsDashboard/viewAnalytics.resource.js"
+    ]
+}
