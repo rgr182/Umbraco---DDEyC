@@ -35,7 +35,8 @@ namespace DDEyC.Middleware
             return Array.Exists(assetExtensions, ext => path.EndsWith(ext)) ||
                    path.StartsWith("/media/") ||
                    path.StartsWith("/scripts/") ||
-                   path.StartsWith("/css/");
+                   path.StartsWith("/css/") ||
+                   path.StartsWith("/api/");
         }
     }
 }
