@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+using DDEyC.Data;
+using DDEyC.Services;
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 IConfiguration configuration = new ConfigurationBuilder()
@@ -12,6 +15,11 @@ builder.CreateUmbracoBuilder()
     .AddDeliveryApi()
     .AddComposers()
     .Build();
+
+builder.Services.AddDbContext<AnalyticsContext>(options =>
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("umbracoDbDSN")));
+
 
 builder.Services.AddTransient<DDEyC.Repositories.ViewAnalyticsRepository>();
 builder.Services.AddTransient<DDEyC.Services.ViewAnalyticsService>();

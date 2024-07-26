@@ -1,9 +1,10 @@
-using System;
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Http;
 using DDEyC.Models;
 using DDEyC.Repositories;
+using Microsoft.AspNetCore.Http;
+using System;
+using System.Collections.Generic;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace DDEyC.Services
 {
@@ -19,7 +20,7 @@ namespace DDEyC.Services
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public void TrackPageView()
+        public async Task TrackPageViewAsync()
         {
             var context = _httpContextAccessor.HttpContext;
             var session = context.Session;
@@ -39,7 +40,7 @@ namespace DDEyC.Services
                     IpAddress = context.Connection.RemoteIpAddress.ToString()
                 };
 
-                _repository.Add(siteView);
+                await _repository.AddAsync(siteView);
 
                 // Update the viewed pages in the session
                 viewedPages[currentUrl] = currentTimestamp;
@@ -63,14 +64,14 @@ namespace DDEyC.Services
             session.SetString(ViewedPagesSessionKey, viewedPagesJson);
         }
 
-        public IEnumerable<AnalyticsView> GetAllPageViews()
+        public Task<IEnumerable<AnalyticsView>> GetAllPageViewsAsync()
         {
-            return _repository.GetAll();
+            return _repository.GetAllAsync();
         }
 
-        public IEnumerable<AnalyticsView> GetPageViewsByDateRange(DateTime start, DateTime end)
+        public Task<IEnumerable<AnalyticsView>> GetPageViewsByDateRangeAsync(DateTime start, DateTime end)
         {
-            return _repository.GetByDateRange(start, end);
+            return _repository.GetByDateRangeAsync(start, end);
         }
     }
 }

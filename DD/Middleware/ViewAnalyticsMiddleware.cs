@@ -19,7 +19,7 @@ namespace DDEyC.Middleware
         // Only track page views for non-Umbraco requests and non-asset requests
         if (!context.Request.Path.StartsWithSegments("/umbraco") && !IsAssetRequest(context.Request))
         {
-            analyticsService.TrackPageView();
+           await analyticsService.TrackPageViewAsync();
         }
 
         await _next(context);

@@ -1,44 +1,38 @@
+using DDEyC.Models;
+using DDEyC.Data;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using NPoco;
-using Umbraco.Cms.Infrastructure.Scoping;
-using DDEyC.Models;
+using System.Threading.Tasks;
 
 namespace DDEyC.Repositories
 {
     public class ViewAnalyticsRepository
     {
-        private readonly IScopeProvider _scopeProvider;
+        private readonly AnalyticsContext _context;
 
-        public ViewAnalyticsRepository(IScopeProvider scopeProvider)
+        public ViewAnalyticsRepository(AnalyticsContext context)
         {
-            _scopeProvider = scopeProvider;
+            _context = context;
         }
 
-        public void Add(AnalyticsView siteView)
+        public async Task AddAsync(AnalyticsView siteView)
         {
-            using (var scope = _scopeProvider.CreateScope())
-            {
-                scope.Database.Insert(siteView);
-                scope.Complete();
-            }
+            await _context.SiteViews.AddAsync(siteView);
+            await _context.SaveChangesAsync();
         }
 
-        public IEnumerable<AnalyticsView> GetAll()
+        public async Task<IEnumerable<AnalyticsView>> GetAllAsync()
         {
-            using (var scope = _scopeProvider.CreateScope())
-            {
-                return scope.Database.Fetch<AnalyticsView>();
-            }
+            return await _context.SiteViews.ToListAsync();
         }
 
-        public IEnumerable<AnalyticsView> GetByDateRange(DateTime start, DateTime end)
+        public async Task<IEnumerable<AnalyticsView>> GetByDateRangeAsync(DateTime start, DateTime end)
         {
-            using (var scope = _scopeProvider.CreateScope())
-            {
-                return scope.Database.Fetch<AnalyticsView>("WHERE Timestamp BETWEEN @0 AND @1", start, end);
-            }
+            return await _context.SiteViews
+                .Where(v => v.Timestamp >= start && v.Timestamp <= end)
+                .ToListAsync();
         }
     }
 }

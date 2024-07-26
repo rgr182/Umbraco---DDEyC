@@ -1,32 +1,29 @@
-using System;
 using Microsoft.AspNetCore.Mvc;
-using Umbraco.Cms.Web.BackOffice.Controllers;
-using Umbraco.Cms.Web.Common.Attributes;
+using Umbraco.Cms.Web.Common.Controllers;
 using DDEyC.Services;
 
-namespace YourNamespace.Controllers
+namespace DDEyC.Controllers
 {
-    [PluginController("Analytics")]
-    public class AnalyticsApiController : UmbracoAuthorizedApiController
+    public class ViewAnalyticsController : UmbracoApiController
     {
         private readonly ViewAnalyticsService _analyticsService;
 
-        public AnalyticsApiController(ViewAnalyticsService analyticsService)
+        public ViewAnalyticsController(ViewAnalyticsService analyticsService)
         {
             _analyticsService = analyticsService;
         }
 
         [HttpGet]
-        public IActionResult GetAllPageViews()
+        public async Task<IActionResult> GetAllPageViews()
         {
-            var pageViews = _analyticsService.GetAllPageViews();
+            var pageViews = await _analyticsService.GetAllPageViewsAsync();
             return Ok(pageViews);
         }
 
         [HttpGet]
-        public IActionResult GetPageViewsByDateRange(DateTime start, DateTime end)
+        public async Task<IActionResult> GetPageViewsByDateRange(DateTime start, DateTime end)
         {
-            var pageViews = _analyticsService.GetPageViewsByDateRange(start, end);
+            var pageViews = await _analyticsService.GetPageViewsByDateRangeAsync(start, end);
             return Ok(pageViews);
         }
     }

@@ -1,14 +1,15 @@
 using System;
-using NPoco;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DDEyC.Models
 {
-    [TableName("SiteViews")]
-    [PrimaryKey("Id")]
+    [Table("SiteViews")]
     public class AnalyticsView
     {
+        [Key]
         public int Id { get; set; }
-        public string Url { get; set; }
+        public required string Url { get; set; }
         public DateTime Timestamp { get; set; }
         public string UserAgent { get; set; }
         public string IpAddress { get; set; }
