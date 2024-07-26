@@ -16,16 +16,14 @@
                 <input id="start-date" 
                        class="date-picker-input"
                        type="date" 
-                       ng-model="vm.dateFilter.startDate" 
-                       ng-change="vm.updateStartDate(vm.dateFilter.startDate)">
+                       ng-model="vm.dateFilter.startDate">
             </div>
             <div class="date-picker-group">
                 <label for="end-date" class="date-picker-label">End Date</label>
                 <input id="end-date" 
                        class="date-picker-input"
                        type="date" 
-                       ng-model="vm.dateFilter.endDate" 
-                       ng-change="vm.updateEndDate(vm.dateFilter.endDate)">
+                       ng-model="vm.dateFilter.endDate">
             </div>
             <button class="update-button" ng-click="vm.loadPageViews()">Update</button>
         </div>

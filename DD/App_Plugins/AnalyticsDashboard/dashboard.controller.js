@@ -1,50 +1,57 @@
 (function () {
     'use strict';
 
-    function analyticsDashboardController($scope, $timeout, viewAnalyticsResource, notificationsService, dateHelper) {
+    function analyticsDashboardController($scope, $q, $timeout, $filter, viewAnalyticsResource, notificationsService, dateHelper) {
         var vm = this;
         vm.pageViews = [];
         vm.groupedPageViews = [];
         vm.loading = false;
         vm.dateFilter = {
-            startDate: dateHelper.convertToServerStringTime(moment().subtract(30, 'days')),
-            endDate: dateHelper.convertToServerStringTime(moment())
+            startDate: null,
+            endDate: null
         };
 
         vm.loadPageViews = loadPageViews;
         vm.getChartData = getChartData;
-        vm.updateStartDate = updateStartDate;
-        vm.updateEndDate = updateEndDate;
 
-        function updateStartDate(date) {
-            vm.dateFilter.startDate = date;
-        }
-
-        function updateEndDate(date) {
-            vm.dateFilter.endDate = date;
+        function formatDateForServer(date) {
+            return date ? dateHelper.convertToServerStringTime(moment(date)) : null;
         }
 
         function loadPageViews() {
-            console.log('loadPageViews called');
+            if (!vm.dateFilter.startDate || !vm.dateFilter.endDate) {
+                notificationsService.warning("Warning", "Please select both start and end dates.");
+                return $q.reject("Invalid date range");
+            }
+            
             vm.loading = true;
-            viewAnalyticsResource.getPageViewsByDateRange(vm.dateFilter.startDate, vm.dateFilter.endDate)
+            var startDate = formatDateForServer(vm.dateFilter.startDate);
+            var endDate = formatDateForServer(vm.dateFilter.endDate);
+            
+            return viewAnalyticsResource.getPageViewsByDateRange(startDate, endDate)
                 .then(function (response) {
-                    console.log('API response:', response);
                     vm.pageViews = response.data;
                     vm.groupedPageViews = groupPageViews(vm.pageViews);
+                    return response;
+                })
+                .catch(function (error) {
+                    notificationsService.error("Error", "Failed to load page views");
+                    return $q.reject(error);
+                })
+                .finally(function () {
                     vm.loading = false;
                     $timeout(createChart, 0);
-                }, function (error) {
-                    console.error('API error:', error);
-                    notificationsService.error("Error", "Failed to load page views");
-                    vm.loading = false;
                 });
         }
 
         function groupPageViews(pageViews) {
+            if (!Array.isArray(pageViews) || pageViews.length === 0) {
+                return [];
+            }
+
             var grouped = {};
             pageViews.forEach(function(view) {
-                var date = moment(view.timestamp).format('YYYY-MM-DD');
+                var date = $filter('date')(view.timestamp, 'yyyy-MM-dd');
                 if (!grouped[date]) {
                     grouped[date] = {
                         date: date,
@@ -84,12 +91,15 @@
         }
 
         function getChartData() {
-            console.log('getChartData called');
+            if (!Array.isArray(vm.pageViews) || vm.pageViews.length === 0) {
+                return { labels: [], datasets: [] };
+            }
+
             var groupedData = {};
             var pageUrls = new Set();
 
             vm.pageViews.forEach(function (view) {
-                var date = moment(view.timestamp).format('YYYY-MM-DD');
+                var date = $filter('date')(view.timestamp, 'yyyy-MM-dd');
                 if (!groupedData[date]) {
                     groupedData[date] = {};
                 }
@@ -119,21 +129,21 @@
         }
 
         function createChart() {
-            console.log('createChart called');
             var ctx = document.getElementById('pageViewsChart');
             if (!ctx) {
-                console.error('Chart canvas not found');
                 return;
             }
             var chartData = vm.getChartData();
-            console.log('Chart data:', chartData);
 
-            // Calculate the maximum value
             var maxValue = Math.max(...chartData.datasets.flatMap(dataset => dataset.data));
-            maxValue = Math.ceil(maxValue * 1.1); // Add 10% to the max value
+            maxValue = Math.ceil(maxValue * 1.1);
 
             if (vm.chart) {
                 vm.chart.destroy();
+            }
+
+            if (chartData.labels.length === 0) {
+                return;
             }
 
             vm.chart = new Chart(ctx, {
@@ -168,13 +178,16 @@
                     }
                 }
             });
-
-            console.log('Chart created with max value:', maxValue);
         }
 
-        console.log('Controller initialized');
-        $timeout(loadPageViews, 0);
+        function init() {
+            vm.dateFilter.startDate = new Date(moment().subtract(30, 'days'));
+            vm.dateFilter.endDate = new Date();
+            loadPageViews();
+        }
+
+        $timeout(init, 0);
     }
 
-    angular.module('umbraco').controller('AnalyticsDashboardController', ['$scope', '$timeout', 'viewAnalyticsResource', 'notificationsService', 'dateHelper', analyticsDashboardController]);
+    angular.module('umbraco').controller('AnalyticsDashboardController', ['$scope', '$q', '$timeout', '$filter', 'viewAnalyticsResource', 'notificationsService', 'dateHelper', analyticsDashboardController]);
 })();
