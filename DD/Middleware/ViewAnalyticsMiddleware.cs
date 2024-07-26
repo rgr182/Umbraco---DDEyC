@@ -16,13 +16,13 @@ namespace DDEyC.Middleware
 
         public async Task InvokeAsync(HttpContext context, ViewAnalyticsService analyticsService)
         {
-            // Only track page views for non-Umbraco requests and non-asset requests
-            if (!context.Request.Path.StartsWithSegments("/umbraco") && !IsAssetRequest(context.Request))
-            {
-                analyticsService.TrackPageView();
-            }
+        // Only track page views for non-Umbraco requests and non-asset requests
+        if (!context.Request.Path.StartsWithSegments("/umbraco") && !IsAssetRequest(context.Request))
+        {
+            analyticsService.TrackPageView();
+        }
 
-            await _next(context);
+        await _next(context);
         }
 
         private bool IsAssetRequest(HttpRequest request)
