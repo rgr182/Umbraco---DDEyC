@@ -1,7 +1,8 @@
 using Umbraco.Cms.Core.Composing;
-using Umbraco.Cms.Core.DependencyInjection;
+
 using Umbraco.Cms.Core.Sections;
 using Umbraco.Cms.Core.Services;
+
 
 namespace DDEyC.Composers
 {
@@ -11,7 +12,7 @@ namespace DDEyC.Composers
         {
             builder.Sections().Append<AnalyticsSection>();
 
-            builder.Components().Append<AddAnalyticsSectionToAdminUsers>();
+            builder.Services.AddTransient<IComponent, AddAnalyticsSectionToAdminUsers>();
         }
     }
 

@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using DDEyC.Data;
-using DDEyC.Services;
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 IConfiguration configuration = new ConfigurationBuilder()
@@ -40,19 +39,49 @@ app.UseStaticFiles();
 // Use session middleware
 app.UseSession();
 
-app.UseMiddleware<DDEyC.Middleware.ViewAnalyticsMiddleware>();
-await app.BootUmbracoAsync();
+app.UseExceptionHandler(errorApp =>
+{
+    errorApp.Run(async context =>
+    {
+        context.Response.StatusCode = (int)System.Net.HttpStatusCode.InternalServerError;
+        context.Response.ContentType = "application/json";
 
-app.UseUmbraco()
-    .WithMiddleware(u =>
-    {
-        u.UseBackOffice();
-        u.UseWebsite();
-    })
-    .WithEndpoints(u =>
-    {
-        u.UseInstallerEndpoints();
-        u.UseBackOfficeEndpoints();
-        u.UseWebsiteEndpoints();
+        var exceptionHandlerPathFeature = context.Features.Get<Microsoft.AspNetCore.Diagnostics.IExceptionHandlerPathFeature>();
+        var exception = exceptionHandlerPathFeature?.Error;
+
+        var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
+        logger.LogError(exception, "An unhandled exception occurred.");
+
+        await context.Response.WriteAsJsonAsync(new { error = "An unexpected error occurred. Please try again later." });
     });
-await app.RunAsync();
+});
+
+// Use the ViewAnalyticsMiddleware
+app.UseMiddleware<DDEyC.Middleware.ViewAnalyticsMiddleware>();
+
+try
+{
+    app.Logger.LogInformation("Starting Umbraco application");
+    await app.BootUmbracoAsync();
+    app.Logger.LogInformation("Umbraco application started successfully");
+
+    app.UseUmbraco()
+        .WithMiddleware(u =>
+        {
+            u.UseBackOffice();
+            u.UseWebsite();
+        })
+        .WithEndpoints(u =>
+        {
+            u.UseInstallerEndpoints();
+            u.UseBackOfficeEndpoints();
+            u.UseWebsiteEndpoints();
+        });
+
+    await app.RunAsync();
+}
+catch (Exception ex)
+{
+    app.Logger.LogError(ex, "An error occurred while starting the Umbraco application");
+    throw;
+}
