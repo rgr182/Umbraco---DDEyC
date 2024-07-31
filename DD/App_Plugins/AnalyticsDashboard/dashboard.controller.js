@@ -19,7 +19,7 @@
         vm.showPerPageOverallTotals = true;
         vm.showAllPagesOverallTotal = true;
         vm.showGraph = true;
-
+        vm.showPerPageViewsInGraph = true;
         vm.uniqueUrls = [];
         vm.selectedUrl = allPages;
         vm.loadPageViews = loadPageViews;
@@ -27,6 +27,9 @@
         vm.applyFilters = applyFilters;
         vm.updateChart = updateChart;
 
+        vm.isAllPages = function() {
+            return vm.selectedUrl === allPages;
+        };
         function formatDateForServer(date) {
             return date ? dateHelper.convertToServerStringTime(moment(date)) : null;
         }
@@ -149,8 +152,12 @@
         }
 
         function applyFilters() {
+            const isAllPages = vm.isAllPages();
+            if (!isAllPages) {
+                vm.showPerPageViewsInGraph = true;
+            }
             vm.filteredPageViews = (vm.groupedPageViews || []).filter(function(view) {
-                var urlMatch = vm.selectedUrl === allPages || view.url === vm.selectedUrl || 
+                var urlMatch = isAllPages || view.url === vm.selectedUrl || 
                                (view.isUrlTotal && view.url === 'Overall Total (' + vm.selectedUrl + ')') ||
                                (vm.selectedUrl !== allPages && view.isAllUrlsTotal);
                 
@@ -161,6 +168,12 @@
                 
                 return urlMatch && showView;
             });
+
+            // Add importance flags for styling
+            vm.filteredPageViews.forEach(function(view) {
+                view.isImportant = view.isDailyTotal || view.isUrlTotal || view.isAllUrlsTotal;
+            });
+
             updateChart();
         }
 
@@ -173,16 +186,18 @@
             var pageUrls = new Set();
 
             vm.groupedPageViews.forEach(function (view) {
-                if (view.isPerPage || view.isDailyTotal) {
+                if ((vm.showPerPageViewsInGraph && view.isPerPage) || 
+                    (!vm.showPerPageViewsInGraph && view.isDailyTotal)) {
                     if (vm.selectedUrl === allPages || view.url === vm.selectedUrl) {
                         if (!groupedData[view.date]) {
                             groupedData[view.date] = {};
                         }
-                        if (!groupedData[view.date][view.url]) {
-                            groupedData[view.date][view.url] = 0;
+                        var key = vm.showPerPageViewsInGraph ? view.url : 'Total';
+                        if (!groupedData[view.date][key]) {
+                            groupedData[view.date][key] = 0;
                         }
-                        groupedData[view.date][view.url] += view.views;
-                        pageUrls.add(view.url);
+                        groupedData[view.date][key] += view.views;
+                        pageUrls.add(key);
                     }
                 }
             });
@@ -198,12 +213,19 @@
                 chartData.datasets.push({
                     label: url,
                     data: sortedDates.map(date => groupedData[date][url] || 0),
-                    backgroundColor: getDistinctColor(index, urlArray.length),
+                    backgroundColor: vm.showPerPageViewsInGraph ? 
+                        getDistinctColor(index, urlArray.length) : 
+                        'rgba(75, 192, 192, 0.6)',
+                    borderColor: vm.showPerPageViewsInGraph ? 
+                        getDistinctColor(index, urlArray.length) : 
+                        'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
                 });
             });
 
             return chartData;
         }
+
 
         function getDistinctColor(index, total) {
             return `hsl(${(index * 360 / total) % 360}, 70%, 50%)`;
@@ -230,10 +252,10 @@
                 maintainAspectRatio: false,
                 scales: {
                     x: {
-                        stacked: true,
+                        stacked: vm.showPerPageViewsInGraph,
                     },
                     y: {
-                        stacked: true,
+                        stacked: vm.showPerPageViewsInGraph,
                         beginAtZero: true,
                         ticks: {
                             precision: 0
@@ -245,23 +267,15 @@
                         display: false,
                     },
                     tooltip: {
-                        mode: 'index',
+                        mode: vm.showPerPageViewsInGraph ? 'index' : 'point',
                         intersect: false,
-                        filter: function(tooltipItem) {
-                            return tooltipItem.raw !== 0;
-                        },
                         callbacks: {
                             title: function(tooltipItems) {
                                 return tooltipItems[0].label;
                             },
                             label: function(context) {
-                                var label = context.dataset.label || '';
-                                if (label) {
-                                    label += ': ';
-                                }
-                                if (context.parsed.y !== null) {
-                                    label += context.parsed.y;
-                                }
+                                var label = vm.showPerPageViewsInGraph ? context.dataset.label : 'Total Views';
+                                label += ': ' + context.parsed.y;
                                 return label;
                             }
                         }

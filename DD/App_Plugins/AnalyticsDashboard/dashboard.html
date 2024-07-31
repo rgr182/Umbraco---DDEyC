@@ -50,6 +50,10 @@
             <input type="checkbox" ng-model="vm.showGraph" ng-change="vm.updateChart()">
             Show Graph
         </label>
+        <label class="toggle-label" ng-if="vm.isAllPages()">
+            <input type="checkbox" ng-model="vm.showPerPageViewsInGraph" ng-change="vm.updateChart()">
+            Show Per-Page Views in Graph
+        </label>
     </div>
 
     <div class="chart-container" ng-show="vm.showGraph">
@@ -70,7 +74,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="view in vm.filteredPageViews">
+                <tr ng-repeat="view in vm.filteredPageViews" ng-class="{'important-row': view.isImportant}">
                     <td>{{view.date}}</td>
                     <td>{{view.url}}</td>
                     <td>{{view.views}}</td>
