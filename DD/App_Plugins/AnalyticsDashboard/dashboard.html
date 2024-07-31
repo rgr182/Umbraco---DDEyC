@@ -1,40 +1,59 @@
 <!DOCTYPE html>
-<html ng-app="umbraco">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Analytics Dashboard</title>
     <link rel="stylesheet" href="/App_Plugins/AnalyticsDashboard/analyticsDashboard.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
 </head>
 <body>
-    <div ng-controller="AnalyticsDashboardController as vm" class="dashboard-container">
+    <div class="dashboard-container" ng-controller="AnalyticsDashboardController as vm">
         <h1 class="dashboard-title">Analytics Dashboard</h1>
 
         <div class="date-picker-container">
             <div class="date-picker-group">
-                <label for="start-date" class="date-picker-label">Start Date</label>
-                <input id="start-date" 
-                       class="date-picker-input"
-                       type="date" 
-                       ng-model="vm.dateFilter.startDate">
+                <label class="date-picker-label">Start Date</label>
+                <input type="date" class="date-picker-input" ng-model="vm.dateFilter.startDate">
             </div>
             <div class="date-picker-group">
-                <label for="end-date" class="date-picker-label">End Date</label>
-                <input id="end-date" 
-                       class="date-picker-input"
-                       type="date" 
-                       ng-model="vm.dateFilter.endDate">
+                <label class="date-picker-label">End Date</label>
+                <input type="date" class="date-picker-input" ng-model="vm.dateFilter.endDate">
             </div>
             <button class="update-button" ng-click="vm.loadPageViews()">Update</button>
         </div>
 
-        <div class="chart-container">
+        <div class="filter-container">
+            <div class="filter-group">
+                <label class="filter-label">Filter by URL:</label>
+                <input type="text" class="filter-input" ng-model="vm.urlFilter" ng-change="vm.applyFilters()">
+            </div>
+        </div>
+        <div class="toggle-container">
+            <label class="toggle-label">
+                <input type="checkbox" ng-model="vm.showPerPageViewsInTable" ng-change="vm.applyFilters()">
+                Show Per-Page Views in Table
+            </label>
+            <label class="toggle-label">
+                <input type="checkbox" ng-model="vm.showPerPageViewsInGraph" ng-change="vm.toggleGraphVisibility()">
+                Show Per-Page Views in Graph
+            </label>
+            <label class="toggle-label">
+                <input type="checkbox" ng-model="vm.showDailyTotals" ng-change="vm.toggleGraphVisibility()">
+                Show Daily Totals
+            </label>
+            <label class="toggle-label">
+                <input type="checkbox" ng-model="vm.showOverallTotal" ng-change="vm.applyFilters()">
+                Show Overall Total
+            </label>
+        </div>
+    
+        <div id="chartContainer" class="chart-container">
             <h2 class="chart-title">Page Views Chart</h2>
-            <div style="height: 400px; width: 100%;">
+            <div style="position: relative; height: 400px;">
                 <canvas id="pageViewsChart"></canvas>
             </div>
         </div>
-
         <div class="table-container">
             <h2 class="chart-title">Detailed Page Views</h2>
             <table class="data-table">
@@ -46,8 +65,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng-repeat="view in vm.groupedPageViews" 
-                        ng-class="{'total-row': view.isTotal}">
+                    <tr ng-repeat="view in vm.filteredPageViews" ng-class="{'total-row': view.isTotal}">
                         <td>{{ view.date }}</td>
                         <td>{{ view.url }}</td>
                         <td>{{ view.views }}</td>
@@ -57,8 +75,6 @@
         </div>
     </div>
 
-    <!-- Include necessary scripts here -->
-    <script src="/umbraco/lib/jquery/jquery.min.js"></script>
     <script src="/umbraco/lib/angular/angular.min.js"></script>
     <script src="/App_Plugins/AnalyticsDashboard/dashboard.controller.js"></script>
 </body>
