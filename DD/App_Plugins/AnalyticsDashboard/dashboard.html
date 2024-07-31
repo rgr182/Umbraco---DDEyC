@@ -25,21 +25,27 @@
 
         <div class="filter-container">
             <div class="filter-group">
-                <label class="filter-label">Filter by URL:</label>
-                <input type="text" class="filter-input" ng-model="vm.urlFilter" ng-change="vm.applyFilters()">
+                <label for="urlFilter" class="filter-label">Filter by URL:</label>
+                <select id="urlFilter" 
+                        ng-model="vm.selectedUrl" 
+                        ng-change="vm.applyFilters()"
+                        class="filter-input">
+                    <option ng-repeat="url in vm.uniqueUrls" value="{{url}}">{{url}}</option>
+                </select>
             </div>
         </div>
+
         <div class="toggle-container">
             <label class="toggle-label">
                 <input type="checkbox" ng-model="vm.showPerPageViewsInTable" ng-change="vm.applyFilters()">
                 Show Per-Page Views in Table
             </label>
             <label class="toggle-label">
-                <input type="checkbox" ng-model="vm.showPerPageViewsInGraph" ng-change="vm.toggleGraphVisibility()">
+                <input type="checkbox" ng-model="vm.showPerPageViewsInGraph" ng-change="vm.updateChart()">
                 Show Per-Page Views in Graph
             </label>
             <label class="toggle-label">
-                <input type="checkbox" ng-model="vm.showDailyTotals" ng-change="vm.toggleGraphVisibility()">
+                <input type="checkbox" ng-model="vm.showDailyTotals" ng-change="vm.applyFilters()">
                 Show Daily Totals
             </label>
             <label class="toggle-label">
@@ -47,13 +53,14 @@
                 Show Overall Total
             </label>
         </div>
-    
-        <div id="chartContainer" class="chart-container">
+
+        <div class="chart-container">
             <h2 class="chart-title">Page Views Chart</h2>
             <div style="position: relative; height: 400px;">
                 <canvas id="pageViewsChart"></canvas>
             </div>
         </div>
+
         <div class="table-container">
             <h2 class="chart-title">Detailed Page Views</h2>
             <table class="data-table">

@@ -2,6 +2,8 @@
     'use strict';
 
     function analyticsDashboardController($scope, $q, $timeout, $filter, viewAnalyticsResource, notificationsService, dateHelper) {
+
+        const allPages="All Pages";
         var vm = this;
         vm.pageViews = [];
         vm.filteredPageViews = [];
@@ -16,7 +18,8 @@
         vm.showPerPageViewsInGraph = true;
         vm.showDailyTotals = true;
         vm.showOverallTotal = true;
-
+        vm.uniqueUrls = [];
+        vm.selectedUrl = allPages;
         vm.loadPageViews = loadPageViews;
         vm.getChartData = getChartData;
         vm.applyFilters = applyFilters;
@@ -25,7 +28,14 @@
         function formatDateForServer(date) {
             return date ? dateHelper.convertToServerStringTime(moment(date)) : null;
         }
-
+        function getUniqueUrls() {
+            vm.uniqueUrls = Array.from(new Set(vm.pageViews.map(view => view.url)));
+            vm.uniqueUrls.sort();
+            vm.uniqueUrls.unshift('All Pages'); // Add 'All Pages' option at the beginning
+            if (!vm.uniqueUrls.includes(vm.selectedUrl)) {
+                vm.selectedUrl = 'All Pages';
+            }
+        }
         function loadPageViews() {
             if (!vm.dateFilter.startDate || !vm.dateFilter.endDate) {
                 notificationsService.warning("Warning", "Please select both start and end dates.");
@@ -40,6 +50,7 @@
                 .then(function (response) {
                     vm.pageViews = response.data;
                     vm.groupedPageViews = groupPageViews(vm.pageViews);
+                    getUniqueUrls();
                     applyFilters();
                     return response;
                 })
@@ -48,6 +59,8 @@
                     vm.pageViews = [];
                     vm.groupedPageViews = [];
                     vm.filteredPageViews = [];
+                    vm.uniqueUrls = ['All Pages'];
+                    vm.selectedUrl = 'All Pages';
                     return $q.reject(error);
                 })
                 .finally(function () {
@@ -55,7 +68,7 @@
                     $timeout(updateChart, 0);
                 });
         }
-
+        
         function groupPageViews(pageViews) {
             if (!Array.isArray(pageViews) || pageViews.length === 0) {
                 return [];
@@ -114,7 +127,7 @@
 
         function applyFilters() {
             vm.filteredPageViews = (vm.groupedPageViews || []).filter(function(view) {
-                var urlMatch = !vm.urlFilter || view.url.toLowerCase().includes(vm.urlFilter.toLowerCase());
+                var urlMatch = vm.selectedUrl === 'All Pages' || view.url === vm.selectedUrl;
                 var showView = (vm.showPerPageViewsInTable && view.isPerPage) ||
                                (vm.showDailyTotals && view.isDailyTotal) ||
                                (vm.showOverallTotal && view.isOverallTotal);
@@ -134,14 +147,17 @@
             vm.groupedPageViews.forEach(function (view) {
                 if ((vm.showPerPageViewsInGraph && view.isPerPage) || 
                     (vm.showDailyTotals && view.isDailyTotal)) {
-                    if (!groupedData[view.date]) {
-                        groupedData[view.date] = {};
+                    // Apply URL filter
+                    if (vm.selectedUrl === 'All Pages' || view.url === vm.selectedUrl) {
+                        if (!groupedData[view.date]) {
+                            groupedData[view.date] = {};
+                        }
+                        if (!groupedData[view.date][view.url]) {
+                            groupedData[view.date][view.url] = 0;
+                        }
+                        groupedData[view.date][view.url] += view.views;
+                        pageUrls.add(view.url);
                     }
-                    if (!groupedData[view.date][view.url]) {
-                        groupedData[view.date][view.url] = 0;
-                    }
-                    groupedData[view.date][view.url] += view.views;
-                    pageUrls.add(view.url);
                 }
             });
 
@@ -245,6 +261,7 @@
         function init() {
             vm.dateFilter.startDate = new Date(moment().subtract(30, 'days'));
             vm.dateFilter.endDate = new Date();
+            vm.selectedUrl = 'All Pages';
             loadPageViews();
         }
 
