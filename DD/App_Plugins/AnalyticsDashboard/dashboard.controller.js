@@ -3,7 +3,7 @@
 
     function analyticsDashboardController($scope, $q, $timeout, $filter, viewAnalyticsResource, notificationsService, dateHelper) {
 
-        const allPages="All Pages";
+        const allPages = "All Pages";
         var vm = this;
         vm.pageViews = [];
         vm.filteredPageViews = [];
@@ -15,9 +15,11 @@
         };
         vm.urlFilter = '';
         vm.showPerPageViewsInTable = true;
-        vm.showPerPageViewsInGraph = true;
-        vm.showDailyTotals = true;
-        vm.showOverallTotal = true;
+        vm.showDailyTotalsInTable = true;
+        vm.showPerPageOverallTotals = true;
+        vm.showAllPagesOverallTotal = true;
+        vm.showGraph = true;
+
         vm.uniqueUrls = [];
         vm.selectedUrl = allPages;
         vm.loadPageViews = loadPageViews;
@@ -28,14 +30,16 @@
         function formatDateForServer(date) {
             return date ? dateHelper.convertToServerStringTime(moment(date)) : null;
         }
+
         function getUniqueUrls() {
             vm.uniqueUrls = Array.from(new Set(vm.pageViews.map(view => view.url)));
             vm.uniqueUrls.sort();
-            vm.uniqueUrls.unshift('All Pages'); // Add 'All Pages' option at the beginning
+            vm.uniqueUrls.unshift(allPages);
             if (!vm.uniqueUrls.includes(vm.selectedUrl)) {
-                vm.selectedUrl = 'All Pages';
+                vm.selectedUrl = allPages;
             }
         }
+
         function loadPageViews() {
             if (!vm.dateFilter.startDate || !vm.dateFilter.endDate) {
                 notificationsService.warning("Warning", "Please select both start and end dates.");
@@ -59,8 +63,8 @@
                     vm.pageViews = [];
                     vm.groupedPageViews = [];
                     vm.filteredPageViews = [];
-                    vm.uniqueUrls = ['All Pages'];
-                    vm.selectedUrl = 'All Pages';
+                    vm.uniqueUrls = [allPages];
+                    vm.selectedUrl = allPages;
                     return $q.reject(error);
                 })
                 .finally(function () {
@@ -76,6 +80,8 @@
 
             var grouped = {};
             var overallTotal = 0;
+            var urlTotals = {};
+
             pageViews.forEach(function(view) {
                 var date = $filter('date')(view.timestamp, 'yyyy-MM-dd');
                 if (!grouped[date]) {
@@ -91,6 +97,11 @@
                 grouped[date].urls[view.url]++;
                 grouped[date].totalViews++;
                 overallTotal++;
+
+                if (!urlTotals[view.url]) {
+                    urlTotals[view.url] = 0;
+                }
+                urlTotals[view.url]++;
             });
             
             var result = Object.values(grouped).flatMap(day => 
@@ -109,12 +120,24 @@
                 })
             );
 
+            Object.entries(urlTotals).forEach(([url, total]) => {
+                result.push({
+                    date: '',
+                    url: 'Overall Total (' + url + ')',
+                    views: total,
+                    isTotal: true,
+                    isOverallTotal: true,
+                    isUrlTotal: true
+                });
+            });
+
             result.push({
                 date: '',
-                url: 'Overall Total',
+                url: 'Overall Total (All URLs)',
                 views: overallTotal,
                 isTotal: true,
-                isOverallTotal: true
+                isOverallTotal: true,
+                isAllUrlsTotal: true
             });
 
             return result.sort((a, b) => {
@@ -127,10 +150,15 @@
 
         function applyFilters() {
             vm.filteredPageViews = (vm.groupedPageViews || []).filter(function(view) {
-                var urlMatch = vm.selectedUrl === 'All Pages' || view.url === vm.selectedUrl;
-                var showView = (vm.showPerPageViewsInTable && view.isPerPage) ||
-                               (vm.showDailyTotals && view.isDailyTotal) ||
-                               (vm.showOverallTotal && view.isOverallTotal);
+                var urlMatch = vm.selectedUrl === allPages || view.url === vm.selectedUrl || 
+                               (view.isUrlTotal && view.url === 'Overall Total (' + vm.selectedUrl + ')') ||
+                               (vm.selectedUrl !== allPages && view.isAllUrlsTotal);
+                
+                var showView = (vm.showPerPageViewsInTable && view.isPerPage && !view.isTotal) ||
+                               (vm.showDailyTotalsInTable && view.isDailyTotal) ||
+                               (vm.showPerPageOverallTotals && view.isUrlTotal) ||
+                               (vm.showAllPagesOverallTotal && view.isAllUrlsTotal);
+                
                 return urlMatch && showView;
             });
             updateChart();
@@ -145,10 +173,8 @@
             var pageUrls = new Set();
 
             vm.groupedPageViews.forEach(function (view) {
-                if ((vm.showPerPageViewsInGraph && view.isPerPage) || 
-                    (vm.showDailyTotals && view.isDailyTotal)) {
-                    // Apply URL filter
-                    if (vm.selectedUrl === 'All Pages' || view.url === vm.selectedUrl) {
+                if (view.isPerPage || view.isDailyTotal) {
+                    if (vm.selectedUrl === allPages || view.url === vm.selectedUrl) {
                         if (!groupedData[view.date]) {
                             groupedData[view.date] = {};
                         }
@@ -189,17 +215,14 @@
                 return;
             }
 
-            // Hide chart if both per-page views and daily totals are off
-            if (!vm.showPerPageViewsInGraph && !vm.showDailyTotals) {
+            if (!vm.showGraph) {
                 if (vm.chart) {
                     vm.chart.destroy();
                     vm.chart = null;
                 }
-                ctx.style.display = 'none';
                 return;
             }
 
-            ctx.style.display = 'block';
             var chartData = vm.getChartData();
 
             var chartOptions = {
@@ -219,17 +242,17 @@
                 },
                 plugins: {
                     legend: {
-                        display: false, // Remove the legend
+                        display: false,
                     },
                     tooltip: {
                         mode: 'index',
                         intersect: false,
                         filter: function(tooltipItem) {
-                            return tooltipItem.raw !== 0; // Only show non-zero values
+                            return tooltipItem.raw !== 0;
                         },
                         callbacks: {
                             title: function(tooltipItems) {
-                                return tooltipItems[0].label; // Show date
+                                return tooltipItems[0].label;
                             },
                             label: function(context) {
                                 var label = context.dataset.label || '';
@@ -258,10 +281,11 @@
                 });
             }
         }
+
         function init() {
             vm.dateFilter.startDate = new Date(moment().subtract(30, 'days'));
             vm.dateFilter.endDate = new Date();
-            vm.selectedUrl = 'All Pages';
+            vm.selectedUrl = allPages;
             loadPageViews();
         }
 

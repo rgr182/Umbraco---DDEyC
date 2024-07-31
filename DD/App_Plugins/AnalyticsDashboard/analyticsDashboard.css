@@ -114,3 +114,17 @@
     font-weight: bold;
     background-color: #e6e6e6;
 }
+/* ... (previous styles remain unchanged) ... */
+
+.toggle-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    margin-bottom: 20px;
+}
+
+.toggle-label {
+    margin-right: 20px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;}
