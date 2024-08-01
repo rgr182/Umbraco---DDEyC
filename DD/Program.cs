@@ -14,6 +14,7 @@ builder.CreateUmbracoBuilder()
     .AddDeliveryApi()
     .AddComposers()
     .Build();
+
 builder.Services.AddMemoryCache();
 builder.Services.AddDbContext<AnalyticsContext>(options =>
     options.UseSqlServer(

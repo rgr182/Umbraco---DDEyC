@@ -1,11 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
-using Umbraco.Cms.Web.Common.Controllers;
+using Umbraco.Cms.Web.BackOffice.Controllers;
 using DDEyC.Services;
-
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace DDEyC.Controllers
 {
-    public class ViewAnalyticsController : UmbracoApiController
+    public class ViewAnalyticsController : UmbracoAuthorizedApiController
     {
         private readonly ViewAnalyticsService _analyticsService;
         private readonly ILogger<ViewAnalyticsController> _logger;
@@ -17,15 +18,20 @@ namespace DDEyC.Controllers
         }
 
         [HttpGet]
+        [Route("umbraco/backoffice/api/ViewAnalytics/GetAllPageViews")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAllPageViews()
         {
             try
             {
                 var pageViews = await _analyticsService.GetAllPageViewsAsync();
-                return Ok(pageViews);
+                return Content(JsonConvert.SerializeObject(pageViews, new JsonSerializerSettings
+                {
+                    ContractResolver = new CamelCasePropertyNamesContractResolver()
+                }), "application/json");
             }
             catch (Exception ex)
             {
@@ -35,8 +41,10 @@ namespace DDEyC.Controllers
         }
 
         [HttpGet]
+        [Route("umbraco/backoffice/api/ViewAnalytics/GetPageViewsByDateRange")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetPageViewsByDateRange([FromQuery] DateTime start, [FromQuery] DateTime end)
         {
@@ -48,7 +56,10 @@ namespace DDEyC.Controllers
             try
             {
                 var pageViews = await _analyticsService.GetPageViewsByDateRangeAsync(start, end);
-                return Ok(pageViews);
+                return Content(JsonConvert.SerializeObject(pageViews, new JsonSerializerSettings
+                {
+                    ContractResolver = new CamelCasePropertyNamesContractResolver()
+                }), "application/json");
             }
             catch (Exception ex)
             {
