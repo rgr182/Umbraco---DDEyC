@@ -2,16 +2,14 @@
     'use strict';
 
     function analyticsDashboardController($scope, $q, $timeout, $filter, viewAnalyticsResource, notificationsService, dateHelper) {
-
-        const allPages = "All Pages";
         var vm = this;
         vm.pageViews = [];
         vm.filteredPageViews = [];
         vm.groupedPageViews = [];
         vm.loading = false;
         vm.dateFilter = {
-            startDate: null,
-            endDate: null
+            startDate: moment().subtract(30, 'days').toDate(),
+            endDate: new Date()
         };
         vm.urlFilter = '';
         vm.showPerPageViewsInTable = true;
@@ -21,160 +19,160 @@
         vm.showGraph = true;
         vm.showPerPageViewsInGraph = true;
         vm.uniqueUrls = [];
-        vm.selectedUrl = allPages;
+        vm.selectedUrl = 'All Pages';
+
         vm.loadPageViews = loadPageViews;
         vm.getChartData = getChartData;
         vm.applyFilters = applyFilters;
-        vm.updateChart = updateChart;
+        vm.updateChart = _.debounce(updateChart, 250);
+        vm.isAllPages = isAllPages;
 
-        vm.isAllPages = function() {
-            return vm.selectedUrl === allPages;
-        };
+        function isAllPages() {
+            return vm.selectedUrl === 'All Pages';
+        }
+
+        function loadPageViews() {
+            if (!validateDateRange()) return $q.reject("Invalid date range");
+            
+            vm.loading = true;
+            var startDate = getStartOfDay(vm.dateFilter.startDate);
+            var endDate = getEndOfDay(vm.dateFilter.endDate);
+            
+            return viewAnalyticsResource.getPageViewsByDateRange(startDate, endDate)
+                .then(handlePageViewsResponse)
+                .catch(handlePageViewsError)
+                .finally(() => {
+                    vm.loading = false;
+                    $timeout(vm.updateChart, 0);
+                });
+        }
+        function getStartOfDay(date) {
+            return moment(date).startOf('day').toISOString();
+        }
+
+        function getEndOfDay(date) {
+            return moment(date).endOf('day').toISOString();
+        }
+        function validateDateRange() {
+            if (!vm.dateFilter.startDate || !vm.dateFilter.endDate) {
+                notificationsService.warning("Warning", "Please select both start and end dates.");
+                return false;
+            }
+            return true;
+        }
+
         function formatDateForServer(date) {
             return date ? dateHelper.convertToServerStringTime(moment(date)) : null;
         }
 
+        function handlePageViewsResponse(response) {
+            vm.pageViews = response.data.map(view => ({
+                ...view,
+                timestamp: moment.utc(view.timestamp).local().toDate()
+            }));
+            vm.groupedPageViews = groupPageViews(vm.pageViews);
+            getUniqueUrls();
+            applyFilters();
+            return response;
+        }
+
+        function handlePageViewsError(error) {
+            notificationsService.error("Error", "Failed to load page views: " + (error.message || 'Unknown error'));
+            resetViewData();
+            return $q.reject(error);
+        }
+
+        function resetViewData() {
+            vm.pageViews = [];
+            vm.groupedPageViews = [];
+            vm.filteredPageViews = [];
+            vm.uniqueUrls = ['All Pages'];
+            vm.selectedUrl = 'All Pages';
+        }
+
         function getUniqueUrls() {
-            vm.uniqueUrls = Array.from(new Set(vm.pageViews.map(view => view.url)));
-            vm.uniqueUrls.sort();
-            vm.uniqueUrls.unshift(allPages);
+            vm.uniqueUrls = ['All Pages', ...new Set(vm.pageViews.map(view => view.url))].sort();
             if (!vm.uniqueUrls.includes(vm.selectedUrl)) {
-                vm.selectedUrl = allPages;
+                vm.selectedUrl = 'All Pages';
             }
         }
 
-        function loadPageViews() {
-            if (!vm.dateFilter.startDate || !vm.dateFilter.endDate) {
-                notificationsService.warning("Warning", "Please select both start and end dates.");
-                return $q.reject("Invalid date range");
-            }
-            
-            vm.loading = true;
-            var startDate = formatDateForServer(vm.dateFilter.startDate);
-            var endDate = formatDateForServer(vm.dateFilter.endDate);
-            
-            return viewAnalyticsResource.getPageViewsByDateRange(startDate, endDate)
-                .then(function (response) {
-                    vm.pageViews = response.data;
-                    vm.groupedPageViews = groupPageViews(vm.pageViews);
-                    getUniqueUrls();
-                    applyFilters();
-                    return response;
-                })
-                .catch(function (error) {
-                    notificationsService.error("Error", "Failed to load page views: " + (error.message || 'Unknown error'));
-                    vm.pageViews = [];
-                    vm.groupedPageViews = [];
-                    vm.filteredPageViews = [];
-                    vm.uniqueUrls = [allPages];
-                    vm.selectedUrl = allPages;
-                    return $q.reject(error);
-                })
-                .finally(function () {
-                    vm.loading = false;
-                    $timeout(updateChart, 0);
-                });
-        }
-        
         function groupPageViews(pageViews) {
-            if (!Array.isArray(pageViews) || pageViews.length === 0) {
-                return [];
-            }
+            if (!Array.isArray(pageViews) || pageViews.length === 0) return [];
 
-            var grouped = {};
-            var overallTotal = 0;
-            var urlTotals = {};
-
-            pageViews.forEach(function(view) {
-                var date = $filter('date')(view.timestamp, 'yyyy-MM-dd');
-                if (!grouped[date]) {
-                    grouped[date] = {
-                        date: date,
-                        urls: {},
-                        totalViews: 0
-                    };
+            const grouped = pageViews.reduce((acc, view) => {
+                const date = moment(view.timestamp).format('YYYY-MM-DD');
+                if (!acc[date]) {
+                    acc[date] = { date, urls: {}, totalViews: 0 };
                 }
-                if (!grouped[date].urls[view.url]) {
-                    grouped[date].urls[view.url] = 0;
-                }
-                grouped[date].urls[view.url]++;
-                grouped[date].totalViews++;
-                overallTotal++;
+                acc[date].urls[view.url] = (acc[date].urls[view.url] || 0) + 1;
+                acc[date].totalViews++;
+                return acc;
+            }, {});
 
-                if (!urlTotals[view.url]) {
-                    urlTotals[view.url] = 0;
-                }
-                urlTotals[view.url]++;
-            });
-            
-            var result = Object.values(grouped).flatMap(day => 
-                Object.entries(day.urls).map(([url, views]) => ({
-                    date: day.date,
-                    url: url,
-                    views: views,
-                    isTotal: false,
-                    isPerPage: true
-                })).concat({
-                    date: day.date,
-                    url: 'Total (' + day.date + ')',
-                    views: day.totalViews,
-                    isTotal: true,
-                    isDailyTotal: true
-                })
-            );
+            const urlTotals = pageViews.reduce((acc, view) => {
+                acc[view.url] = (acc[view.url] || 0) + 1;
+                return acc;
+            }, {});
 
-            Object.entries(urlTotals).forEach(([url, total]) => {
-                result.push({
+            const overallTotal = pageViews.length;
+
+            return [
+                ...Object.entries(grouped).flatMap(([date, day]) => [
+                    ...Object.entries(day.urls).map(([url, views]) => ({
+                        date,
+                        url,
+                        views,
+                        isPerPage: true,
+                        isTotal: false
+                    })),
+                    {
+                        date,
+                        url: `Total (${date})`,
+                        views: day.totalViews,
+                        isDailyTotal: true,
+                        isTotal: true
+                    }
+                ]),
+                ...Object.entries(urlTotals).map(([url, total]) => ({
                     date: '',
-                    url: 'Overall Total (' + url + ')',
+                    url: `Overall Total (${url})`,
                     views: total,
-                    isTotal: true,
+                    isUrlTotal: true,
                     isOverallTotal: true,
-                    isUrlTotal: true
-                });
-            });
-
-            result.push({
-                date: '',
-                url: 'Overall Total (All URLs)',
-                views: overallTotal,
-                isTotal: true,
-                isOverallTotal: true,
-                isAllUrlsTotal: true
-            });
-
-            return result.sort((a, b) => {
-                if (a.date !== b.date) return a.date.localeCompare(b.date);
-                if (a.isTotal) return 1;
-                if (b.isTotal) return -1;
-                return a.url.localeCompare(b.url);
-            });
+                    isTotal: true
+                })),
+                {
+                    date: '',
+                    url: 'Overall Total (All URLs)',
+                    views: overallTotal,
+                    isAllUrlsTotal: true,
+                    isOverallTotal: true,
+                    isTotal: true
+                }
+            ].sort((a, b) => a.date.localeCompare(b.date) || (a.isTotal ? 1 : -1) || a.url.localeCompare(b.url));
         }
 
         function applyFilters() {
-            const isAllPages = vm.isAllPages();
-            if (!isAllPages) {
+            const isAllPagesSelected = isAllPages();
+            if (!isAllPagesSelected) {
                 vm.showPerPageViewsInGraph = true;
             }
-            vm.filteredPageViews = (vm.groupedPageViews || []).filter(function(view) {
-                var urlMatch = isAllPages || view.url === vm.selectedUrl || 
-                               (view.isUrlTotal && view.url === 'Overall Total (' + vm.selectedUrl + ')') ||
-                               (vm.selectedUrl !== allPages && view.isAllUrlsTotal);
-                
-                var showView = (vm.showPerPageViewsInTable && view.isPerPage && !view.isTotal) ||
-                               (vm.showDailyTotalsInTable && view.isDailyTotal) ||
-                               (vm.showPerPageOverallTotals && view.isUrlTotal) ||
-                               (vm.showAllPagesOverallTotal && view.isAllUrlsTotal);
-                
-                return urlMatch && showView;
-            });
+            vm.filteredPageViews = vm.groupedPageViews.filter(view => 
+                (isAllPagesSelected || view.url === vm.selectedUrl || 
+                 (view.isUrlTotal && view.url === `Overall Total (${vm.selectedUrl})`) ||
+                 (!isAllPagesSelected && view.isAllUrlsTotal)) &&
+                ((vm.showPerPageViewsInTable && view.isPerPage && !view.isTotal) ||
+                 (vm.showDailyTotalsInTable && view.isDailyTotal) ||
+                 (vm.showPerPageOverallTotals && view.isUrlTotal) ||
+                 (vm.showAllPagesOverallTotal && view.isAllUrlsTotal))
+            );
 
-            // Add importance flags for styling
-            vm.filteredPageViews.forEach(function(view) {
+            vm.filteredPageViews.forEach(view => {
                 view.isImportant = view.isDailyTotal || view.isUrlTotal || view.isAllUrlsTotal;
             });
 
-            updateChart();
+            vm.updateChart();
         }
 
         function getChartData() {
@@ -182,60 +180,40 @@
                 return { labels: [], datasets: [] };
             }
 
-            var groupedData = {};
-            var pageUrls = new Set();
-
-            vm.groupedPageViews.forEach(function (view) {
+            const groupedData = vm.groupedPageViews.reduce((acc, view) => {
                 if ((vm.showPerPageViewsInGraph && view.isPerPage) || 
                     (!vm.showPerPageViewsInGraph && view.isDailyTotal)) {
-                    if (vm.selectedUrl === allPages || view.url === vm.selectedUrl) {
-                        if (!groupedData[view.date]) {
-                            groupedData[view.date] = {};
-                        }
-                        var key = vm.showPerPageViewsInGraph ? view.url : 'Total';
-                        if (!groupedData[view.date][key]) {
-                            groupedData[view.date][key] = 0;
-                        }
-                        groupedData[view.date][key] += view.views;
-                        pageUrls.add(key);
+                    if (isAllPages() || view.url === vm.selectedUrl) {
+                        if (!acc[view.date]) acc[view.date] = {};
+                        const key = vm.showPerPageViewsInGraph ? view.url : 'Total';
+                        acc[view.date][key] = (acc[view.date][key] || 0) + view.views;
                     }
                 }
-            });
+                return acc;
+            }, {});
 
-            var sortedDates = Object.keys(groupedData).sort();
-            var chartData = {
+            const sortedDates = Object.keys(groupedData).sort();
+            const pageUrls = new Set(Object.values(groupedData).flatMap(Object.keys));
+
+            return {
                 labels: sortedDates,
-                datasets: []
-            };
-
-            var urlArray = Array.from(pageUrls);
-            urlArray.forEach((url, index) => {
-                chartData.datasets.push({
+                datasets: Array.from(pageUrls).map((url, index) => ({
                     label: url,
                     data: sortedDates.map(date => groupedData[date][url] || 0),
-                    backgroundColor: vm.showPerPageViewsInGraph ? 
-                        getDistinctColor(index, urlArray.length) : 
-                        'rgba(75, 192, 192, 0.6)',
-                    borderColor: vm.showPerPageViewsInGraph ? 
-                        getDistinctColor(index, urlArray.length) : 
-                        'rgba(75, 192, 192, 1)',
+                    backgroundColor: getDistinctColor(index, pageUrls.size),
+                    borderColor: getDistinctColor(index, pageUrls.size),
                     borderWidth: 1
-                });
-            });
-
-            return chartData;
+                }))
+            };
         }
-
 
         function getDistinctColor(index, total) {
             return `hsl(${(index * 360 / total) % 360}, 70%, 50%)`;
         }
 
         function updateChart() {
-            var ctx = document.getElementById('pageViewsChart');
-            if (!ctx) {
-                return;
-            }
+            const ctx = document.getElementById('pageViewsChart');
+            if (!ctx) return;
 
             if (!vm.showGraph) {
                 if (vm.chart) {
@@ -245,65 +223,56 @@
                 return;
             }
 
-            var chartData = vm.getChartData();
+            const chartData = vm.getChartData();
+            const chartOptions = getChartOptions();
 
-            var chartOptions = {
+            try {
+                if (vm.chart) {
+                    vm.chart.data = chartData;
+                    vm.chart.options = chartOptions;
+                    vm.chart.update();
+                } else {
+                    vm.chart = new Chart(ctx, {
+                        type: 'bar',
+                        data: chartData,
+                        options: chartOptions
+                    });
+                }
+            } catch (error) {
+                notificationsService.error("Chart Error", "Failed to update chart: " + error.message);
+            }
+        }
+
+        function getChartOptions() {
+            return {
                 responsive: true,
                 maintainAspectRatio: false,
                 scales: {
-                    x: {
-                        stacked: vm.showPerPageViewsInGraph,
-                    },
+                    x: { stacked: vm.showPerPageViewsInGraph },
                     y: {
                         stacked: vm.showPerPageViewsInGraph,
                         beginAtZero: true,
-                        ticks: {
-                            precision: 0
-                        }
+                        ticks: { precision: 0 }
                     }
                 },
                 plugins: {
-                    legend: {
-                        display: false,
-                    },
+                    legend: { display: false },
                     tooltip: {
                         mode: vm.showPerPageViewsInGraph ? 'index' : 'point',
                         intersect: false,
                         callbacks: {
-                            title: function(tooltipItems) {
-                                return tooltipItems[0].label;
-                            },
-                            label: function(context) {
-                                var label = vm.showPerPageViewsInGraph ? context.dataset.label : 'Total Views';
-                                label += ': ' + context.parsed.y;
-                                return label;
+                            title: tooltipItems => tooltipItems[0].label,
+                            label: context => {
+                                const label = vm.showPerPageViewsInGraph ? context.dataset.label : 'Total Views';
+                                return `${label}: ${context.parsed.y}`;
                             }
                         }
                     }
                 }
             };
-
-            if (vm.chart) {
-                vm.chart.data = chartData;
-                vm.chart.options = chartOptions;
-                vm.chart.update();
-            } else {
-                vm.chart = new Chart(ctx, {
-                    type: 'bar',
-                    data: chartData,
-                    options: chartOptions
-                });
-            }
         }
 
-        function init() {
-            vm.dateFilter.startDate = new Date(moment().subtract(30, 'days'));
-            vm.dateFilter.endDate = new Date();
-            vm.selectedUrl = allPages;
-            loadPageViews();
-        }
-
-        $timeout(init, 0);
+        $timeout(loadPageViews, 0);
     }
 
     angular.module('umbraco').controller('AnalyticsDashboardController', ['$scope', '$q', '$timeout', '$filter', 'viewAnalyticsResource', 'notificationsService', 'dateHelper', analyticsDashboardController]);
