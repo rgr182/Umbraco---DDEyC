@@ -1,8 +1,14 @@
+// Improved dashboard.controller.js
+
 (function () {
     'use strict';
 
-    function analyticsDashboardController($scope, $q, $timeout, $filter, viewAnalyticsResource, notificationsService, dateHelper) {
-        var vm = this;
+    angular.module('umbraco').controller('AnalyticsDashboardController', ['$scope', '$q', '$timeout', 'viewAnalyticsResource', 'notificationsService', 'dateHelper', analyticsDashboardController]);
+
+    function analyticsDashboardController($scope, $q, $timeout, viewAnalyticsResource, notificationsService, dateHelper) {
+        const vm = this;
+        
+        // Initialize view model properties
         vm.pageViews = [];
         vm.filteredPageViews = [];
         vm.groupedPageViews = [];
@@ -21,22 +27,22 @@
         vm.uniqueUrls = [];
         vm.selectedUrl = 'All Pages';
 
+        // Function assignments
         vm.loadPageViews = loadPageViews;
         vm.getChartData = getChartData;
         vm.applyFilters = applyFilters;
         vm.updateChart = _.debounce(updateChart, 250);
-        vm.isAllPages = isAllPages;
+        vm.isAllPages = () => vm.selectedUrl === 'All Pages';
 
-        function isAllPages() {
-            return vm.selectedUrl === 'All Pages';
-        }
+        // Initialize
+        $timeout(loadPageViews, 0);
 
         function loadPageViews() {
             if (!validateDateRange()) return $q.reject("Invalid date range");
             
             vm.loading = true;
-            var startDate = getStartOfDay(vm.dateFilter.startDate);
-            var endDate = getEndOfDay(vm.dateFilter.endDate);
+            const startDate = getStartOfDay(vm.dateFilter.startDate);
+            const endDate = getEndOfDay(vm.dateFilter.endDate);
             
             return viewAnalyticsResource.getPageViewsByDateRange(startDate, endDate)
                 .then(handlePageViewsResponse)
@@ -46,6 +52,7 @@
                     $timeout(vm.updateChart, 0);
                 });
         }
+
         function getStartOfDay(date) {
             return moment(date).startOf('day').toISOString();
         }
@@ -53,16 +60,13 @@
         function getEndOfDay(date) {
             return moment(date).endOf('day').toISOString();
         }
+
         function validateDateRange() {
             if (!vm.dateFilter.startDate || !vm.dateFilter.endDate) {
                 notificationsService.warning("Warning", "Please select both start and end dates.");
                 return false;
             }
             return true;
-        }
-
-        function formatDateForServer(date) {
-            return date ? dateHelper.convertToServerStringTime(moment(date)) : null;
         }
 
         function handlePageViewsResponse(response) {
@@ -154,7 +158,7 @@
         }
 
         function applyFilters() {
-            const isAllPagesSelected = isAllPages();
+            const isAllPagesSelected = vm.isAllPages();
             if (!isAllPagesSelected) {
                 vm.showPerPageViewsInGraph = true;
             }
@@ -183,7 +187,7 @@
             const groupedData = vm.groupedPageViews.reduce((acc, view) => {
                 if ((vm.showPerPageViewsInGraph && view.isPerPage) || 
                     (!vm.showPerPageViewsInGraph && view.isDailyTotal)) {
-                    if (isAllPages() || view.url === vm.selectedUrl) {
+                    if (vm.isAllPages() || view.url === vm.selectedUrl) {
                         if (!acc[view.date]) acc[view.date] = {};
                         const key = vm.showPerPageViewsInGraph ? view.url : 'Total';
                         acc[view.date][key] = (acc[view.date][key] || 0) + view.views;
@@ -271,9 +275,5 @@
                 }
             };
         }
-
-        $timeout(loadPageViews, 0);
     }
-
-    angular.module('umbraco').controller('AnalyticsDashboardController', ['$scope', '$q', '$timeout', '$filter', 'viewAnalyticsResource', 'notificationsService', 'dateHelper', analyticsDashboardController]);
 })();
