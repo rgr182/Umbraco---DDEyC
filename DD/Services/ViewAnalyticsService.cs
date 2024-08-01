@@ -1,10 +1,8 @@
 using DDEyC.Models;
 using DDEyC.Repositories;
-using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
+using Microsoft.Extensions.Caching.Memory;
 using System.Text.Json;
-using System.Threading.Tasks;
+
 
 namespace DDEyC.Services
 {
@@ -12,12 +10,22 @@ namespace DDEyC.Services
     {
         private readonly ViewAnalyticsRepository _repository;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IMemoryCache _cache;
+        private readonly ILogger<ViewAnalyticsService> _logger;
         private const string ViewedPagesSessionKey = "ViewedPages";
+        private const string AllPageViewsCacheKey = "AllPageViews";
+        private static readonly TimeSpan CacheDuration = TimeSpan.FromMinutes(15);
 
-        public ViewAnalyticsService(ViewAnalyticsRepository repository, IHttpContextAccessor httpContextAccessor)
+        public ViewAnalyticsService(
+            ViewAnalyticsRepository repository, 
+            IHttpContextAccessor httpContextAccessor,
+            IMemoryCache cache,
+            ILogger<ViewAnalyticsService> logger)
         {
             _repository = repository;
             _httpContextAccessor = httpContextAccessor;
+            _cache = cache;
+            _logger = logger;
         }
 
         public async Task TrackPageViewAsync()
@@ -37,14 +45,23 @@ namespace DDEyC.Services
                     Url = currentUrl,
                     Timestamp = currentTimestamp,
                     UserAgent = context.Request.Headers["User-Agent"],
-                    IpAddress = context.Connection.RemoteIpAddress.ToString()
+                    IpAddress = GetIpAddress(context)
                 };
 
-                await _repository.AddAsync(siteView);
+                try
+                {
+                    await _repository.AddAsync(siteView);
+                    _cache.Remove(AllPageViewsCacheKey);  // Invalidate cache
 
-                // Update the viewed pages in the session
-                viewedPages[currentUrl] = currentTimestamp;
-                SaveViewedPagesToSession(session, viewedPages);
+                    // Update the viewed pages in the session
+                    viewedPages[currentUrl] = currentTimestamp;
+                    SaveViewedPagesToSession(session, viewedPages);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error occurred while tracking page view for URL: {Url}", currentUrl);
+                    throw;
+                }
             }
         }
 
@@ -64,9 +81,26 @@ namespace DDEyC.Services
             session.SetString(ViewedPagesSessionKey, viewedPagesJson);
         }
 
-        public Task<IEnumerable<AnalyticsView>> GetAllPageViewsAsync()
+        private string GetIpAddress(HttpContext context)
         {
-            return _repository.GetAllAsync();
+            var forwardedFor = context.Request.Headers["X-Forwarded-For"].FirstOrDefault();
+            if (!string.IsNullOrEmpty(forwardedFor))
+            {
+                return forwardedFor.Split(',')[0].Trim();
+            }
+            return context.Connection.RemoteIpAddress?.ToString() ?? "Unknown";
+        }
+
+        public async Task<IEnumerable<AnalyticsView>> GetAllPageViewsAsync()
+        {
+            if (_cache.TryGetValue(AllPageViewsCacheKey, out IEnumerable<AnalyticsView> cachedViews))
+            {
+                return cachedViews;
+            }
+
+            var pageViews = await _repository.GetAllAsync();
+            _cache.Set(AllPageViewsCacheKey, pageViews, CacheDuration);
+            return pageViews;
         }
 
         public Task<IEnumerable<AnalyticsView>> GetPageViewsByDateRangeAsync(DateTime start, DateTime end)
