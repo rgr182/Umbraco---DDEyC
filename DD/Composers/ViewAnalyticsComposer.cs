@@ -1,5 +1,6 @@
+using DDEyC.Notifications;
 using Umbraco.Cms.Core.Composing;
-
+using Umbraco.Cms.Core.Notifications;
 using Umbraco.Cms.Core.Sections;
 using Umbraco.Cms.Core.Services;
 
@@ -10,6 +11,8 @@ namespace DDEyC.Composers
     {
         public void Compose(IUmbracoBuilder builder)
         {
+            builder.AddNotificationHandler<UmbracoApplicationStartingNotification, RunViewAnalyticsMigration>();
+
             builder.Sections().Append<AnalyticsSection>();
 
             builder.Services.AddTransient<IComponent, AddAnalyticsSectionToAdminUsers>();

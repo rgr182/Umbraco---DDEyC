@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Http;
 using System.Threading.Tasks;
 using DDEyC.Services;
 using Microsoft.Extensions.Logging;
+using System.Text.RegularExpressions;
 
 namespace DDEyC.Middleware
 {
@@ -9,6 +10,7 @@ namespace DDEyC.Middleware
     {
         private readonly RequestDelegate _next;
         private readonly ILogger<ViewAnalyticsMiddleware> _logger;
+        private static readonly Regex AssetExtensionRegex = new Regex(@"\.(css|js)(\.[a-zA-Z0-9]+)?$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         public ViewAnalyticsMiddleware(RequestDelegate next, ILogger<ViewAnalyticsMiddleware> logger)
         {
@@ -35,21 +37,23 @@ namespace DDEyC.Middleware
 
         private bool ShouldProcessRequest(HttpRequest request)
         {
-            return !request.Path.StartsWithSegments("/umbraco") &&
-                   !request.Path.StartsWithSegments("/api") &&
-                   !IsAssetRequest(request);
-        }
-
-        private bool IsAssetRequest(HttpRequest request)
-        {
             string path = request.Path.Value.ToLowerInvariant();
             
-            string[] assetExtensions = { ".css", ".js", ".map", ".jpg", ".jpeg", ".png", ".gif", ".svg", ".ico", ".woff", ".woff2", ".ttf", ".eot" };
+            return !path.StartsWith("/umbraco") &&
+                   !path.StartsWith("/api") &&
+                   !path.StartsWith("/sb/") &&
+                   !path.Contains("umbraco-backoffice") &&
+                   !IsAssetRequest(path);
+        }
+
+        private bool IsAssetRequest(string path)
+        {
+            string[] assetExtensions = { ".jpg", ".jpeg", ".png", ".gif", ".svg", ".ico", ".woff", ".woff2", ".ttf", ".eot", ".map" };
             
-            return Array.Exists(assetExtensions, ext => path.EndsWith(ext)) ||
+            return assetExtensions.Any(ext => path.EndsWith(ext, StringComparison.OrdinalIgnoreCase)) ||
+                   AssetExtensionRegex.IsMatch(path) ||
                    path.StartsWith("/media/") ||
                    path.StartsWith("/scripts/") ||
-                   path.StartsWith("/api/") ||
                    path.StartsWith("/css/");
         }
     }
