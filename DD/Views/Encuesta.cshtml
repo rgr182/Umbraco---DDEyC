@@ -1,43 +1,84 @@
-﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<object>;
-@using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
-@using Umbraco.Cms.Core.Models.Blocks;
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<object>
+@using ContentModels = Umbraco.Cms.Web.Common.PublishedModels
+@using Umbraco.Cms.Core.Models.Blocks
+
+
 @{
     Layout = null;
     const string HomeName = "Home";
     const string DefaultSurveyNodeName = "DefaultSurvey";
     const string Questions = "questions";
+
     //get Home Node
     var rootNode = Umbraco.ContentAtRoot().Where(x => x.Name == HomeName).FirstOrDefault();
+
     // ghet default Survey
     var DefaultSurveyNode = rootNode.Children.FirstOrDefault(x => x.Name == DefaultSurveyNodeName);
+
     // get Questions Content
     IEnumerable<BlockListItem> DefaultQuestions = DefaultSurveyNode?.Value<IEnumerable<BlockListItem>>(Questions) ?? Enumerable.Empty<BlockListItem>();
 }
-
+<head>
+    <link rel="stylesheet" href="~/Styles/encuesta.css" />
+</head>
 
 <body>
-    <div>
-        @foreach (var question in DefaultQuestions)
-        {
-            <ul>
+    <div id="survey-container">
+        <form class="survey-form">
+            @foreach (var question in DefaultQuestions)
+            {
                 @if (question != null && question.Content is ContentModels.QuestionElement questionElement)
                 {
-                    <li>
-                        <h1>@questionElement.Question</h1>
-                        <ul>
-                            @foreach(var answers in questionElement.Answer)
+                    <div>
+                        <label class="fw-bold">@questionElement.Question</label>
+                        @foreach (var answers in questionElement.Answer)
+                        {
+                            @if (answers.Content is ContentModels.RichTextItems richTextItems)
                             {
-                                <li>
-                                    @if (answers.Content is ContentModels.RichTextItems richTextItems)
-                                    {
-                                        <p>@richTextItems.RichText</p>
-                                    }
-                                </li>
+                                <div>
+                                    <input type="radio" name="@questionElement.Question" value="@richTextItems.RichText" />
+                                    <label>@richTextItems.RichText</label>
+                                </div>
                             }
-                        </ul>
-                    </li>
+                                
+                        }
+                    </div>
                 }
-            </ul>
-        }
+            }
+            <button type="submit">Submit</button>
+        </form>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Check if the survey has already been displayed this session
+            if (sessionStorage.getItem('surveyDisplayed')) {
+                return;
+            }
+
+            // Get the start time from sessionStorage or set it if it doesn't exist
+            let startTime = sessionStorage.getItem('startTime');
+            if (!startTime) {
+                startTime = new Date().getTime();
+                sessionStorage.setItem('startTime', startTime);
+            }
+
+            // Calculate the elapsed time
+            const elapsedTime = new Date().getTime() - startTime;
+
+            // Check if the elapsed time is greater than or equal to 1 minutes (60000 ms)
+            const displayTime = 1* 30 * 1000;
+            if (elapsedTime >= displayTime) {
+                var container = document.getElementById('survey-container');
+                container.style.display = 'block';
+                sessionStorage.setItem('surveyDisplayed', 'true');
+            } else {
+                // Set a timeout to display the survey when 1 minutes have passed
+                setTimeout(function () {
+                    var container = document.getElementById('survey-container');
+                    container.style.display = 'block';
+                    sessionStorage.setItem('surveyDisplayed', 'true');
+                }, displayTime - elapsedTime);
+            }
+        });
+    </script>
 </body>

@@ -1,0 +1,46 @@
+﻿/* Style for the survey form container */
+#survey-container {
+    display: none;
+    position: fixed;
+    color: black;
+    right: 10px;
+    bottom: 10px;
+    width: 300px;
+    height: 400px;
+    font-size: 10px;
+    background-color: white;
+    border-left: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 5px;
+}
+
+.survey-form {
+    display: flex;
+    flex-direction: column;
+}
+
+    .survey-form label {
+        margin-top: 10px;
+    }
+
+    .survey-form input {
+        margin-top: 5px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .survey-form button {
+        margin-top: 20px;
+        padding: 10px;
+        background-color: #007BFF;
+        color: white;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+
+        .survey-form button:hover {
+            background-color: #0056b3;
+        }
