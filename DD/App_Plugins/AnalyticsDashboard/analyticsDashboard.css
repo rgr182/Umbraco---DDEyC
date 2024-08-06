@@ -1,0 +1,152 @@
+.dashboard-container {
+    font-family: Arial, sans-serif;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.dashboard-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.date-picker-container,
+.filter-container,
+.toggle-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.date-picker-group,
+.filter-group {
+    flex: 1;
+    margin-right: 10px;
+    min-width: 200px;
+}
+
+.date-picker-label,
+.filter-label {
+    display: block;
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.date-picker-input,
+.filter-input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.update-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.update-button:hover {
+    background-color: #0056b3;
+}
+
+.toggle-container {
+    justify-content: flex-start;
+}
+
+.toggle-label {
+    margin-right: 20px;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+}
+
+.toggle-label input[type="checkbox"] {
+    margin-right: 5px;
+}
+
+.chart-container {
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 4px;
+}
+
+.chart-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.table-container {
+    overflow-x: auto;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.data-table th, .data-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.data-table th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+.data-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.data-table .total-row {
+    font-weight: bold;
+    background-color: #e6e6e6;
+}
+/* ... (previous styles remain unchanged) ... */
+
+.toggle-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    margin-bottom: 20px;
+}
+
+.toggle-label {
+    margin-right: 20px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;}
+    .data-table .important-row {
+        font-weight: bold;
+        background-color: #f0f0f0;
+    }
+    
+    .data-table .important-row td {
+        border-top: 2px solid #ddd;
+        border-bottom: 2px solid #ddd;
+    }
+    
+    /* Optional: Add some subtle animation for hovering over rows */
+    .data-table tr {
+        transition: background-color 0.3s ease;
+    }
+    
+    .data-table tr:hover {
+        background-color: #f5f5f5;
+    }
+    
+    .data-table .important-row:hover {
+        background-color: #e8e8e8;
+    }
