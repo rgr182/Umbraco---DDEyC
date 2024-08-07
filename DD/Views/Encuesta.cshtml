@@ -1,7 +1,8 @@
 ﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<object>
 @using ContentModels = Umbraco.Cms.Web.Common.PublishedModels
 @using Umbraco.Cms.Core.Models.Blocks
-
+@using Newtonsoft.Json
+@using System.Text.RegularExpressions
 
 @{
     Layout = null;
@@ -9,14 +10,33 @@
     const string DefaultSurveyNodeName = "DefaultSurvey";
     const string Questions = "questions";
 
-    //get Home Node
     var rootNode = Umbraco.ContentAtRoot().Where(x => x.Name == HomeName).FirstOrDefault();
-
-    // ghet default Survey
     var DefaultSurveyNode = rootNode.Children.FirstOrDefault(x => x.Name == DefaultSurveyNodeName) as ContentModels.SurveyForm;
-
-    // get Questions Content
     IEnumerable<BlockListItem> DefaultQuestions = DefaultSurveyNode?.Value<IEnumerable<BlockListItem>>(Questions) ?? Enumerable.Empty<BlockListItem>();
+
+    string StripHtml(string input)
+    {
+        return Regex.Replace(input ?? "", "<.*?>", String.Empty).Trim();
+    }
+
+    var surveyStructure = new
+    {
+        title = StripHtml(DefaultSurveyNode?.QuestionTitle?.ToString()),
+        description = StripHtml(DefaultSurveyNode?.Description?.ToString()),
+        questions = DefaultQuestions.Select(q => new
+        {
+            id = q.Content.Key.ToString(),
+            text = StripHtml((q.Content as ContentModels.QuestionElement)?.Question?.ToString() ?? ""),
+            answers = (q.Content as ContentModels.QuestionElement)?.Answer
+                .Select(a => new
+                {
+                    id = a.Content.Key.ToString(),
+                    text = StripHtml((a.Content as ContentModels.RichTextItems)?.RichText?.ToString() ?? "")
+                })
+        })
+    };
+
+    var surveyStructureJson = JsonConvert.SerializeObject(surveyStructure);
 }
 <head>
     <link rel="stylesheet" href="~/Styles/encuesta.css" />
@@ -24,7 +44,7 @@
 
 <body>
     <div id="survey-container">
-        <form class="survey-form">
+        <form id="survey-form" class="survey-form">
             <div>
                 @if (DefaultSurveyNode != null)
                 {
@@ -49,17 +69,16 @@
                 @if (question != null && question.Content is ContentModels.QuestionElement questionElement)
                 {
                     <div>
-                        <label class="fw-bold">@questionElement.Question</label>
-                        @foreach (var answers in questionElement.Answer)
+                        <label class="fw-bold" data-question-id="@question.Content.Key">@questionElement.Question</label>
+                        @foreach (var answer in questionElement.Answer)
                         {
-                            @if (answers.Content is ContentModels.RichTextItems richTextItems)
+                            @if (answer.Content is ContentModels.RichTextItems richTextItems)
                             {
                                 <div>
-                                    <input type="radio" name="@questionElement.Question" value="@richTextItems.RichText" />
+                                    <input type="radio" name="@question.Content.Key" value="@answer.Content.Key" />
                                     <label>@richTextItems.RichText</label>
                                 </div>
                             }
-                                
                         }
                     </div>
                 }
@@ -67,5 +86,10 @@
             <button type="submit">Submit</button>
         </form>
     </div>
-    <script src="~/Scripts/DisplayTimerSurveyForm.js"></script>
+ <script>
+    var surveyStructure = @Html.Raw(surveyStructureJson);
+    console.log('Survey structure:', surveyStructure); // Log the survey structure
+</script>
+<script src="~/Scripts/DisplayTimerSurveyForm.js"></script>
+<script src="~/Scripts/SubmitSurveyForm.js"></script>
 </body>
