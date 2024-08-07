@@ -14,8 +14,8 @@
     // Calculate the elapsed time
     const elapsedTime = new Date().getTime() - startTime;
 
-    // Check if the elapsed time is greater than or equal to 1 minutes (60000 ms)
-    const displayTime = 1 * 2 * 1000;
+    // Check if the elapsed time is greater than or equal to 1/2 minutes (30000 ms)
+    const displayTime = 1 * 30 * 1000;
     if (elapsedTime >= displayTime) {
         var container = document.getElementById('survey-container');
         container.style.display = 'block';
