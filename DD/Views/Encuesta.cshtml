@@ -43,46 +43,49 @@
 </head>
 
 <body>
+    
     <div id="survey-container">
+        <div>
+            @if (DefaultSurveyNode != null)
+            {
+                <h2 class="fw-bold">@DefaultSurveyNode.QuestionTitle</h2>
+                <div>@Html.Raw(DefaultSurveyNode.Description?.ToHtmlString())</div>
+            }
+        </div>
         <form id="survey-form" class="survey-form">
             <div>
-                @if (DefaultSurveyNode != null)
+                <label class=" fw-bold" for="name">Nombre:</label>
+                <input class="info d-flex" type="text" id="name" name="name" required>
+            </div>
+            <div>
+                <label class=" fw-bold" for="phone">Telefono:</label>
+                <input class="info d-flex" type="tel" id="phone" name="phone" required>
+            </div>
+            <div>
+                <label class=" fw-bold" for="email">Email:</label>
+                <input class=" info d-flex" type="email" id="email" name="email" required>
+            </div>
+            <div>
+                @foreach (var question in DefaultQuestions)
                 {
-                    <h2>@DefaultSurveyNode.QuestionTitle</h2>
-                    <div>@Html.Raw(DefaultSurveyNode.Description?.ToHtmlString())</div>
-                }
-            </div>
-            <div>
-                <label class="fw-bold" for="name">Nombre:</label>
-                <input class="d-flex" type="text" id="name" name="name" required>
-            </div>
-            <div>
-                <label class="fw-bold" for="phone">Telefono:</label>
-                <input class="d-flex" type="tel" id="phone" name="phone" required>
-            </div>
-            <div>
-                <label class="fw-bold" for="email">Email:</label>
-                <input class="d-flex" type="email" id="email" name="email" required>
-            </div>
-            @foreach (var question in DefaultQuestions)
-            {
-                @if (question != null && question.Content is ContentModels.QuestionElement questionElement)
-                {
-                    <div>
-                        <label class="fw-bold" data-question-id="@question.Content.Key">@questionElement.Question</label>
-                        @foreach (var answer in questionElement.Answer)
-                        {
-                            @if (answer.Content is ContentModels.RichTextItems richTextItems)
+                    @if (question != null && question.Content is ContentModels.QuestionElement questionElement)
+                    {
+                        <div>
+                            <label class="fw-bold" data-question-id="@question.Content.Key">@questionElement.Question</label>
+                            @foreach (var answer in questionElement.Answer)
                             {
-                                <div>
-                                    <input type="radio" name="@question.Content.Key" value="@answer.Content.Key" />
-                                    <label>@richTextItems.RichText</label>
-                                </div>
+                                @if (answer.Content is ContentModels.RichTextItems richTextItems)
+                                {
+                                    <div>
+                                        <input type="radio" name="@question.Content.Key" value="@answer.Content.Key" />
+                                        <label>@richTextItems.RichText</label>
+                                    </div>
+                                }
                             }
-                        }
-                    </div>
+                        </div>
+                    }
                 }
-            }
+            </div>
             <button type="submit">Submit</button>
         </form>
     </div>
