@@ -1,0 +1,81 @@
+﻿/* Style for the survey form container */
+#survey-container {
+    display: none;
+    position: fixed;
+    color: black;
+    right: 10px;
+    bottom: 10px;
+    width: 300px;
+    height: 750px;
+    font-size: 12px;
+    background-color: white;
+    border-left: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 5px;
+    z-index: 20;
+}
+    #survey-container h2 {
+        background-color: #007BFF;
+        color: white;
+        padding: 10px;
+        border-radius: 5px;
+        display:flex;
+        justify-content: center;
+    }
+.survey-form {
+    display: flex;
+    flex-direction: column;
+}
+    .survey-form label {
+        margin-top: 10px;
+    }
+
+    .survey-form input {
+        margin-top: 5px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+        .info{
+            background-color: lightgray;
+            width:100%;
+        }
+        .survey-form input[type="radio"]:checked {
+            accent-color: magenta;
+        }
+
+    .survey-form button {
+        margin-top: 20px;
+        padding: 10px;
+        background-color: #007BFF;
+        color: white;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+        font-size: 16px;
+    }
+
+        .survey-form button:hover {
+            background-color: #0056b3;
+        }
+
+@media (max-width: 1009px){
+    #survey-container {
+        display: none;
+        position: fixed;
+        color: black;
+        right: 10px;
+        bottom: 10px;
+        width: 300px;
+        height: 400px;
+        font-size: 12px;
+        background-color: white;
+        border-left: 1px solid #ccc;
+        padding: 10px;
+        border-radius: 5px;
+        z-index: 20;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+}
