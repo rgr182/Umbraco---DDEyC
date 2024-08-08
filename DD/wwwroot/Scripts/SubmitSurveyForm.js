@@ -29,7 +29,11 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         if (!allQuestionsAnswered) {
-            alert('Please answer all questions before submitting the survey.');
+            Swal.fire({
+                icon: 'warning',
+                title: 'Encuesta incompleta',
+                text: 'Por favor, responde todas las preguntas antes de enviar la encuesta.'
+            });
             return;
         }
 
@@ -53,13 +57,21 @@ document.addEventListener('DOMContentLoaded', function () {
         })
         .then(data => {
             console.log('Success:', data);
-            alert('Thank you for completing the survey!');
+            Swal.fire({
+                icon: 'success',
+                title: 'Encuesta enviada',
+                text: 'Gracias por contestar la encuesta.'
+            });
             form.reset();
             document.getElementById('survey-container').style.display = 'none';
         })
         .catch((error) => {
             console.error('Error:', error);
-            alert('An error occurred while submitting the survey. Please try again.');
+            Swal.fire({
+                icon: 'error',
+                title: 'Error al enviar',
+                text: 'Un error ha ocurrido al enviar la encuesta. Por favor, espera un poco e intenta de nuevo.'
+            });
         });
     });
 });
