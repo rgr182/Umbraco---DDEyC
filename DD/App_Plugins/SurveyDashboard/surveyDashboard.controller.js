@@ -8,13 +8,16 @@
         vm.surveySummary = null;
         vm.surveyResponses = null;
         vm.selectedResponse = null;
+        vm.showDetails = false;
+        vm.showSummary = false;
+        vm.showResponses = false;
+        vm.showResponseDetails = false;
 
         vm.loadSurveys = loadSurveys;
         vm.viewDetails = viewDetails;
         vm.viewSummary = viewSummary;
         vm.viewResponses = viewResponses;
         vm.viewResponseDetails = viewResponseDetails;
-        vm.closeModal = closeModal;
         vm.closeResponseDetails = closeResponseDetails;
 
         function loadSurveys() {
@@ -31,8 +34,9 @@
             $http.get(`/api/survey/${id}`)
                 .then(function (response) {
                     vm.selectedSurvey = response.data;
-                    vm.surveySummary = null;
-                    vm.surveyResponses = null;
+                    vm.showDetails = true;
+                    vm.showSummary = false;
+                    vm.showResponses = false;
                 })
                 .catch(function (error) {
                     notificationsService.error('Error', 'Failed to load survey details');
@@ -43,8 +47,9 @@
             $http.get(`/api/survey/${id}/summary`)
                 .then(function (response) {
                     vm.surveySummary = response.data;
-                    vm.selectedSurvey = null;
-                    vm.surveyResponses = null;
+                    vm.showSummary = true;
+                    vm.showDetails = false;
+                    vm.showResponses = false;
                 })
                 .catch(function (error) {
                     notificationsService.error('Error', 'Failed to load survey summary');
@@ -55,8 +60,9 @@
             $http.get(`/api/survey/${id}/results`)
                 .then(function (response) {
                     vm.surveyResponses = response.data;
-                    vm.selectedSurvey = null;
-                    vm.surveySummary = null;
+                    vm.showResponses = true;
+                    vm.showDetails = false;
+                    vm.showSummary = false;
                 })
                 .catch(function (error) {
                     notificationsService.error('Error', 'Failed to load survey responses');
@@ -65,15 +71,11 @@
 
         function viewResponseDetails(response) {
             vm.selectedResponse = response;
-        }
-
-        function closeModal() {
-            vm.selectedSurvey = null;
-            vm.surveySummary = null;
-            vm.surveyResponses = null;
+            vm.showResponseDetails = true;
         }
 
         function closeResponseDetails() {
+            vm.showResponseDetails = false;
             vm.selectedResponse = null;
         }
 

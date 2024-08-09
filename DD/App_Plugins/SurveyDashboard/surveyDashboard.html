@@ -26,10 +26,10 @@
         </tbody>
     </table>
 
-    <!-- Survey Details Results -->
-    <div class="survey-results" ng-if="vm.selectedSurvey">
+    <!-- Survey Details -->
+    <div class="survey-results" ng-if="vm.showDetails">
         <h2 class="survey-results__title">Survey Details: {{vm.selectedSurvey.name}}</h2>
-        <div class="survey-results__content">
+        <div class="survey-results__body">
             <p><strong>Created:</strong> {{vm.selectedSurvey.createdAt | date:'medium'}}</p>
             <p><strong>Total Responses:</strong> {{vm.selectedSurvey.responseCount}}</p>
             <h3>Questions:</h3>
@@ -37,15 +37,12 @@
                 <li class="survey-results__item" ng-repeat="question in vm.selectedSurvey.questions">{{question}}</li>
             </ul>
         </div>
-        <div class="survey-results__close">
-            <button class="survey-btn survey-btn--secondary" ng-click="vm.closeDetails()">Close</button>
-        </div>
     </div>
 
-    <!-- Survey Summary Results -->
-    <div class="survey-results" ng-if="vm.surveySummary">
+    <!-- Survey Summary -->
+    <div class="survey-results" ng-if="vm.showSummary">
         <h2 class="survey-results__title">Survey Summary: {{vm.surveySummary.name}}</h2>
-        <div class="survey-results__content">
+        <div class="survey-results__body">
             <div ng-repeat="questionSummary in vm.surveySummary.questionSummaries">
                 <h3>{{questionSummary.questionText}}</h3>
                 <p><strong>Total Answers:</strong> {{questionSummary.answerCount}}</p>
@@ -58,15 +55,12 @@
                 </ul>
             </div>
         </div>
-        <div class="survey-results__close">
-            <button class="survey-btn survey-btn--secondary" ng-click="vm.closeSummary()">Close</button>
-        </div>
     </div>
 
-    <!-- Survey Responses Results -->
-    <div class="survey-results" ng-if="vm.surveyResponses">
+    <!-- Survey Responses -->
+    <div class="survey-results" ng-if="vm.showResponses">
         <h2 class="survey-results__title">Survey Responses</h2>
-        <div class="survey-results__content">
+        <div class="survey-results__body">
             <table class="survey-table">
                 <thead class="survey-table__head">
                     <tr class="survey-table__row">
@@ -86,25 +80,22 @@
                 </tbody>
             </table>
         </div>
-        <div class="survey-results__close">
-            <button class="survey-btn survey-btn--secondary" ng-click="vm.closeResponses()">Close</button>
-        </div>
     </div>
 
-    <!-- Response Details Results -->
-    <div class="survey-results" ng-if="vm.selectedResponse">
-        <h2 class="survey-results__title">Response Details</h2>
-        <div class="survey-results__content">
-            <p><strong>Respondent:</strong> {{vm.selectedResponse.name}}</p>
-            <p><strong>Submitted At:</strong> {{vm.selectedResponse.submittedAt | date:'medium'}}</p>
-            <h3>Answers:</h3>
-            <ul class="survey-results__list">
-                <li class="survey-results__item" ng-repeat="answer in vm.selectedResponse.answers">
-                    <strong>{{answer.questionText}}:</strong> {{answer.answerText}}
-                </li>
-            </ul>
-        </div>
-        <div class="survey-results__close">
+    <!-- Single User Response Modal -->
+    <div class="survey-modal" ng-if="vm.showResponseDetails" ng-click="vm.closeResponseDetails()">
+        <div class="survey-modal__content" ng-click="$event.stopPropagation()">
+            <h2 class="survey-results__title">Response Details</h2>
+            <div class="survey-results__body">
+                <p><strong>Respondent:</strong> {{vm.selectedResponse.name}}</p>
+                <p><strong>Submitted At:</strong> {{vm.selectedResponse.submittedAt | date:'medium'}}</p>
+                <h3>Answers:</h3>
+                <ul class="survey-results__list">
+                    <li class="survey-results__item" ng-repeat="answer in vm.selectedResponse.answers">
+                        <strong>{{answer.questionText}}:</strong> {{answer.answerText}}
+                    </li>
+                </ul>
+            </div>
             <button class="survey-btn survey-btn--secondary" ng-click="vm.closeResponseDetails()">Close</button>
         </div>
     </div>
