@@ -8,7 +8,6 @@
     <launchSettingsProfile>launchSettings</launchSettingsProfile>
   </PropertyGroup>
   <ItemGroup>
-    <Content Include="App_Plugins\google-forms-extension\umbraco-package.json" />
     <Content Include="wwwroot\media\mvkajess\logo-idea_mesa-de-trabajo-1.png" />
     <Content Include="wwwroot\media\mxpe1vlr\**" />
     <Content Include="wwwroot\media\srrn2nhz\**" />
@@ -26,9 +25,6 @@
   </ItemGroup>
   <ItemGroup>
     <_ContentIncludedByDefault Remove="wwwroot\Styles\encuesta.css" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App_Plugins\google-forms-extension\google-forms-extension.js" />
   </ItemGroup>
 
   <ItemGroup>

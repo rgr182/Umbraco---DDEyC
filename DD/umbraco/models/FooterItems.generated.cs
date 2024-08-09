@@ -18,34 +18,9 @@ using Umbraco.Extensions;
 
 namespace Umbraco.Cms.Web.Common.PublishedModels
 {
-	// Mixin Content Type with alias "footerItems"
-	/// <summary>Footer Items</summary>
-	public partial interface IFooterItems : IPublishedElement
-	{
-		/// <summary>Footer Item Image</summary>
-		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
-		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		global::Umbraco.Cms.Core.Models.MediaWithCrops FooterItemImage { get; }
-
-		/// <summary>Footer Item Text 1</summary>
-		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
-		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		global::Umbraco.Cms.Core.Strings.IHtmlEncodedString FooterItemText1 { get; }
-
-		/// <summary>Footer Item Text 2</summary>
-		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
-		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		global::Umbraco.Cms.Core.Strings.IHtmlEncodedString FooterItemText2 { get; }
-
-		/// <summary>Footer Item URL</summary>
-		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
-		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		global::Umbraco.Cms.Core.Models.Link FooterItemUrl { get; }
-	}
-
 	/// <summary>Footer Items</summary>
 	[PublishedModel("footerItems")]
-	public partial class FooterItems : PublishedElementModel, IFooterItems
+	public partial class FooterItems : PublishedElementModel
 	{
 		// helpers
 #pragma warning disable 0109 // new is redundant
@@ -80,12 +55,7 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
 		[ImplementPropertyType("footerItemImage")]
-		public virtual global::Umbraco.Cms.Core.Models.MediaWithCrops FooterItemImage => GetFooterItemImage(this, _publishedValueFallback);
-
-		/// <summary>Static getter for Footer Item Image</summary>
-		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
-		[return: global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		public static global::Umbraco.Cms.Core.Models.MediaWithCrops GetFooterItemImage(IFooterItems that, IPublishedValueFallback publishedValueFallback) => that.Value<global::Umbraco.Cms.Core.Models.MediaWithCrops>(publishedValueFallback, "footerItemImage");
+		public virtual global::Umbraco.Cms.Core.Models.MediaWithCrops FooterItemImage => this.Value<global::Umbraco.Cms.Core.Models.MediaWithCrops>(_publishedValueFallback, "footerItemImage");
 
 		///<summary>
 		/// Footer Item Text 1
@@ -93,12 +63,7 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
 		[ImplementPropertyType("footerItemText1")]
-		public virtual global::Umbraco.Cms.Core.Strings.IHtmlEncodedString FooterItemText1 => GetFooterItemText1(this, _publishedValueFallback);
-
-		/// <summary>Static getter for Footer Item Text 1</summary>
-		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
-		[return: global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		public static global::Umbraco.Cms.Core.Strings.IHtmlEncodedString GetFooterItemText1(IFooterItems that, IPublishedValueFallback publishedValueFallback) => that.Value<global::Umbraco.Cms.Core.Strings.IHtmlEncodedString>(publishedValueFallback, "footerItemText1");
+		public virtual global::Umbraco.Cms.Core.Strings.IHtmlEncodedString FooterItemText1 => this.Value<global::Umbraco.Cms.Core.Strings.IHtmlEncodedString>(_publishedValueFallback, "footerItemText1");
 
 		///<summary>
 		/// Footer Item Text 2
@@ -106,12 +71,7 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
 		[ImplementPropertyType("footerItemText2")]
-		public virtual global::Umbraco.Cms.Core.Strings.IHtmlEncodedString FooterItemText2 => GetFooterItemText2(this, _publishedValueFallback);
-
-		/// <summary>Static getter for Footer Item Text 2</summary>
-		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
-		[return: global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		public static global::Umbraco.Cms.Core.Strings.IHtmlEncodedString GetFooterItemText2(IFooterItems that, IPublishedValueFallback publishedValueFallback) => that.Value<global::Umbraco.Cms.Core.Strings.IHtmlEncodedString>(publishedValueFallback, "footerItemText2");
+		public virtual global::Umbraco.Cms.Core.Strings.IHtmlEncodedString FooterItemText2 => this.Value<global::Umbraco.Cms.Core.Strings.IHtmlEncodedString>(_publishedValueFallback, "footerItemText2");
 
 		///<summary>
 		/// Footer Item URL
@@ -119,11 +79,6 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
 		[ImplementPropertyType("footerItemURL")]
-		public virtual global::Umbraco.Cms.Core.Models.Link FooterItemUrl => GetFooterItemUrl(this, _publishedValueFallback);
-
-		/// <summary>Static getter for Footer Item URL</summary>
-		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
-		[return: global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		public static global::Umbraco.Cms.Core.Models.Link GetFooterItemUrl(IFooterItems that, IPublishedValueFallback publishedValueFallback) => that.Value<global::Umbraco.Cms.Core.Models.Link>(publishedValueFallback, "footerItemURL");
+		public virtual global::Umbraco.Cms.Core.Models.Link FooterItemUrl => this.Value<global::Umbraco.Cms.Core.Models.Link>(_publishedValueFallback, "footerItemURL");
 	}
 }
