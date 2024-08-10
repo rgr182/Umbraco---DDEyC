@@ -1,11 +1,14 @@
 using DDEyC.Models;
 using DDEyC.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using Umbraco.Cms.Web.Common.Authorization;
 
 namespace DDEyC.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize(Policy = AuthorizationPolicies.BackOfficeAccess)]
     public class SurveyController : ControllerBase
     {
         private readonly SurveyService _surveyService;
@@ -33,7 +36,8 @@ namespace DDEyC.Controllers
                 return StatusCode(500, "An error occurred while processing your request.");
             }
         }
-         [HttpGet("{id}/results")]
+
+        [HttpGet("{id}/results")]
         public async Task<IActionResult> GetSurveyResults(int id)
         {
             try
@@ -47,7 +51,8 @@ namespace DDEyC.Controllers
                 return StatusCode(500, "An error occurred while processing your request.");
             }
         }
-           [HttpGet("{id}/summary")]
+
+        [HttpGet("{id}/summary")]
         public async Task<IActionResult> GetSurveySummary(int id)
         {
             try
@@ -63,7 +68,8 @@ namespace DDEyC.Controllers
                 return StatusCode(500, "An error occurred while processing your request.");
             }
         }
-         [HttpGet("list")]
+
+        [HttpGet("list")]
         public async Task<IActionResult> GetSurveyList()
         {
             try
@@ -77,6 +83,7 @@ namespace DDEyC.Controllers
                 return StatusCode(500, "An error occurred while processing your request.");
             }
         }
+
         [HttpPost]
         public async Task<IActionResult> CreateSurvey([FromBody] Survey survey)
         {
@@ -97,7 +104,8 @@ namespace DDEyC.Controllers
             }
         }
 
-         [HttpPost("submit")]
+        [HttpPost("submit")]
+        [AllowAnonymous]
         public async Task<IActionResult> SubmitSurveyResponse([FromBody] SurveySubmissionRequest request)
         {
             if (!ModelState.IsValid)
@@ -116,7 +124,9 @@ namespace DDEyC.Controllers
                 return StatusCode(500, "An error occurred while processing your request.");
             }
         }
+
         [HttpPost("{id}/submit")]
+        [AllowAnonymous]
         public async Task<IActionResult> SubmitSurveyResult(int id, [FromBody] SurveyResult result)
         {
             if (!ModelState.IsValid)
@@ -140,7 +150,5 @@ namespace DDEyC.Controllers
                 return StatusCode(500, "An error occurred while processing your request.");
             }
         }
-
-        
     }
 }
