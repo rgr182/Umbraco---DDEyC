@@ -3,7 +3,7 @@
 
     <table class="survey-table">
         <thead class="survey-table__head">
-            <tr class="survey-table__row">
+            <tr>
                 <th class="survey-table__cell">Name</th>
                 <th class="survey-table__cell">Created At</th>
                 <th class="survey-table__cell">Questions</th>
@@ -13,11 +13,11 @@
         </thead>
         <tbody>
             <tr class="survey-table__row" ng-repeat="survey in vm.surveys">
-                <td class="survey-table__cell" data-label="Name">{{survey.name}}</td>
-                <td class="survey-table__cell" data-label="Created At">{{survey.createdAt | date:'medium'}}</td>
-                <td class="survey-table__cell" data-label="Questions">{{survey.questionCount}}</td>
-                <td class="survey-table__cell" data-label="Responses">{{survey.responseCount}}</td>
-                <td class="survey-table__cell" data-label="Actions">
+                <td class="survey-table__cell">{{survey.name}}</td>
+                <td class="survey-table__cell">{{survey.createdAt | date:'medium'}}</td>
+                <td class="survey-table__cell">{{survey.questionCount}}</td>
+                <td class="survey-table__cell">{{survey.responseCount}}</td>
+                <td class="survey-table__cell">
                     <button class="survey-btn survey-btn--primary" ng-click="vm.viewDetails(survey.id)">Details</button>
                     <button class="survey-btn survey-btn--secondary" ng-click="vm.viewSummary(survey.id)">Summary</button>
                     <button class="survey-btn survey-btn--secondary" ng-click="vm.viewResponses(survey.id)">Responses</button>
@@ -88,6 +88,8 @@
             <h2 class="survey-results__title">Response Details</h2>
             <div class="survey-results__body">
                 <p><strong>Respondent:</strong> {{vm.selectedResponse.name}}</p>
+                <p><strong>Email:</strong> {{vm.selectedResponse.email}}</p>
+                <p><strong>Phone:</strong> {{vm.selectedResponse.phone}}</p>
                 <p><strong>Submitted At:</strong> {{vm.selectedResponse.submittedAt | date:'medium'}}</p>
                 <h3>Answers:</h3>
                 <ul class="survey-results__list">
@@ -96,7 +98,7 @@
                     </li>
                 </ul>
             </div>
-            <button class="survey-btn survey-btn--secondary" ng-click="vm.closeResponseDetails()">Close</button>
+            <button class="survey-btn survey-btn--primary" ng-click="vm.closeResponseDetails()">Close</button>
         </div>
     </div>
 </div>
