@@ -1,12 +1,14 @@
 using DDEyC.Models;
 using DDEyC.Services;
 using Microsoft.AspNetCore.Mvc;
+using Umbraco.Cms.Web.BackOffice.Controllers;
+using Umbraco.Cms.Web.Common.Attributes;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DDEyC.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class SurveyController : ControllerBase
+    [PluginController("DDEyC")]
+    public class SurveyController : UmbracoAuthorizedApiController
     {
         private readonly SurveyService _surveyService;
         private readonly ILogger<SurveyController> _logger;
@@ -17,7 +19,22 @@ namespace DDEyC.Controllers
             _logger = logger;
         }
 
-        [HttpGet("{id}")]
+        [HttpGet]
+        public async Task<IActionResult> GetSurveyList()
+        {
+            try
+            {
+                var surveys = await _surveyService.GetSurveyListAsync();
+                return Ok(surveys);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while fetching survey list");
+                return StatusCode(500, "An error occurred while processing your request.");
+            }
+        }
+
+        [HttpGet("/umbraco/backoffice/DDEyC/Survey/details/{id}")]
         public async Task<IActionResult> GetSurveyDetails(int id)
         {
             try
@@ -33,7 +50,8 @@ namespace DDEyC.Controllers
                 return StatusCode(500, "An error occurred while processing your request.");
             }
         }
-         [HttpGet("{id}/results")]
+
+        [HttpGet("/umbraco/backoffice/DDEyC/Survey/results/{id}")]
         public async Task<IActionResult> GetSurveyResults(int id)
         {
             try
@@ -47,7 +65,8 @@ namespace DDEyC.Controllers
                 return StatusCode(500, "An error occurred while processing your request.");
             }
         }
-           [HttpGet("{id}/summary")]
+
+        [HttpGet("/umbraco/backoffice/DDEyC/Survey/summary/{id}")]
         public async Task<IActionResult> GetSurveySummary(int id)
         {
             try
@@ -63,20 +82,7 @@ namespace DDEyC.Controllers
                 return StatusCode(500, "An error occurred while processing your request.");
             }
         }
-         [HttpGet("list")]
-        public async Task<IActionResult> GetSurveyList()
-        {
-            try
-            {
-                var surveys = await _surveyService.GetSurveyListAsync();
-                return Ok(surveys);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error occurred while fetching survey list");
-                return StatusCode(500, "An error occurred while processing your request.");
-            }
-        }
+
         [HttpPost]
         public async Task<IActionResult> CreateSurvey([FromBody] Survey survey)
         {
@@ -88,7 +94,7 @@ namespace DDEyC.Controllers
             try
             {
                 var createdSurvey = await _surveyService.CreateSurveyAsync(survey);
-                return CreatedAtAction("CreateSurvey", new { id = createdSurvey.Id }, createdSurvey);
+                return CreatedAtAction(nameof(GetSurveyDetails), new { id = createdSurvey.Id }, createdSurvey);
             }
             catch (Exception ex)
             {
@@ -97,7 +103,8 @@ namespace DDEyC.Controllers
             }
         }
 
-         [HttpPost("submit")]
+        [HttpPost("submit")]
+        [AllowAnonymous]
         public async Task<IActionResult> SubmitSurveyResponse([FromBody] SurveySubmissionRequest request)
         {
             if (!ModelState.IsValid)
@@ -116,7 +123,8 @@ namespace DDEyC.Controllers
                 return StatusCode(500, "An error occurred while processing your request.");
             }
         }
-        [HttpPost("{id}/submit")]
+
+        [HttpPost("result/{id}")]
         public async Task<IActionResult> SubmitSurveyResult(int id, [FromBody] SurveyResult result)
         {
             if (!ModelState.IsValid)
@@ -141,6 +149,52 @@ namespace DDEyC.Controllers
             }
         }
 
-        
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateSurvey(int id, [FromBody] Survey survey)
+        {
+            if (id != survey.Id)
+            {
+                return BadRequest("Survey ID mismatch");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var updatedSurvey = await _surveyService.UpdateSurveyAsync(id, survey);
+                return Ok(updatedSurvey);
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while updating survey");
+                return StatusCode(500, "An error occurred while processing your request.");
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteSurvey(int id)
+        {
+            try
+            {
+                var result = await _surveyService.DeleteSurveyAsync(id);
+                if (!result)
+                {
+                    return NotFound();
+                }
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while deleting survey");
+                return StatusCode(500, "An error occurred while processing your request.");
+            }
+        }
     }
 }

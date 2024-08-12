@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using DDEyC.Models;
 using DDEyC.Repositories;
 
@@ -13,17 +14,16 @@ namespace DDEyC.Services
             _repository = repository;
             _logger = logger;
         }
-         public async Task<SurveySubmissionResult> SubmitSurveyResponseAsync(SurveySubmissionRequest request)
+        public async Task<SurveySubmissionResult> SubmitSurveyResponseAsync(SurveySubmissionRequest request)
         {
             var existingSurvey = await _repository.GetSurveyByQuestionsAsync(request.Questions.Select(q => q.Text).ToList());
             bool isNewSurvey = false;
 
             if (existingSurvey == null)
             {
-                // Create new survey
                 existingSurvey = new Survey
                 {
-                    Name = $"Survey_{DateTime.UtcNow:yyyyMMddHHmmss}",
+                    Name = GenerateSurveyName(request),
                     CreatedAt = DateTime.UtcNow,
                     Questions = request.Questions.Select(q => new SurveyQuestion { QuestionText = q.Text }).ToList()
                 };
@@ -32,7 +32,6 @@ namespace DDEyC.Services
                 isNewSurvey = true;
             }
 
-            // Create survey result
             var surveyResult = new SurveyResult
             {
                 SurveyId = existingSurvey.Id,
@@ -55,6 +54,16 @@ namespace DDEyC.Services
                 ResultId = surveyResult.Id,
                 IsNewSurvey = isNewSurvey
             };
+        }
+        private string GenerateSurveyName(SurveySubmissionRequest request)
+        {
+            string baseTitle = "Survey";
+            if (!string.IsNullOrEmpty(request.Name))
+            {
+                baseTitle = Regex.Replace(request.Name, @"[^a-zA-Z0-9\s]", "");
+                baseTitle = baseTitle.Substring(0, Math.Min(baseTitle.Length, 20)).Trim();
+            }
+            return $"{baseTitle}_{DateTime.UtcNow:yyyyMMddHHmmss}";
         }
         public async Task<Survey> CreateSurveyAsync(Survey survey)
         {
@@ -150,6 +159,39 @@ namespace DDEyC.Services
             return await _repository.CreateSurveyResultAsync(result);
         }
 
-       
+        public async Task<bool> DeleteSurveyAsync(int id)
+        {
+            try
+            {
+                return await _repository.DeleteSurveyAsync(id);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while deleting survey with ID {SurveyId}", id);
+                throw;
+            }
+        }
+
+        public async Task<Survey> UpdateSurveyAsync(int id, Survey updatedSurvey)
+        {
+            try
+            {
+                var existingSurvey = await _repository.GetSurveyByIdAsync(id);
+                if (existingSurvey == null)
+                {
+                    throw new KeyNotFoundException($"Survey with ID {id} not found.");
+                }
+
+                existingSurvey.Name = updatedSurvey.Name;
+                existingSurvey.Questions = updatedSurvey.Questions;
+
+                return await _repository.UpdateSurveyAsync(existingSurvey);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while updating survey with ID {SurveyId}", id);
+                throw;
+            }
+        }
     }
 }
