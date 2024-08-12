@@ -53,7 +53,12 @@ document.addEventListener('DOMContentLoaded', function () {
                     throw new Error(`HTTP error! status: ${response.status}, message: ${text}`);
                 });
             }
-            return response.json();
+            return response.text();
+        })
+        .then(text => {
+            // Remove the ")]}',\n" prefix if it exists
+            const jsonString = text.replace(/^\)\]\}',\s*/, '');
+            return JSON.parse(jsonString);
         })
         .then(data => {
             console.log('Success:', data);

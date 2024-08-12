@@ -83,7 +83,7 @@ namespace DDEyC.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPost("/api/Survey")]
         public async Task<IActionResult> CreateSurvey([FromBody] Survey survey)
         {
             if (!ModelState.IsValid)
@@ -103,7 +103,7 @@ namespace DDEyC.Controllers
             }
         }
 
-        [HttpPost("submit")]
+        [HttpPost("api/Survey/submit")]
         [AllowAnonymous]
         public async Task<IActionResult> SubmitSurveyResponse([FromBody] SurveySubmissionRequest request)
         {
