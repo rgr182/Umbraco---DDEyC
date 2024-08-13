@@ -91,10 +91,12 @@
             <button type="submit">Submit</button>
         </form>
     </div>
- <script>
-    var surveyStructure = @Html.Raw(surveyStructureJson);
-    console.log('Survey structure:', surveyStructure); // Log the survey structure
-</script>
-<script src="~/Scripts/DisplayTimerSurveyForm.js"></script>
-<script src="~/Scripts/SubmitSurveyForm.js"></script>
+    <script>
+        var surveyStructure = @Html.Raw(surveyStructureJson);
+        var displayTimer = @DefaultSurveyNode.DisplayTimer;
+        console.log('Survey structure:', surveyStructure); // Log the survey structure
+        console.log('Display Timer:', displayTimer); // Log the display timer
+    </script>
+    <script src="~/Scripts/DisplayTimerSurveyForm.js"></script>
+    <script src="~/Scripts/SubmitSurveyForm.js"></script>
 </body>
