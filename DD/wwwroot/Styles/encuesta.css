@@ -1,23 +1,32 @@
 ﻿/* Style for the survey form container */
+body {
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    font-size: 16px; /* Base para cálculo de rem */
+}
 #survey-container {
     display: none;
     position: fixed;
     color: black;
-    right: 10px;
-    bottom: 10px;
-    width: 300px;
-    height: 750px;
-    font-size: 12px;
-    background-color: white;
-    border-left: 1px solid #ccc;
-    padding: 10px;
+    right: 0.625rem;
+    bottom: 0.625rem;
+    width: 30vw;
+    height: 90vh;
+    max-height: 840px;
+    padding: 1rem;
     border-radius: 5px;
     z-index: 20;
+    background-color: white;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
     #survey-container h2 {
         background-color: #007BFF;
         color: white;
-        padding: 10px;
+        padding: 0.625rem;
         border-radius: 5px;
         display:flex;
         justify-content: center;
@@ -32,7 +41,7 @@
 
     .survey-form input {
         margin-top: 5px;
-        padding: 10px;
+        padding: 0.625rem;
         border: 1px solid #ccc;
         border-radius: 5px;
         cursor: pointer;
@@ -45,16 +54,15 @@
             accent-color: magenta;
         }
 
-    .survey-form button {
-        margin-top: 20px;
-        padding: 10px;
-        background-color: #007BFF;
-        color: white;
-        border: none;
-        cursor: pointer;
-        border-radius: 5px;
-        font-size: 16px;
-    }
+.survey-form button {
+    margin-top: 20px;
+    padding: 0.625rem;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
 
         .survey-form button:hover {
             background-color: #0056b3;
@@ -65,15 +73,14 @@
         display: none;
         position: fixed;
         color: black;
-        right: 10px;
-        bottom: 10px;
-        width: 300px;
-        height: 400px;
-        font-size: 12px;
+        right: 0.625rem;
+        bottom: 0.625rem;
+        width: 75vw;
+        height: 90vh;
+        max-height: 840px;
         background-color: white;
-        border-left: 1px solid #ccc;
-        padding: 10px;
-        border-radius: 5px;
+        padding: 0.625rem;
+        border-radius: 0.320rem;
         z-index: 20;
         overflow-y: auto;
         overflow-x: hidden;

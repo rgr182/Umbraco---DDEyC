@@ -57,15 +57,15 @@
         <form id="survey-form" class="survey-form">
             <div>
                 <label class=" fw-bold" for="name">Nombre:</label>
-                <input class="info d-flex" type="text" id="name" name="name" required>
+                <input class="info d-flex" type="text" id="name" name="name" placeholder="Juan Lopez" required>
             </div>
             <div>
                 <label class=" fw-bold" for="phone">Telefono:</label>
-                <input class="info d-flex" type="tel" id="phone" name="phone" required>
+                <input class="info d-flex" type="tel" id="phone" name="phone" placeholder="123123123">
             </div>
             <div>
                 <label class=" fw-bold" for="email">Email:</label>
-                <input class=" info d-flex" type="email" id="email" name="email" required>
+                <input class=" info d-flex" type="email" id="email" name="email" placeholder="ejemplo@dominio.com" >
             </div>
             <div>
                 @foreach (var question in DefaultQuestions)
@@ -73,7 +73,9 @@
                     @if (question != null && question.Content is ContentModels.QuestionElement questionElement)
                     {
                         <div>
-                            <label class="fw-bold" data-question-id="@question.Content.Key">@questionElement.Question</label>
+                            <label class="fw-bold" data-question-id="@question.Content.Key">
+                                @questionElement.Question
+                            </label>
                             @foreach (var answer in questionElement.Answer)
                             {
                                 @if (answer.Content is ContentModels.RichTextItems richTextItems)

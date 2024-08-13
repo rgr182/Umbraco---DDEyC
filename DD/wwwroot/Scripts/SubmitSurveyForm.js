@@ -7,8 +7,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const formData = new FormData(form);
         const surveyData = {
             name: formData.get('name'),
-            email: formData.get('email'),
-            phone: formData.get('phone'),
+            email: formData.get('email') || null,
+            phone: formData.get('phone') || null,
             questions: []
         };
 
