@@ -63,5 +63,24 @@ namespace DDEyC.Repositories
                 .AsSplitQuery()
                 .ToListAsync();
         }
+         public async Task<bool> DeleteSurveyAsync(int id)
+        {
+            var survey = await _context.Surveys.FindAsync(id);
+            if (survey == null)
+            {
+                return false;
+            }
+
+            _context.Surveys.Remove(survey);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<Survey> UpdateSurveyAsync(Survey survey)
+        {
+            _context.Entry(survey).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+            return survey;
+        }
     }
 }

@@ -1,0 +1,8 @@
+{
+    "css": [
+        "~/App_Plugins/SurveyDashboard/surveyDashboard.css"
+    ],
+    "javascript": [
+        "~/App_Plugins/SurveyDashboard/surveyDashboard.controller.js"
+    ]
+}

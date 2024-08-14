@@ -15,7 +15,9 @@ namespace DDEyC.Composers
 
             builder.Sections().Append<AnalyticsSection>();
 
-            builder.Services.AddTransient<IComponent, AddAnalyticsSectionToAdminUsers>();
+            builder.Components().Append<AddAnalyticsSectionToAdminUsers>();
+
+
         }
     }
 

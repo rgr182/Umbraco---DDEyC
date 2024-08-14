@@ -20,12 +20,8 @@
     <Content Include="wwwroot\media\c1vnlo3d\**" />
     <Content Include="wwwroot\media\dn0n3ouf\**" />
   </ItemGroup>
-  <ItemGroup>
-    <Content Remove="Views\GoogleFormDashboard.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <_ContentIncludedByDefault Remove="wwwroot\Styles\encuesta.css" />
-  </ItemGroup>
+ 
+   
 
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.7">
