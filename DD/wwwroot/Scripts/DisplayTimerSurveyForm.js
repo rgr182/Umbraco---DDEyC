@@ -29,3 +29,28 @@
         }, displayTime - elapsedTime);
     }
 });
+document.addEventListener('DOMContentLoaded', function() {
+    const container = document.getElementById('survey-container');
+    const minimizeBtn = document.getElementById('minimize-btn');
+    const surveyContent = document.querySelector('.survey-content');
+
+    // Set initial state
+    if (container.classList.contains('initial-minimized')) {
+        minimizeBtn.textContent = '+';
+        container.classList.add('minimized');
+    } else {
+        minimizeBtn.textContent = '−';
+    }
+
+    minimizeBtn.addEventListener('click', function() {
+        container.classList.toggle('minimized');
+        container.classList.remove('initial-minimized');
+        if (container.classList.contains('minimized')) {
+            minimizeBtn.textContent = '+';
+            surveyContent.style.display = 'none';
+        } else {
+            minimizeBtn.textContent = '−';
+            surveyContent.style.display = 'block';
+        }
+    });
+});
