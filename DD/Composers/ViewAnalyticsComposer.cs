@@ -1,4 +1,5 @@
 using DDEyC.Notifications;
+using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.Notifications;
 using Umbraco.Cms.Core.Sections;
@@ -34,14 +35,19 @@ namespace DDEyC.Composers
     public class AddAnalyticsSectionToAdminUsers : IComponent
     {
         private readonly IUserService _userService;
+        private readonly IRuntimeState _runtimeState;
 
-        public AddAnalyticsSectionToAdminUsers(IUserService userService)
+        public AddAnalyticsSectionToAdminUsers(IUserService userService, IRuntimeState runtimeState)
         {
             _userService = userService;
+            _runtimeState = runtimeState;
         }
 
         public void Initialize()
         {
+            if (!_runtimeState.Level.Equals(RuntimeLevel.Install)){
+                return;
+            }
             var adminGroup = _userService.GetUserGroupByAlias("admin");
             if (adminGroup != null && !adminGroup.AllowedSections.Contains(AnalyticsSection.SectionAlias))
             {

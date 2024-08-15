@@ -3,6 +3,7 @@ using DDEyC.Notifications;
 using DDEyC.Repositories;
 using DDEyC.Services;
 using Microsoft.EntityFrameworkCore;
+using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.Dashboards;
 using Umbraco.Cms.Core.Events;
@@ -64,11 +65,13 @@ namespace DDEyC.Composers
     {
         private readonly ILogger<AddSurveySectionToAdminUsers> _logger;
         private readonly IUserService _userService;
+        private readonly IRuntimeState _runtimeState;
 
-        public AddSurveySectionToAdminUsers(IUserService userService, ILogger<AddSurveySectionToAdminUsers> logger)
+        public AddSurveySectionToAdminUsers(IUserService userService, ILogger<AddSurveySectionToAdminUsers> logger, IRuntimeState runtimeState)
         {
             _userService = userService;
             _logger = logger;
+            _runtimeState = runtimeState;
         }
 
         public void Initialize()
@@ -76,6 +79,10 @@ namespace DDEyC.Composers
             _logger.LogWarning("AddSurveySectionToAdminUsers Initialize method started");
             try
             {
+                if (_runtimeState.Level != RuntimeLevel.Install){
+                    _logger.LogWarning("AddSurveySectionToAdminUsers Initialize method skipped, running on install mode");
+                    return;
+                } 
                 var adminGroup = _userService.GetUserGroupByAlias("admin");
                 if (adminGroup != null)
                 {
