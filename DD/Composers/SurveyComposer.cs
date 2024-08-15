@@ -79,7 +79,7 @@ namespace DDEyC.Composers
             _logger.LogWarning("AddSurveySectionToAdminUsers Initialize method started");
             try
             {
-                if (_runtimeState.Level != RuntimeLevel.Install){
+                if (_runtimeState.Level.Equals(RuntimeLevel.Install)){
                     _logger.LogWarning("AddSurveySectionToAdminUsers Initialize method skipped, running on install mode");
                     return;
                 } 

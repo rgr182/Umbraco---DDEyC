@@ -45,7 +45,7 @@ namespace DDEyC.Composers
 
         public void Initialize()
         {
-            if (!_runtimeState.Level.Equals(RuntimeLevel.Install)){
+            if (_runtimeState.Level.Equals(RuntimeLevel.Install)){
                 return;
             }
             var adminGroup = _userService.GetUserGroupByAlias("admin");
