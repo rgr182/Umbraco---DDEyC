@@ -1,6 +1,15 @@
 ﻿document.addEventListener('DOMContentLoaded', function () {
+    const container = document.getElementById('survey-container');
+
+    // Check if the survey has already been completed in this session
+    if (sessionStorage.getItem('surveyCompleted') === 'true') {
+        container.style.display = 'none';
+        return;
+    }
+
     // Check if the survey has already been displayed this session
     if (sessionStorage.getItem('surveyDisplayed')) {
+        container.style.display = 'block';
         return;
     }
 
@@ -13,22 +22,21 @@
 
     // Calculate the elapsed time
     const elapsedTime = new Date().getTime() - startTime;
-
-    // Check if the elapsed time is greater than or equal to 1/2 minutes (30000 ms)
     const displayTime = displayTimer * 1000;
+
+    // Check if the elapsed time is greater than or equal to displayTime
     if (elapsedTime >= displayTime) {
-        var container = document.getElementById('survey-container');
         container.style.display = 'block';
         sessionStorage.setItem('surveyDisplayed', 'true');
     } else {
-        // Set a timeout to display the survey when 1 minutes have passed
         setTimeout(function () {
-            var container = document.getElementById('survey-container');
             container.style.display = 'block';
             sessionStorage.setItem('surveyDisplayed', 'true');
         }, displayTime - elapsedTime);
     }
 });
+
+
 document.addEventListener('DOMContentLoaded', function() {
     const container = document.getElementById('survey-container');
     const minimizeBtn = document.getElementById('minimize-btn');

@@ -37,8 +37,6 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        console.log('Survey data to be sent:', surveyData);
-
         // Send the data to the backend
         fetch('/api/Survey/submit', {
             method: 'POST',
@@ -68,6 +66,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 text: 'Gracias por contestar la encuesta.'
             });
             form.reset();
+            sessionStorage.setItem('surveyCompleted', 'true');
             document.getElementById('survey-container').style.display = 'none';
         })
         .catch((error) => {
