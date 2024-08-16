@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
             return;
         }
-
+        console.log('Survey data to be sent:', surveyData);
         // Send the data to the backend
         fetch('/api/Survey/submit', {
             method: 'POST',
