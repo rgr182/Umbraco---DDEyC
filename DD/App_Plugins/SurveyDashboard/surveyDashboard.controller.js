@@ -19,11 +19,17 @@
         vm.showResponses = false;
         vm.showResponseDetails = false;
 
-        // Pagination
+        // Pagination for surveys
         vm.currentPage = 1;
         vm.pageSize = 10;
         vm.totalItems = 0;
         vm.totalPages = 1;
+
+        // Pagination for responses
+        vm.responseCurrentPage = 1;
+        vm.responsePageSize = 10;
+        vm.responseTotalItems = 0;
+        vm.responseTotalPages = 1;
 
         // Search and filter
         vm.searchQuery = '';
@@ -39,6 +45,7 @@
         vm.closeResponseDetails = closeResponseDetails;
         vm.searchAndFilter = searchAndFilter;
         vm.changePage = changePage;
+        vm.changeResponsePage = changeResponsePage;
         vm.scrollTo = scrollTo;
         vm.clearCache = clearCache;
 
@@ -229,32 +236,95 @@
         }
 
         function viewResponses(id) {
-            const cacheKey = 'survey_responses_' + id;
-            const cachedData = getFromCache(cacheKey);
+            vm.responseCurrentPage = 1;
+            vm.selectedSurvey = { id: id }; // Set the selected survey
+            loadResponses(id);
+        }
 
+        function loadResponses(id) {
+            const cacheKey = `survey_responses_${id}_${vm.responseCurrentPage}_${vm.responsePageSize}`;
+            const cachedData = getFromCache(cacheKey);
+        
             if (cachedData) {
+                console.log('Using cached data for responses');
                 processSurveyResponses(cachedData);
             } else {
-                $http.get(`/umbraco/backoffice/DDEyC/Survey/results/${id}`)
+                console.log('Fetching responses from server');
+                $http.get(`/umbraco/backoffice/DDEyC/Survey/results/${id}`, {
+                    params: {
+                        page: vm.responseCurrentPage,
+                        pageSize: vm.responsePageSize
+                    }
+                })
                     .then(function (response) {
-                        addToCache(cacheKey, response.data, SURVEY_DETAILS_CACHE_TIME);
-                        processSurveyResponses(response.data);
+                        console.log('Server response:', response);
+                        if (response.data !== undefined) {
+                            console.log('Response data:', response.data);
+                            addToCache(cacheKey, response.data, SURVEY_DETAILS_CACHE_TIME);
+                            processSurveyResponses(response.data);
+                        } else {
+                            console.error('No data in server response');
+                            notificationsService.error('Error', 'No data received from server');
+                        }
                     })
                     .catch(function (error) {
+                        console.error('Error loading survey responses:', error);
                         notificationsService.error('Error', 'Failed to load survey responses');
                     });
             }
         }
 
         function processSurveyResponses(data) {
-            vm.surveyResponses = data.map(function(result) {
+            console.log('Received survey responses data:', data);
+        
+            if (!data) {
+                console.error('Received null or undefined data');
+                notificationsService.error('Error', 'No data received from server');
+                return;
+            }
+        
+            let items = [];
+            let totalItems = 0;
+            let currentPage = 1;
+        
+            // Check if data is an object with Items property
+            if (data && typeof data === 'object' && data.Items) {
+                items = Array.isArray(data.Items) ? data.Items : [data.Items];
+                totalItems = data.TotalItems || items.length;
+                currentPage = data.Page || 1;
+                
+                // Update selected survey information if available
+                if (data.SurveyId && data.SurveyName) {
+                    vm.selectedSurvey = {
+                        id: data.SurveyId,
+                        name: data.SurveyName
+                    };
+                }
+            } 
+            // Check if data is an array
+            else if (Array.isArray(data)) {
+                items = data;
+                totalItems = data.length;
+            } 
+            // If data is an object but doesn't have Items, treat it as a single item
+            else if (typeof data === 'object') {
+                items = [data];
+                totalItems = 1;
+            } 
+            else {
+                console.error('Received data is not in an expected format:', data);
+                notificationsService.error('Error', 'Unexpected data format received');
+                return;
+            }
+        
+            vm.surveyResponses = items.map(function(result) {
                 return {
                     id: result.Id,
                     name: result.Name,
                     email: result.Email,
                     phone: result.Phone,
                     submittedAt: new Date(result.SubmittedAt),
-                    answers: result.Answers.map(function(answer) {
+                    answers: (result.Answers || []).map(function(answer) {
                         return {
                             questionText: answer.QuestionText,
                             answerText: answer.AnswerText
@@ -262,10 +332,28 @@
                     })
                 };
             });
+        
+            vm.responseTotalItems = totalItems;
+            vm.responseTotalPages = Math.ceil(vm.responseTotalItems / vm.responsePageSize);
+            vm.responseCurrentPage = currentPage;
             vm.showResponses = true;
             vm.showDetails = false;
             vm.showSummary = false;
             scrollTo('surveyResponses');
+        
+            console.log('Processed survey responses:', vm.surveyResponses);
+        }
+
+        function changeResponsePage(newPage) {
+            if (newPage >= 1 && newPage <= vm.responseTotalPages) {
+                vm.responseCurrentPage = newPage;
+                if (vm.selectedSurvey && vm.selectedSurvey.id) {
+                    loadResponses(vm.selectedSurvey.id);
+                } else {
+                    console.error('No selected survey found');
+                    notificationsService.error('Error', 'Unable to change page: No survey selected');
+                }
+            }
         }
 
         function viewResponseDetails(response) {

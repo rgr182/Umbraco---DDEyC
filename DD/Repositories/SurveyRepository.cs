@@ -63,7 +63,36 @@ namespace DDEyC.Repositories
                 throw;
             }
         }
+        public async Task<(List<SurveyResult> Results, int TotalCount)> GetPagedSurveyResultsBySurveyIdAsync(int surveyId, int page, int pageSize)
+        {
+            try
+            {
+                _logger.LogInformation($"GetPagedSurveyResultsBySurveyIdAsync called with surveyId: {surveyId}, page: {page}, pageSize: {pageSize}");
 
+                var query = _context.SurveyResults
+                    .Include(r => r.Answers)
+                        .ThenInclude(a => a.Question)
+                    .Where(r => r.SurveyId == surveyId)
+                    .AsSplitQuery();
+
+                var totalCount = await query.CountAsync();
+
+                var results = await query
+                    .OrderByDescending(r => r.SubmittedAt)
+                    .Skip((page - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToListAsync();
+
+                _logger.LogInformation($"Retrieved {results.Count} results for survey id: {surveyId} (page {page} of {Math.Ceiling((double)totalCount / pageSize)})");
+
+                return (results, totalCount);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error in GetPagedSurveyResultsBySurveyIdAsync with surveyId: {surveyId}");
+                throw;
+            }
+        }
         public async Task<Survey> GetSurveyByIdAsync(int id)
         {
             try

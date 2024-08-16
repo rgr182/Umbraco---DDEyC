@@ -60,12 +60,12 @@ namespace DDEyC.Controllers
         }
 
         [HttpGet("/umbraco/backoffice/DDEyC/Survey/results/{id}")]
-        public async Task<IActionResult> GetSurveyResults(int id)
+        public async Task<IActionResult> GetSurveyResults(int id, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
         {
             try
             {
-                var results = await _surveyService.GetSurveyResultsAsync(id);
-                return Ok(results);
+                var pagedResults = await _surveyService.GetPagedSurveyResultsAsync(id, page, pageSize);
+                return Ok(pagedResults);
             }
             catch (Exception ex)
             {

@@ -91,14 +91,25 @@
                 </thead>
                 <tbody>
                     <tr class="survey-table__row" ng-repeat="response in vm.surveyResponses">
-                        <td class="survey-table__cell">{{response.name}}</td>
-                        <td class="survey-table__cell">{{response.submittedAt | date:'medium'}}</td>
-                        <td class="survey-table__cell">
-                            <button class="survey-btn survey-btn--primary" ng-click="vm.viewResponseDetails(response)">View Details</button>
+                        <td class="survey-table__cell" data-label="Respondent">{{response.name}}</td>
+                        <td class="survey-table__cell" data-label="Submitted At">{{response.submittedAt | date:'medium'}}</td>
+                        <td class="survey-table__cell" data-label="Actions">
+                            <button class="survey-btn survey-btn--secondary" ng-click="vm.viewResponseDetails(response)">View Details</button>
                         </td>
                     </tr>
                 </tbody>
             </table>
+        </div>
+        <div class="survey-dashboard__pagination" ng-if="vm.responseTotalPages > 1">
+            <button class="survey-btn" ng-click="vm.changeResponsePage(vm.responseCurrentPage - 1)" ng-disabled="vm.responseCurrentPage === 1">
+                <i class="icon-arrow-left"></i> Previous
+            </button>
+            <span class="survey-dashboard__page-info">
+                Page {{vm.responseCurrentPage}} of {{vm.responseTotalPages}}
+            </span>
+            <button class="survey-btn" ng-click="vm.changeResponsePage(vm.responseCurrentPage + 1)" ng-disabled="vm.responseCurrentPage === vm.responseTotalPages">
+                Next <i class="icon-arrow-right"></i>
+            </button>
         </div>
     </div>
 
