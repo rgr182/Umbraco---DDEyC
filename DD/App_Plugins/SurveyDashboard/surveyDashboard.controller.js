@@ -1,9 +1,14 @@
 (function () {
     'use strict';
 
-    function surveyDashboardController($scope, $http, notificationsService, $timeout, $location, $anchorScroll, $cacheFactory) {
-        var vm = this;
-        var cache = $cacheFactory('surveyCache');
+    function surveyDashboardController($scope, $http, notificationsService, $timeout, $location, $anchorScroll) {
+        const vm = this;
+        const memoryCache = {};
+        const MAX_CACHE_SIZE = 100;
+        const SURVEY_LIST_CACHE_TIME = 60000; // 1 minute
+        const SURVEY_DETAILS_CACHE_TIME = 300000; // 5 minutes
+
+        // Initialize properties
         vm.surveys = [];
         vm.selectedSurvey = null;
         vm.surveySummary = null;
@@ -25,6 +30,7 @@
         vm.dateFrom = null;
         vm.dateTo = null;
 
+        // Method assignments
         vm.loadSurveys = loadSurveys;
         vm.viewDetails = viewDetails;
         vm.viewSummary = viewSummary;
@@ -34,9 +40,39 @@
         vm.searchAndFilter = searchAndFilter;
         vm.changePage = changePage;
         vm.scrollTo = scrollTo;
+        vm.clearCache = clearCache;
+
+        // Function definitions
+        function addToCache(key, data, expirationTime) {
+            if (Object.keys(memoryCache).length >= MAX_CACHE_SIZE) {
+                const oldestKey = Object.keys(memoryCache).reduce((a, b) => 
+                    memoryCache[a].timestamp < memoryCache[b].timestamp ? a : b
+                );
+                delete memoryCache[oldestKey];
+            }
+            memoryCache[key] = {
+                data: data,
+                timestamp: new Date().getTime(),
+                expirationTime: expirationTime
+            };
+        }
+
+        function getFromCache(key) {
+            const cachedItem = memoryCache[key];
+            if (cachedItem && (new Date().getTime() - cachedItem.timestamp < cachedItem.expirationTime)) {
+                return cachedItem.data;
+            }
+            return null;
+        }
+
+        function clearCache() {
+            Object.keys(memoryCache).forEach(key => delete memoryCache[key]);
+            notificationsService.success("Cache Cleared", "The cache has been successfully cleared.");
+            loadSurveys();
+        }
 
         function loadSurveys() {
-            var params = {
+            const params = {
                 page: vm.currentPage,
                 pageSize: vm.pageSize,
                 searchQuery: vm.searchQuery,
@@ -44,17 +80,17 @@
                 toDate: vm.dateTo ? vm.dateTo.toISOString() : null
             };
 
-            var cacheKey = 'surveys_' + JSON.stringify(params);
-            var cachedData = cache.get(cacheKey);
+            const cacheKey = 'surveys_' + JSON.stringify(params);
+            const cachedData = getFromCache(cacheKey);
 
             if (cachedData) {
                 processSurveyData(cachedData);
             } else {
                 $http.get('/umbraco/backoffice/DDEyC/Survey/GetSurveyList', { params: params })
                     .then(function (response) {
-                        var data = response.data;
+                        let data = response.data;
                         if (typeof data === 'string') {
-                            var match = data.match(/\{.*\}/);
+                            const match = data.match(/\{.*\}/);
                             if (match) {
                                 try {
                                     data = JSON.parse(match[0]);
@@ -67,7 +103,7 @@
                                 return;
                             }
                         }
-                        cache.put(cacheKey, data);
+                        addToCache(cacheKey, data, SURVEY_LIST_CACHE_TIME);
                         processSurveyData(data);
                     })
                     .catch(function (error) {
@@ -109,7 +145,7 @@
 
         function scrollTo(elementId) {
             $timeout(function() {
-                var element = document.getElementById(elementId);
+                const element = document.getElementById(elementId);
                 if (element) {
                     element.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
@@ -117,15 +153,15 @@
         }
 
         function viewDetails(id) {
-            var cacheKey = 'survey_details_' + id;
-            var cachedData = cache.get(cacheKey);
+            const cacheKey = 'survey_details_' + id;
+            const cachedData = getFromCache(cacheKey);
 
             if (cachedData) {
                 processSurveyDetails(cachedData);
             } else {
                 $http.get(`/umbraco/backoffice/DDEyC/Survey/details/${id}`)
                     .then(function (response) {
-                        cache.put(cacheKey, response.data);
+                        addToCache(cacheKey, response.data, SURVEY_DETAILS_CACHE_TIME);
                         processSurveyDetails(response.data);
                     })
                     .catch(function (error) {
@@ -149,15 +185,15 @@
         }
 
         function viewSummary(id) {
-            var cacheKey = 'survey_summary_' + id;
-            var cachedData = cache.get(cacheKey);
+            const cacheKey = 'survey_summary_' + id;
+            const cachedData = getFromCache(cacheKey);
 
             if (cachedData) {
                 processSurveySummary(cachedData);
             } else {
                 $http.get(`/umbraco/backoffice/DDEyC/Survey/summary/${id}`)
                     .then(function (response) {
-                        cache.put(cacheKey, response.data);
+                        addToCache(cacheKey, response.data, SURVEY_DETAILS_CACHE_TIME);
                         processSurveySummary(response.data);
                     })
                     .catch(function (error) {
@@ -193,15 +229,15 @@
         }
 
         function viewResponses(id) {
-            var cacheKey = 'survey_responses_' + id;
-            var cachedData = cache.get(cacheKey);
+            const cacheKey = 'survey_responses_' + id;
+            const cachedData = getFromCache(cacheKey);
 
             if (cachedData) {
                 processSurveyResponses(cachedData);
             } else {
                 $http.get(`/umbraco/backoffice/DDEyC/Survey/results/${id}`)
                     .then(function (response) {
-                        cache.put(cacheKey, response.data);
+                        addToCache(cacheKey, response.data, SURVEY_DETAILS_CACHE_TIME);
                         processSurveyResponses(response.data);
                     })
                     .catch(function (error) {
@@ -254,8 +290,7 @@
         'notificationsService', 
         '$timeout', 
         '$location', 
-        '$anchorScroll', 
-        '$cacheFactory',
+        '$anchorScroll',
         surveyDashboardController
     ]);
 })();
