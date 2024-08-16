@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    function surveyDashboardController($scope, $http, notificationsService) {
+    function surveyDashboardController($scope, $http, notificationsService, $timeout, $location, $anchorScroll) {
         var vm = this;
         vm.surveys = [];
         vm.selectedSurvey = null;
@@ -32,6 +32,7 @@
         vm.closeResponseDetails = closeResponseDetails;
         vm.searchAndFilter = searchAndFilter;
         vm.changePage = changePage;
+        vm.scrollTo = scrollTo;
 
         function loadSurveys() {
             var params = {
@@ -44,28 +45,26 @@
 
             $http.get('/umbraco/backoffice/DDEyC/Survey/GetSurveyList', { params: params })
                 .then(function (response) {
-                    console.log('Raw response:', response);  // Log the raw response
+                  
                     var data = response.data;
                     
-                    // Handle Umbraco's JSON wrapping
                     if (typeof data === 'string') {
                         var match = data.match(/\{.*\}/);
                         if (match) {
                             try {
                                 data = JSON.parse(match[0]);
                             } catch (e) {
-                                console.error('Error parsing JSON:', e);
+                               
                                 notificationsService.error('Error', 'Failed to parse survey data');
                                 return;
                             }
                         } else {
-                            console.error('Unable to extract JSON from response');
+                           
                             notificationsService.error('Error', 'Invalid data format received');
                             return;
                         }
                     }
 
-                    // Check if the data has the expected structure
                     if (data && Array.isArray(data.Items)) {
                         vm.surveys = data.Items.map(function(survey) {
                             return {
@@ -80,12 +79,12 @@
                         vm.totalPages = Math.ceil(vm.totalItems / vm.pageSize);
                         vm.currentPage = data.Page;
                     } else {
-                        console.error('Unexpected data structure:', data);
+                        
                         notificationsService.error('Error', 'Received unexpected data structure');
                     }
                 })
                 .catch(function (error) {
-                    console.error('Error loading surveys:', error);
+                   
                     notificationsService.error('Error', 'Failed to load surveys');
                 });
         }
@@ -102,6 +101,15 @@
             }
         }
 
+        function scrollTo(elementId) {
+            $timeout(function() {
+                var element = document.getElementById(elementId);
+                if (element) {
+                    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        }
+
         function viewDetails(id) {
             $http.get(`/umbraco/backoffice/DDEyC/Survey/details/${id}`)
                 .then(function (response) {
@@ -115,9 +123,10 @@
                     vm.showDetails = true;
                     vm.showSummary = false;
                     vm.showResponses = false;
+                    scrollTo('surveyDetails');
                 })
                 .catch(function (error) {
-                    console.error('Error loading survey details:', error);
+                    
                     notificationsService.error('Error', 'Failed to load survey details');
                 });
         }
@@ -147,9 +156,10 @@
                     vm.showSummary = true;
                     vm.showDetails = false;
                     vm.showResponses = false;
+                    scrollTo('surveySummary');
                 })
                 .catch(function (error) {
-                    console.error('Error loading survey summary:', error);
+                    
                     notificationsService.error('Error', 'Failed to load survey summary');
                 });
         }
@@ -175,9 +185,10 @@
                     vm.showResponses = true;
                     vm.showDetails = false;
                     vm.showSummary = false;
+                    scrollTo('surveyResponses');
                 })
                 .catch(function (error) {
-                    console.error('Error loading survey responses:', error);
+                   
                     notificationsService.error('Error', 'Failed to load survey responses');
                 });
         }
@@ -185,16 +196,28 @@
         function viewResponseDetails(response) {
             vm.selectedResponse = response;
             vm.showResponseDetails = true;
+            scrollTo('responseDetails');
         }
 
         function closeResponseDetails() {
             vm.showResponseDetails = false;
             vm.selectedResponse = null;
+            scrollTo('surveyResponses');
         }
+
+        
 
         // Initialize
         loadSurveys();
     }
 
-    angular.module('umbraco').controller('SurveyDashboardController', ['$scope', '$http', 'notificationsService', surveyDashboardController]);
+    angular.module('umbraco').controller('SurveyDashboardController', [
+        '$scope', 
+        '$http', 
+        'notificationsService', 
+        '$timeout', 
+        '$location', 
+        '$anchorScroll', 
+        surveyDashboardController
+    ]);
 })();

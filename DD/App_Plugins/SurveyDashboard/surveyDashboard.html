@@ -34,12 +34,20 @@
 
     <!-- Pagination controls -->
     <div class="survey-dashboard__pagination">
-        <button ng-disabled="vm.currentPage === 1" ng-click="vm.changePage(vm.currentPage - 1)">Previous</button>
-        <span>Page {{vm.currentPage}} of {{vm.totalPages}}</span>
-        <button ng-disabled="vm.currentPage === vm.totalPages" ng-click="vm.changePage(vm.currentPage + 1)">Next</button>
+        <button class="survey-btn survey-btn--secondary" ng-click="vm.changePage(vm.currentPage - 1)" ng-disabled="vm.currentPage === 1">
+            <i class="icon-arrow-left"></i> Previous
+        </button>
+        
+        <span class="survey-dashboard__page-info">
+            Page {{vm.currentPage}} of {{vm.totalPages}}
+        </span>
+        
+        <button class="survey-btn survey-btn--secondary" ng-click="vm.changePage(vm.currentPage + 1)" ng-disabled="vm.currentPage === vm.totalPages">
+            Next <i class="icon-arrow-right"></i>
+        </button>
     </div>
 
-    <div class="survey-results" ng-if="vm.showDetails">
+    <div id="surveyDetails"  class="survey-results" ng-if="vm.showDetails">
         <h2 class="survey-results__title">Survey Details: {{vm.selectedSurvey.name}}</h2>
         <div class="survey-results__body">
             <p><strong>Created:</strong> {{vm.selectedSurvey.createdAt | date:'medium'}}</p>
@@ -51,7 +59,7 @@
         </div>
     </div>
 
-    <div class="survey-results" ng-if="vm.showSummary">
+    <div id="surveySummary" class="survey-results" ng-if="vm.showSummary">
         <h2 class="survey-results__title">Survey Summary: {{vm.surveySummary.name}}</h2>
         <div class="survey-results__body">
             <p><strong>Created:</strong> {{vm.surveySummary.createdAt | date:'medium'}}</p>
@@ -70,7 +78,7 @@
         </div>
     </div>
 
-    <div class="survey-results" ng-if="vm.showResponses">
+    <div id="surveyResponses" class="survey-results" ng-if="vm.showResponses">
         <h2 class="survey-results__title">Survey Responses</h2>
         <div class="survey-results__body">
             <table class="survey-table">
@@ -94,7 +102,7 @@
         </div>
     </div>
 
-    <div class="survey-modal" ng-if="vm.showResponseDetails" ng-click="vm.closeResponseDetails()">
+    <div id="responseDetails" class="survey-modal" ng-if="vm.showResponseDetails" ng-click="vm.closeResponseDetails()">
         <div class="survey-modal__content" ng-click="$event.stopPropagation()">
             <h2 class="survey-results__title">Response Details</h2>
             <div class="survey-results__body">
