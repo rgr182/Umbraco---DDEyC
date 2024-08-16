@@ -19,21 +19,25 @@ namespace DDEyC.Controllers
             _logger = logger;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetSurveyList()
+       [HttpGet]
+        public async Task<IActionResult> GetSurveyList([FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] string searchQuery = "", [FromQuery] DateTime? fromDate = null, [FromQuery] DateTime? toDate = null)
         {
             try
             {
-                var surveys = await _surveyService.GetSurveyListAsync();
-                return Ok(surveys);
+                _logger.LogInformation($"GetSurveyList called with page: {page}, pageSize: {pageSize}, searchQuery: {searchQuery}, fromDate: {fromDate}, toDate: {toDate}");
+                
+                var pagedResult = await _surveyService.GetPagedSurveyListAsync(page, pageSize, searchQuery, fromDate, toDate);
+                
+                _logger.LogInformation($"GetSurveyList returned {pagedResult.Items.Count} items out of {pagedResult.TotalItems} total items");
+                
+                return Ok(pagedResult);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while fetching survey list");
-                return StatusCode(500, "An error occurred while processing your request.");
+                _logger.LogError(ex, "Error occurred while fetching paged survey list");
+                return StatusCode(500, new { error = ex.Message, stackTrace = ex.StackTrace });
             }
         }
-
         [HttpGet("/umbraco/backoffice/DDEyC/Survey/details/{id}")]
         public async Task<IActionResult> GetSurveyDetails(int id)
         {

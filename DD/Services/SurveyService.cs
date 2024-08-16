@@ -193,5 +193,46 @@ namespace DDEyC.Services
                 throw;
             }
         }
+        public async Task<PagedResult<SurveyListItem>> GetPagedSurveyListAsync(int page, int pageSize, string searchQuery, DateTime? fromDate, DateTime? toDate)
+        {
+            try
+            {
+                _logger.LogInformation($"GetPagedSurveyListAsync called with page: {page}, pageSize: {pageSize}, searchQuery: {searchQuery}, fromDate: {fromDate}, toDate: {toDate}");
+
+                var surveys = await _repository.GetPagedSurveysAsync(page, pageSize, searchQuery, fromDate, toDate);
+                var totalItems = await _repository.GetTotalSurveyCountAsync(searchQuery, fromDate, toDate);
+
+                var surveyListItems = surveys.Select(s => new SurveyListItem
+                {
+                    Id = s.Id,
+                    Name = s.Name,
+                    CreatedAt = s.CreatedAt,
+                    QuestionCount = s.Questions.Count,
+                    ResponseCount = s.Results.Count
+                }).ToList();
+
+                _logger.LogInformation($"GetPagedSurveyListAsync returning {surveyListItems.Count} items out of {totalItems} total items");
+
+                return new PagedResult<SurveyListItem>
+                {
+                    Items = surveyListItems,
+                    TotalItems = totalItems,
+                    Page = page,
+                    PageSize = pageSize
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in GetPagedSurveyListAsync");
+                throw;
+            }
+        }
+    }
+     public class PagedResult<T>
+    {
+        public List<T> Items { get; set; }
+        public int TotalItems { get; set; }
+        public int Page { get; set; }
+        public int PageSize { get; set; }
     }
 }

@@ -133,7 +133,14 @@
     max-height: 80vh;
     overflow-y: auto;
 }
+.survey-dashboard__pagination {
+    margin-top: 20px;
+    text-align: center;
+}
 
+.survey-dashboard__pagination button {
+    margin: 0 10px;
+}
 /* Responsive styles */
 @media (max-width: 768px) {
     .survey-table,
