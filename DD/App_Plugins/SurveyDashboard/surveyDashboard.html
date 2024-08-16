@@ -1,6 +1,12 @@
 <div class="survey-dashboard" ng-controller="SurveyDashboardController as vm">
     <h1 class="survey-dashboard__title">Survey Dashboard</h1>
 
+    <div class="survey-dashboard__filters">
+        <input type="text" ng-model="vm.searchQuery" ng-change="vm.searchAndFilter()" placeholder="Search surveys...">
+        <input type="date" ng-model="vm.dateFrom" ng-change="vm.searchAndFilter()" placeholder="From date">
+        <input type="date" ng-model="vm.dateTo" ng-change="vm.searchAndFilter()" placeholder="To date">
+    </div>
+
     <table class="survey-table">
         <thead class="survey-table__head">
             <tr>
@@ -26,30 +32,45 @@
         </tbody>
     </table>
 
-    <!-- Survey Details -->
-    <div class="survey-results" ng-if="vm.showDetails">
+    <!-- Pagination controls -->
+    <div class="survey-dashboard__pagination">
+        <button class="survey-btn survey-btn--secondary" ng-click="vm.changePage(vm.currentPage - 1)" ng-disabled="vm.currentPage === 1">
+            <i class="icon-arrow-left"></i> Previous
+        </button>
+        
+        <span class="survey-dashboard__page-info">
+            Page {{vm.currentPage}} of {{vm.totalPages}}
+        </span>
+        
+        <button class="survey-btn survey-btn--secondary" ng-click="vm.changePage(vm.currentPage + 1)" ng-disabled="vm.currentPage === vm.totalPages">
+            Next <i class="icon-arrow-right"></i>
+        </button>
+    </div>
+
+    <div id="surveyDetails"  class="survey-results" ng-if="vm.showDetails">
         <h2 class="survey-results__title">Survey Details: {{vm.selectedSurvey.name}}</h2>
         <div class="survey-results__body">
             <p><strong>Created:</strong> {{vm.selectedSurvey.createdAt | date:'medium'}}</p>
             <p><strong>Total Responses:</strong> {{vm.selectedSurvey.responseCount}}</p>
             <h3>Questions:</h3>
             <ul class="survey-results__list">
-                <li class="survey-results__item" ng-repeat="question in vm.selectedSurvey.questions">{{question}}</li>
+                <li ng-repeat="question in vm.selectedSurvey.questions">{{question}}</li>
             </ul>
         </div>
     </div>
 
-    <!-- Survey Summary -->
-    <div class="survey-results" ng-if="vm.showSummary">
+    <div id="surveySummary" class="survey-results" ng-if="vm.showSummary">
         <h2 class="survey-results__title">Survey Summary: {{vm.surveySummary.name}}</h2>
         <div class="survey-results__body">
+            <p><strong>Created:</strong> {{vm.surveySummary.createdAt | date:'medium'}}</p>
+            <p><strong>Total Responses:</strong> {{vm.surveySummary.totalResponses}}</p>
             <div ng-repeat="questionSummary in vm.surveySummary.questionSummaries">
                 <h3>{{questionSummary.questionText}}</h3>
                 <p><strong>Total Answers:</strong> {{questionSummary.answerCount}}</p>
                 <p><strong>Unique Answers:</strong> {{questionSummary.uniqueAnswers}}</p>
                 <h4>Top Answers:</h4>
                 <ul class="survey-results__list">
-                    <li class="survey-results__item" ng-repeat="answer in questionSummary.topAnswers">
+                    <li ng-repeat="answer in questionSummary.topAnswers">
                         {{answer.answerText}}: {{answer.frequency}}
                     </li>
                 </ul>
@@ -57,13 +78,12 @@
         </div>
     </div>
 
-    <!-- Survey Responses -->
-    <div class="survey-results" ng-if="vm.showResponses">
+    <div id="surveyResponses" class="survey-results" ng-if="vm.showResponses">
         <h2 class="survey-results__title">Survey Responses</h2>
         <div class="survey-results__body">
             <table class="survey-table">
                 <thead class="survey-table__head">
-                    <tr class="survey-table__row">
+                    <tr>
                         <th class="survey-table__cell">Respondent</th>
                         <th class="survey-table__cell">Submitted At</th>
                         <th class="survey-table__cell">Actions</th>
@@ -71,9 +91,9 @@
                 </thead>
                 <tbody>
                     <tr class="survey-table__row" ng-repeat="response in vm.surveyResponses">
-                        <td class="survey-table__cell" data-label="Respondent">{{response.name}}</td>
-                        <td class="survey-table__cell" data-label="Submitted At">{{response.submittedAt | date:'medium'}}</td>
-                        <td class="survey-table__cell" data-label="Actions">
+                        <td class="survey-table__cell">{{response.name}}</td>
+                        <td class="survey-table__cell">{{response.submittedAt | date:'medium'}}</td>
+                        <td class="survey-table__cell">
                             <button class="survey-btn survey-btn--primary" ng-click="vm.viewResponseDetails(response)">View Details</button>
                         </td>
                     </tr>
@@ -82,8 +102,7 @@
         </div>
     </div>
 
-    <!-- Single User Response Modal -->
-    <div class="survey-modal" ng-if="vm.showResponseDetails" ng-click="vm.closeResponseDetails()">
+    <div id="responseDetails" class="survey-modal" ng-if="vm.showResponseDetails" ng-click="vm.closeResponseDetails()">
         <div class="survey-modal__content" ng-click="$event.stopPropagation()">
             <h2 class="survey-results__title">Response Details</h2>
             <div class="survey-results__body">
@@ -93,7 +112,7 @@
                 <p><strong>Submitted At:</strong> {{vm.selectedResponse.submittedAt | date:'medium'}}</p>
                 <h3>Answers:</h3>
                 <ul class="survey-results__list">
-                    <li class="survey-results__item" ng-repeat="answer in vm.selectedResponse.answers">
+                    <li ng-repeat="answer in vm.selectedResponse.answers">
                         <strong>{{answer.questionText}}:</strong> {{answer.answerText}}
                     </li>
                 </ul>
