@@ -78,6 +78,7 @@
                         });
                         vm.totalItems = data.TotalItems;
                         vm.totalPages = Math.ceil(vm.totalItems / vm.pageSize);
+                        vm.currentPage = data.Page;
                     } else {
                         console.error('Unexpected data structure:', data);
                         notificationsService.error('Error', 'Received unexpected data structure');
