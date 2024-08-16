@@ -1,8 +1,9 @@
 (function () {
     'use strict';
 
-    function surveyDashboardController($scope, $http, notificationsService, $timeout, $location, $anchorScroll) {
+    function surveyDashboardController($scope, $http, notificationsService, $timeout, $location, $anchorScroll, $cacheFactory) {
         var vm = this;
+        var cache = $cacheFactory('surveyCache');
         vm.surveys = [];
         vm.selectedSurvey = null;
         vm.surveySummary = null;
@@ -43,50 +44,55 @@
                 toDate: vm.dateTo ? vm.dateTo.toISOString() : null
             };
 
-            $http.get('/umbraco/backoffice/DDEyC/Survey/GetSurveyList', { params: params })
-                .then(function (response) {
-                  
-                    var data = response.data;
-                    
-                    if (typeof data === 'string') {
-                        var match = data.match(/\{.*\}/);
-                        if (match) {
-                            try {
-                                data = JSON.parse(match[0]);
-                            } catch (e) {
-                               
-                                notificationsService.error('Error', 'Failed to parse survey data');
+            var cacheKey = 'surveys_' + JSON.stringify(params);
+            var cachedData = cache.get(cacheKey);
+
+            if (cachedData) {
+                processSurveyData(cachedData);
+            } else {
+                $http.get('/umbraco/backoffice/DDEyC/Survey/GetSurveyList', { params: params })
+                    .then(function (response) {
+                        var data = response.data;
+                        if (typeof data === 'string') {
+                            var match = data.match(/\{.*\}/);
+                            if (match) {
+                                try {
+                                    data = JSON.parse(match[0]);
+                                } catch (e) {
+                                    notificationsService.error('Error', 'Failed to parse survey data');
+                                    return;
+                                }
+                            } else {
+                                notificationsService.error('Error', 'Invalid data format received');
                                 return;
                             }
-                        } else {
-                           
-                            notificationsService.error('Error', 'Invalid data format received');
-                            return;
                         }
-                    }
+                        cache.put(cacheKey, data);
+                        processSurveyData(data);
+                    })
+                    .catch(function (error) {
+                        notificationsService.error('Error', 'Failed to load surveys');
+                    });
+            }
+        }
 
-                    if (data && Array.isArray(data.Items)) {
-                        vm.surveys = data.Items.map(function(survey) {
-                            return {
-                                id: survey.Id,
-                                name: survey.Name,
-                                createdAt: new Date(survey.CreatedAt),
-                                questionCount: survey.QuestionCount,
-                                responseCount: survey.ResponseCount
-                            };
-                        });
-                        vm.totalItems = data.TotalItems;
-                        vm.totalPages = Math.ceil(vm.totalItems / vm.pageSize);
-                        vm.currentPage = data.Page;
-                    } else {
-                        
-                        notificationsService.error('Error', 'Received unexpected data structure');
-                    }
-                })
-                .catch(function (error) {
-                   
-                    notificationsService.error('Error', 'Failed to load surveys');
+        function processSurveyData(data) {
+            if (data && Array.isArray(data.Items)) {
+                vm.surveys = data.Items.map(function(survey) {
+                    return {
+                        id: survey.Id,
+                        name: survey.Name,
+                        createdAt: new Date(survey.CreatedAt),
+                        questionCount: survey.QuestionCount,
+                        responseCount: survey.ResponseCount
+                    };
                 });
+                vm.totalItems = data.TotalItems;
+                vm.totalPages = Math.ceil(vm.totalItems / vm.pageSize);
+                vm.currentPage = data.Page;
+            } else {
+                notificationsService.error('Error', 'Received unexpected data structure');
+            }
         }
 
         function searchAndFilter() {
@@ -111,86 +117,119 @@
         }
 
         function viewDetails(id) {
-            $http.get(`/umbraco/backoffice/DDEyC/Survey/details/${id}`)
-                .then(function (response) {
-                    vm.selectedSurvey = {
-                        id: response.data.Id,
-                        name: response.data.Name,
-                        createdAt: new Date(response.data.CreatedAt),
-                        questions: response.data.Questions,
-                        responseCount: response.data.ResponseCount
-                    };
-                    vm.showDetails = true;
-                    vm.showSummary = false;
-                    vm.showResponses = false;
-                    scrollTo('surveyDetails');
-                })
-                .catch(function (error) {
-                    
-                    notificationsService.error('Error', 'Failed to load survey details');
-                });
+            var cacheKey = 'survey_details_' + id;
+            var cachedData = cache.get(cacheKey);
+
+            if (cachedData) {
+                processSurveyDetails(cachedData);
+            } else {
+                $http.get(`/umbraco/backoffice/DDEyC/Survey/details/${id}`)
+                    .then(function (response) {
+                        cache.put(cacheKey, response.data);
+                        processSurveyDetails(response.data);
+                    })
+                    .catch(function (error) {
+                        notificationsService.error('Error', 'Failed to load survey details');
+                    });
+            }
+        }
+
+        function processSurveyDetails(data) {
+            vm.selectedSurvey = {
+                id: data.Id,
+                name: data.Name,
+                createdAt: new Date(data.CreatedAt),
+                questions: data.Questions,
+                responseCount: data.ResponseCount
+            };
+            vm.showDetails = true;
+            vm.showSummary = false;
+            vm.showResponses = false;
+            scrollTo('surveyDetails');
         }
 
         function viewSummary(id) {
-            $http.get(`/umbraco/backoffice/DDEyC/Survey/summary/${id}`)
-                .then(function (response) {
-                    vm.surveySummary = {
-                        id: response.data.Id,
-                        name: response.data.Name,
-                        createdAt: new Date(response.data.CreatedAt),
-                        totalResponses: response.data.TotalResponses,
-                        questionSummaries: response.data.QuestionSummaries.map(function(qs) {
+            var cacheKey = 'survey_summary_' + id;
+            var cachedData = cache.get(cacheKey);
+
+            if (cachedData) {
+                processSurveySummary(cachedData);
+            } else {
+                $http.get(`/umbraco/backoffice/DDEyC/Survey/summary/${id}`)
+                    .then(function (response) {
+                        cache.put(cacheKey, response.data);
+                        processSurveySummary(response.data);
+                    })
+                    .catch(function (error) {
+                        notificationsService.error('Error', 'Failed to load survey summary');
+                    });
+            }
+        }
+
+        function processSurveySummary(data) {
+            vm.surveySummary = {
+                id: data.Id,
+                name: data.Name,
+                createdAt: new Date(data.CreatedAt),
+                totalResponses: data.TotalResponses,
+                questionSummaries: data.QuestionSummaries.map(function(qs) {
+                    return {
+                        questionText: qs.QuestionText,
+                        answerCount: qs.AnswerCount,
+                        uniqueAnswers: qs.UniqueAnswers,
+                        topAnswers: qs.TopAnswers.map(function(ta) {
                             return {
-                                questionText: qs.QuestionText,
-                                answerCount: qs.AnswerCount,
-                                uniqueAnswers: qs.UniqueAnswers,
-                                topAnswers: qs.TopAnswers.map(function(ta) {
-                                    return {
-                                        answerText: ta.AnswerText,
-                                        frequency: ta.Frequency
-                                    };
-                                })
+                                answerText: ta.AnswerText,
+                                frequency: ta.Frequency
                             };
                         })
                     };
-                    vm.showSummary = true;
-                    vm.showDetails = false;
-                    vm.showResponses = false;
-                    scrollTo('surveySummary');
                 })
-                .catch(function (error) {
-                    
-                    notificationsService.error('Error', 'Failed to load survey summary');
-                });
+            };
+            vm.showSummary = true;
+            vm.showDetails = false;
+            vm.showResponses = false;
+            scrollTo('surveySummary');
         }
 
         function viewResponses(id) {
-            $http.get(`/umbraco/backoffice/DDEyC/Survey/results/${id}`)
-                .then(function (response) {
-                    vm.surveyResponses = response.data.map(function(result) {
-                        return {
-                            id: result.Id,
-                            name: result.Name,
-                            email: result.Email,
-                            phone: result.Phone,
-                            submittedAt: new Date(result.SubmittedAt),
-                            answers: result.Answers.map(function(answer) {
-                                return {
-                                    questionText: answer.QuestionText,
-                                    answerText: answer.AnswerText
-                                };
-                            })
-                        };
+            var cacheKey = 'survey_responses_' + id;
+            var cachedData = cache.get(cacheKey);
+
+            if (cachedData) {
+                processSurveyResponses(cachedData);
+            } else {
+                $http.get(`/umbraco/backoffice/DDEyC/Survey/results/${id}`)
+                    .then(function (response) {
+                        cache.put(cacheKey, response.data);
+                        processSurveyResponses(response.data);
+                    })
+                    .catch(function (error) {
+                        notificationsService.error('Error', 'Failed to load survey responses');
                     });
-                    vm.showResponses = true;
-                    vm.showDetails = false;
-                    vm.showSummary = false;
-                    scrollTo('surveyResponses');
-                })
-                .catch(function (error) {
-                   
-                    notificationsService.error('Error', 'Failed to load survey responses');
-                });
+            }
+        }
+
+        function processSurveyResponses(data) {
+            vm.surveyResponses = data.map(function(result) {
+                return {
+                    id: result.Id,
+                    name: result.Name,
+                    email: result.Email,
+                    phone: result.Phone,
+                    submittedAt: new Date(result.SubmittedAt),
+                    answers: result.Answers.map(function(answer) {
+                        return {
+                            questionText: answer.QuestionText,
+                            answerText: answer.AnswerText
+                        };
+                    })
+                };
+            });
+            vm.showResponses = true;
+            vm.showDetails = false;
+            vm.showSummary = false;
+            scrollTo('surveyResponses');
         }
 
         function viewResponseDetails(response) {
@@ -205,8 +244,6 @@
             scrollTo('surveyResponses');
         }
 
-        
-
         // Initialize
         loadSurveys();
     }
@@ -218,6 +255,7 @@
         '$timeout', 
         '$location', 
         '$anchorScroll', 
+        '$cacheFactory',
         surveyDashboardController
     ]);
 })();
