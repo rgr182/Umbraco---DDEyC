@@ -1,10 +1,12 @@
 <div class="survey-dashboard" ng-controller="SurveyDashboardController as vm">
-    <h1 class="survey-dashboard__title">Survey Dashboard</h1>
+    <h1 id="survey-dashboard" class="survey-dashboard__title">Survey Dashboard</h1>
 
     <div class="survey-dashboard__filters">
-        <input type="text" ng-model="vm.searchQuery" ng-change="vm.searchAndFilter()" placeholder="Search surveys...">
-        <input type="date" ng-model="vm.dateFrom" ng-change="vm.searchAndFilter()" placeholder="From date">
-        <input type="date" ng-model="vm.dateTo" ng-change="vm.searchAndFilter()" placeholder="To date">
+        <input type="text" ng-model="vm.searchQuery" placeholder="Search surveys...">
+        <input type="date" ng-model="vm.dateFrom" placeholder="From Date">
+        <input type="date" ng-model="vm.dateTo" placeholder="To Date">
+        <button class="survey-btn survey-btn--primary" ng-click="vm.searchAndFilter()">Search</button>
+        <button class="survey-btn survey-btn--secondary" ng-click="vm.clearCache()">Clear Cache</button>
     </div>
 
     <table class="survey-table">
@@ -19,42 +21,41 @@
         </thead>
         <tbody>
             <tr class="survey-table__row" ng-repeat="survey in vm.surveys">
-                <td class="survey-table__cell">{{survey.name}}</td>
-                <td class="survey-table__cell">{{survey.createdAt | date:'medium'}}</td>
-                <td class="survey-table__cell">{{survey.questionCount}}</td>
-                <td class="survey-table__cell">{{survey.responseCount}}</td>
-                <td class="survey-table__cell">
-                    <button class="survey-btn survey-btn--primary" ng-click="vm.viewDetails(survey.id)">Details</button>
+                <td class="survey-table__cell" data-label="Name">{{survey.name}}</td>
+                <td class="survey-table__cell" data-label="Created At">{{survey.createdAt | date:'medium'}}</td>
+                <td class="survey-table__cell" data-label="Questions">{{survey.questionCount}}</td>
+                <td class="survey-table__cell" data-label="Responses">{{survey.responseCount}}</td>
+                <td class="survey-table__cell" data-label="Actions">
+                    <button class="survey-btn survey-btn--secondary" ng-click="vm.viewDetails(survey.id)">Details</button>
                     <button class="survey-btn survey-btn--secondary" ng-click="vm.viewSummary(survey.id)">Summary</button>
-                    <button class="survey-btn survey-btn--secondary" ng-click="vm.viewResponses(survey.id)">Responses</button>
+                    <button class="survey-btn survey-btn--secondary" ng-click="vm.viewResponses(survey.id, survey.name)">Responses</button>
                 </td>
             </tr>
         </tbody>
     </table>
 
-    <!-- Pagination controls -->
     <div class="survey-dashboard__pagination">
-        <button class="survey-btn survey-btn--secondary" ng-click="vm.changePage(vm.currentPage - 1)" ng-disabled="vm.currentPage === 1">
+        <button class="survey-btn" ng-click="vm.changePage(vm.currentPage - 1)" ng-disabled="vm.currentPage === 1">
             <i class="icon-arrow-left"></i> Previous
         </button>
-        
         <span class="survey-dashboard__page-info">
             Page {{vm.currentPage}} of {{vm.totalPages}}
         </span>
-        
-        <button class="survey-btn survey-btn--secondary" ng-click="vm.changePage(vm.currentPage + 1)" ng-disabled="vm.currentPage === vm.totalPages">
+        <button class="survey-btn" ng-click="vm.changePage(vm.currentPage + 1)" ng-disabled="vm.currentPage === vm.totalPages">
             Next <i class="icon-arrow-right"></i>
         </button>
     </div>
 
-    <div id="surveyDetails"  class="survey-results" ng-if="vm.showDetails">
+    <div id="surveyDetails" class="survey-results" ng-if="vm.showDetails">
         <h2 class="survey-results__title">Survey Details: {{vm.selectedSurvey.name}}</h2>
         <div class="survey-results__body">
             <p><strong>Created:</strong> {{vm.selectedSurvey.createdAt | date:'medium'}}</p>
             <p><strong>Total Responses:</strong> {{vm.selectedSurvey.responseCount}}</p>
             <h3>Questions:</h3>
             <ul class="survey-results__list">
-                <li ng-repeat="question in vm.selectedSurvey.questions">{{question}}</li>
+                <li class="survey-results__item" ng-repeat="question in vm.selectedSurvey.questions">
+                    {{question}}
+                </li>
             </ul>
         </div>
     </div>
@@ -70,7 +71,7 @@
                 <p><strong>Unique Answers:</strong> {{questionSummary.uniqueAnswers}}</p>
                 <h4>Top Answers:</h4>
                 <ul class="survey-results__list">
-                    <li ng-repeat="answer in questionSummary.topAnswers">
+                    <li class="survey-results__item" ng-repeat="answer in questionSummary.topAnswers">
                         {{answer.answerText}}: {{answer.frequency}}
                     </li>
                 </ul>
@@ -79,7 +80,7 @@
     </div>
 
     <div id="surveyResponses" class="survey-results" ng-if="vm.showResponses">
-        <h2 class="survey-results__title">Survey Responses</h2>
+        <h2 class="survey-results__title">Survey Responses: {{vm.selectedSurvey.name}}</h2>
         <div class="survey-results__body">
             <table class="survey-table">
                 <thead class="survey-table__head">
@@ -91,14 +92,25 @@
                 </thead>
                 <tbody>
                     <tr class="survey-table__row" ng-repeat="response in vm.surveyResponses">
-                        <td class="survey-table__cell">{{response.name}}</td>
-                        <td class="survey-table__cell">{{response.submittedAt | date:'medium'}}</td>
-                        <td class="survey-table__cell">
-                            <button class="survey-btn survey-btn--primary" ng-click="vm.viewResponseDetails(response)">View Details</button>
+                        <td class="survey-table__cell" data-label="Respondent">{{response.name}}</td>
+                        <td class="survey-table__cell" data-label="Submitted At">{{response.submittedAt | date:'medium'}}</td>
+                        <td class="survey-table__cell" data-label="Actions">
+                            <button class="survey-btn survey-btn--secondary" ng-click="vm.viewResponseDetails(response)">View Details</button>
                         </td>
                     </tr>
                 </tbody>
             </table>
+        </div>
+        <div class="survey-dashboard__pagination" ng-if="vm.responseTotalPages > 1">
+            <button class="survey-btn" ng-click="vm.changeResponsePage(vm.responseCurrentPage - 1)" ng-disabled="vm.responseCurrentPage === 1">
+                <i class="icon-arrow-left"></i> Previous
+            </button>
+            <span class="survey-dashboard__page-info">
+                Page {{vm.responseCurrentPage}} of {{vm.responseTotalPages}}
+            </span>
+            <button class="survey-btn" ng-click="vm.changeResponsePage(vm.responseCurrentPage + 1)" ng-disabled="vm.responseCurrentPage === vm.responseTotalPages">
+                Next <i class="icon-arrow-right"></i>
+            </button>
         </div>
     </div>
 
@@ -112,7 +124,7 @@
                 <p><strong>Submitted At:</strong> {{vm.selectedResponse.submittedAt | date:'medium'}}</p>
                 <h3>Answers:</h3>
                 <ul class="survey-results__list">
-                    <li ng-repeat="answer in vm.selectedResponse.answers">
+                    <li class="survey-results__item" ng-repeat="answer in vm.selectedResponse.answers">
                         <strong>{{answer.questionText}}:</strong> {{answer.answerText}}
                     </li>
                 </ul>

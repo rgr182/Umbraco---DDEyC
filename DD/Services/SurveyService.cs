@@ -213,6 +213,31 @@ namespace DDEyC.Services
                 throw;
             }
         }
+    public async Task<PagedResult<SurveyResultDetails>> GetPagedSurveyResultsAsync(int id, int page, int pageSize)
+        {
+            var (results, totalCount) = await _repository.GetPagedSurveyResultsBySurveyIdAsync(id, page, pageSize);
+            var pagedResults = results.Select(r => new SurveyResultDetails
+            {
+                Id = r.Id,
+                Name = r.Name,
+                Email = r.Email,
+                Phone = r.Phone,
+                SubmittedAt = r.SubmittedAt,
+                Answers = r.Answers.Select(a => new AnswerDetails
+                {
+                    QuestionText = a.Question.QuestionText,
+                    AnswerText = a.AnswerText
+                }).ToList()
+            }).ToList();
+
+            return new PagedResult<SurveyResultDetails>
+            {
+                Items = pagedResults,
+                TotalItems = totalCount,
+                Page = page,
+                PageSize = pageSize
+            };
+        }
     }
      public class PagedResult<T>
     {
