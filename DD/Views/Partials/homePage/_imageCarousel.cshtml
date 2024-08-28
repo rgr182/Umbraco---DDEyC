@@ -10,9 +10,9 @@
     <link href="~/Styles/ContentCarousel.css" rel="stylesheet" />
 </head>
 
-<div class="container">
+<div>
     <div class="row justify-content-center">
-        <div class="col-8 mt-5 mb-5">
+        <div class="mt-5 mb-5">
             <div id="@imageCarouselId" class="carousel slide" data-bs-ride="carousel">
                 <ol class="carousel-indicators img-carousel">
                     @{
@@ -62,5 +62,11 @@
     </div>
 </div>
 
-
-
+@* the Modal *@
+<div id="imageModal" class="modal">
+    <span class="modal-close">&times;</span>
+    <div class="modal-content">
+        <img id="modalImage" src="" alt="Modal Image">
+    </div>
+</div>
+<script src="~/Scripts/modalImageCarousel.js"></script>

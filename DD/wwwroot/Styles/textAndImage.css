@@ -10,7 +10,10 @@
     margin-bottom: 10px;
 }
 
-.text-start {
-    
+.text-start {    
     text-align: start;
+}
+
+.general-content .ms-card {
+    border-color: white;
 }

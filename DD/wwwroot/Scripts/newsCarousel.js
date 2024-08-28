@@ -28,14 +28,14 @@ function renderMobileLayout(blocksList, defaultImageUrl, carouselId, carouselInn
         const isActive = index === 0 ? 'active' : '';
         const carouselItemHTML = `
             <div class="carousel-item text-and-image-carousel ${isActive}">
-            <div class="carousel-item-content">
+            <div class="carousel-item-content news-carousel">
                     <div class="row">
                         <div class="col-12">
                             <div class="text-content">
                                 <p>${content.NewsCarouselItemText1}</p>
                                 <p>${content.NewsCarouselItemText2}</p>
                             </div>
-                            <div class="text-center carousel-img-container">
+                            <div class="text-center carousel-img-container not-footer">
                                 <a href="${content.NewsCarouselItemUrl}">
                                     <img src="${imageUrl}" class="img-fluid carousel-img" alt="..."
                                         onerror="handleImageError(this, '${defaultImageUrl}')">
@@ -58,8 +58,8 @@ function renderDesktopLayout(blocksList, defaultImageUrl, carouselId, carouselIn
     for (let i = 0; i < blocksList.length; i += 2) {
         const isFirst = i === 0;
         const carouselItemHTML = `
-            <div class="carousel-item text-and-image-carousel ${isFirst ? 'active' : ''}">
-                <div class="carousel-item-content">
+            <div class="carousel-item news-carousel text-and-image-carousel ${isFirst ? 'active' : ''}">
+                <div class="carousel-item-content news-carousel">
                     <div class="row">
                         ${renderDesktopColumns(blocksList, i, defaultImageUrl)}
                     </div>
@@ -86,7 +86,7 @@ function renderDesktopColumns(blocksList, startIndex, defaultImageUrl) {
                     <p class="text-ellipsis">${content.NewsCarouselItemText1}</p>
                     <p class="text-ellipsis">${content.NewsCarouselItemText2}</p>
                 </div>
-                <div class="col-6 text-center carousel-img-container">
+                <div class="col-6 text-center carousel-img-container not-footer">
                     <a href="${content.NewsCarouselItemUrl}">
                         <img src="${imageUrl}" class="img-fluid carousel-img" alt="..."
                             onerror="handleImageError(this, '${defaultImageUrl}')">

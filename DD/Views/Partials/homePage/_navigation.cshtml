@@ -1,101 +1,97 @@
 @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
-@using Microsoft.Extensions.Configuration
-@inject IConfiguration Configuration
+@using Umbraco.Cms.Core.Models.PublishedContent
 @{
     Layout = null;
     var rootNode = Umbraco.ContentAtRoot().FirstOrDefault();
+    // Method to get visible children
     IEnumerable<IPublishedContent> GetVisibleChildren(IPublishedContent node)
     {
         return node.Children().Where(x => x.IsVisible());
     }
-    IEnumerable<IPublishedContent> GetVisibleDescendants(IPublishedContent node)
+    // Method to get visible children of pages with visible children
+    IEnumerable<IPublishedContent> GetVisibleChildrenOfPagesWithVisibleChildren(IPublishedContent node)
     {
-        return GetVisibleChildren(node).Concat(GetVisibleChildren(node).SelectMany(GetVisibleDescendants));
+        var childrenOfPagesWithVisibleChildren = new List<IPublishedContent>();
+        foreach (var child in GetVisibleChildren(node))
+        {
+            var visibleChildren = GetVisibleChildren(child);
+            if (visibleChildren.Any())
+            {
+                childrenOfPagesWithVisibleChildren.AddRange(visibleChildren);
+            }
+        }
+        return childrenOfPagesWithVisibleChildren;
     }
-    var allVisiblePages = GetVisibleDescendants(rootNode);
-    var navigationConfig = Configuration.GetSection("Navigation");
-    var hasChildLinks = navigationConfig.Get<List<string>>();
+    var visibleChildrenOfPagesWithVisibleChildren = GetVisibleChildrenOfPagesWithVisibleChildren(rootNode);
 }
 <!DOCTYPE html>
 <html>
 <head>
-    @await Html.PartialAsync("~/Views/Partials/_metaData.cshtml")
     <link rel="stylesheet" href="~/Styles/navigation.css" />
 </head>
 <body>
-    <nav id="navigation">
-        <div>
-            <a id="open-menu"><i id="bars" class="fas fa-bars"></i></a>
-            <ul>
-                @if (allVisiblePages != null && allVisiblePages.Any())
-                {
-                    foreach (var item in allVisiblePages)
+    <div class="navigation-container">
+        <nav id="navigation">
+            <div>
+                <div class="mobileMenu">
+                    <a href="@rootNode.Url()">
+                        <i class="homeButton fa-solid fa-house"></i>
+                    </a>
+                    <a id="open-menu">
+                        <i id="bars" class="fas fa-bars"></i>
+                    </a>
+                </div>
+                <ul>
+                    <li>
+                        <a href="@rootNode.Url()">
+                            <i class="hideHome fa-solid fa-house"></i>
+                        </a>
+                    </li>
+                    @if (visibleChildrenOfPagesWithVisibleChildren != null && visibleChildrenOfPagesWithVisibleChildren.Any())
                     {
-                        if (hasChildLinks.Contains(item.Name))
+                        foreach (var item in visibleChildrenOfPagesWithVisibleChildren)
                         {
-                            <li class="has-dropdown">
-                                <a class="parent-link">@item.Name</a>
-                                <button class="dropdown-arrow fas fa-chevron-down"></button>
-                                <ul class="dropdown">
-                                    @foreach (var childLink in item.Children())
-                                    {
-                                        var visibleGrandChildren = childLink.Children().Where(x => x.IsVisible());
-                                        <li class="has-subdropdown">
-                                            <a class="child-link" href="@childLink.Url()">@childLink.Name</a>
-                                            @if (visibleGrandChildren.Any())
-                                            {
-                                                <button class="dropdown-arrow fas fa-chevron-down"></button>
-                                                <ul class="sub-dropdown">
-                                                    @foreach (var grandChildLink in visibleGrandChildren)
-                                                    {
-                                                        <li>
-                                                            <a href="@grandChildLink.Url()">@grandChildLink.Name</a>
-                                                        </li>
-                                                    }
-                                                </ul>
-                                            }
-                                        </li>
-                                    }
-                                </ul>
-                            </li>
+                            var hasChildLinks = item.Children().Any(x => x.IsVisible());
+                            if (hasChildLinks)
+                            {
+                                <li class="has-dropdown">
+                                    <a class="parent-link" href="@item.Url()">@item.Name</a>
+                                    <button class="dropdown-arrow fas fa-chevron-down"></button>
+                                    <ul class="dropdown">
+                                        @foreach (var childLink in item.Children().Where(x => x.IsVisible()))
+                                        {
+                                            var visibleGrandChildren = childLink.Children().Where(x => x.IsVisible());
+                                            <li class="has-subdropdown">
+                                                <a class="child-link" href="@childLink.Url()">@childLink.Name</a>
+                                                @if (visibleGrandChildren.Any())
+                                                {
+                                                    <button class="dropdown-arrow fas fa-chevron-down"></button>
+                                                    <ul class="sub-dropdown">
+                                                        @foreach (var grandChildLink in visibleGrandChildren)
+                                                        {
+                                                            <li>
+                                                                <a href="@grandChildLink.Url()">@grandChildLink.Name</a>
+                                                            </li>
+                                                        }
+                                                    </ul>
+                                                }
+                                            </li>
+                                        }
+                                    </ul>
+                                </li>
+                            }
+                            else
+                            {
+                                <li>
+                                    <a href="@item.Url()">@item.Name</a>
+                                </li>
+                            }
                         }
                     }
-                }
-            </ul>
-        </div>
-    </nav>
+                </ul>
+            </div>
+        </nav>
+    </div>
     <script src="~/Scripts/mobileMenuToggle.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var parentLinks = document.querySelectorAll('.parent-link');
-
-            parentLinks.forEach(function (link) {
-                link.addEventListener('click', function (event) {
-                    var parentLi = event.target.closest('li');
-                    var dropdown = parentLi.querySelector('.dropdown');
-
-                    if (dropdown) {
-                        event.preventDefault();
-                        dropdown.classList.toggle('open');
-                    }
-                });
-            });
-
-            var childLinks = document.querySelectorAll('.child-link');
-
-            childLinks.forEach(function (link) {
-                link.addEventListener('click', function (event) {
-                    var parentLi = event.target.closest('li');
-                    var subDropdown = parentLi.querySelector('.sub-dropdown');
-
-                    if (subDropdown) {
-                        event.preventDefault();
-                        subDropdown.classList.toggle('open');
-                    }
-                });
-            });
-        });
-
-    </script>
 </body>
 </html>

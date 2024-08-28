@@ -1,0 +1,84 @@
+/* Estilos para las imágenes del carrusel */
+#carousel_image {
+    max-width: 840px !important; /* Incremento del 20% de 700px */
+    max-height: 700.6px !important; /* Incremento del 20% de 393px */
+    min-width: 560px !important; /* Decremento del 20% de 700px */
+    min-height: 314.4px !important; /* Decremento del 20% de 393px */
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    transition: all 0.5s ease; /* Transición suave para el tamaño */
+}
+
+/* Estilos generales */
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+html {
+    font-size: 62.5%; /* Base de 10px para facilitar el uso de rem */
+}
+
+/* Estilos para las flechas de navegación del carrusel */
+.carousel-control-prev {
+    left: -10%; /* Acercar flecha izquierda un 10% */
+}
+
+.carousel-control-next {
+    right: -10%; /* Acercar flecha derecha un 10% */
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    width: 2.5rem; /* Tamaño de las flechas */
+    height: 2.5rem; /* Tamaño de las flechas */
+    background-color: transparent; /* Fondo transparente */
+}
+
+    .carousel-control-prev-icon::before,
+    .carousel-control-next-icon::before {
+        color: #ffffff; /* Color blanco para las flechas */
+        font-size: 2.5rem; /* Tamaño de los iconos de las flechas */
+    }
+
+/* Estilos para los indicadores de paginación */
+.carousel-indicators {
+    bottom: 20px; /* Separar hacia abajo de forma fija */
+    position: absolute;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding-left: 0;
+    margin-left: auto;
+    margin-right: auto;
+    list-style: none;
+    z-index: 10; /* Asegurar que los indicadores estén sobre las imágenes */
+}
+
+    .carousel-indicators li {
+        box-sizing: content-box;
+        flex: 0 1 auto;
+        width: 30px;
+        height: 3px;
+        margin-right: 3px;
+        margin-left: 3px;
+        text-indent: -999px;
+        cursor: pointer;
+        background-color: #000;
+        background-clip: padding-box;
+        border-top: 10px solid transparent;
+        border-bottom: 10px solid transparent;
+        opacity: .5;
+        transition: opacity .6s ease;
+    }
+
+    .carousel-indicators .active {
+        opacity: 1;
+    }
+
+/* Espaciado adicional para evitar empalme con el contenido de abajo */
+.carousel {
+    padding-bottom: 100px; /* Aumentar el espacio fijo debajo del carrusel */
+}

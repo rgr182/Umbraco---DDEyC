@@ -18,32 +18,9 @@ using Umbraco.Extensions;
 
 namespace Umbraco.Cms.Web.Common.PublishedModels
 {
-	// Mixin Content Type with alias "richTextFooterRow"
-	/// <summary>Rich Text Footer Row</summary>
-	public partial interface IRichTextFooterRow : IPublishedElement
-	{
-		/// <summary>Footer Font Size</summary>
-		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
-		int FooterFontSize { get; }
-
-		/// <summary>Footer Headline</summary>
-		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
-		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		global::Umbraco.Cms.Core.Strings.IHtmlEncodedString FooterHeadline { get; }
-
-		/// <summary>Footer Headline Color</summary>
-		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
-		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		string FooterHeadlineColor { get; }
-
-		/// <summary>Footer Headline Hide</summary>
-		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
-		bool FooterHeadlineHide { get; }
-	}
-
 	/// <summary>Rich Text Footer Row</summary>
 	[PublishedModel("richTextFooterRow")]
-	public partial class RichTextFooterRow : PublishedElementModel, IRichTextFooterRow
+	public partial class RichTextFooterRow : PublishedElementModel
 	{
 		// helpers
 #pragma warning disable 0109 // new is redundant
@@ -77,11 +54,7 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
 		[ImplementPropertyType("footerFontSize")]
-		public virtual int FooterFontSize => GetFooterFontSize(this, _publishedValueFallback);
-
-		/// <summary>Static getter for Footer Font Size</summary>
-		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
-		public static int GetFooterFontSize(IRichTextFooterRow that, IPublishedValueFallback publishedValueFallback) => that.Value<int>(publishedValueFallback, "footerFontSize");
+		public virtual int FooterFontSize => this.Value<int>(_publishedValueFallback, "footerFontSize");
 
 		///<summary>
 		/// Footer Headline: Edit the headline title
@@ -89,12 +62,7 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
 		[ImplementPropertyType("footerHeadline")]
-		public virtual global::Umbraco.Cms.Core.Strings.IHtmlEncodedString FooterHeadline => GetFooterHeadline(this, _publishedValueFallback);
-
-		/// <summary>Static getter for Footer Headline</summary>
-		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
-		[return: global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		public static global::Umbraco.Cms.Core.Strings.IHtmlEncodedString GetFooterHeadline(IRichTextFooterRow that, IPublishedValueFallback publishedValueFallback) => that.Value<global::Umbraco.Cms.Core.Strings.IHtmlEncodedString>(publishedValueFallback, "footerHeadline");
+		public virtual global::Umbraco.Cms.Core.Strings.IHtmlEncodedString FooterHeadline => this.Value<global::Umbraco.Cms.Core.Strings.IHtmlEncodedString>(_publishedValueFallback, "footerHeadline");
 
 		///<summary>
 		/// Footer Headline Color
@@ -102,22 +70,13 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
 		[ImplementPropertyType("footerHeadlineColor")]
-		public virtual string FooterHeadlineColor => GetFooterHeadlineColor(this, _publishedValueFallback);
-
-		/// <summary>Static getter for Footer Headline Color</summary>
-		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
-		[return: global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		public static string GetFooterHeadlineColor(IRichTextFooterRow that, IPublishedValueFallback publishedValueFallback) => that.Value<string>(publishedValueFallback, "footerHeadlineColor");
+		public virtual string FooterHeadlineColor => this.Value<string>(_publishedValueFallback, "footerHeadlineColor");
 
 		///<summary>
 		/// Footer Headline Hide: Select to true if you need to hide the text
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
 		[ImplementPropertyType("footerHeadlineHide")]
-		public virtual bool FooterHeadlineHide => GetFooterHeadlineHide(this, _publishedValueFallback);
-
-		/// <summary>Static getter for Footer Headline Hide</summary>
-		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
-		public static bool GetFooterHeadlineHide(IRichTextFooterRow that, IPublishedValueFallback publishedValueFallback) => that.Value<bool>(publishedValueFallback, "footerHeadlineHide");
+		public virtual bool FooterHeadlineHide => this.Value<bool>(_publishedValueFallback, "footerHeadlineHide");
 	}
 }

@@ -67,11 +67,9 @@ td {
     vertical-align: baseline;
     background: transparent;
 }
-
 header {
     background-color: #fcfcfc;
 }
-
 /* Global styles */
 body {
     overflow-x: hidden;
@@ -81,7 +79,6 @@ body {
     background: linear-gradient(180deg, #03438b 0%, #0f6ab0 100%);
     color: white;
 }
-
 /* Add your custom styles here */
 .row{
     margin-left: 0;
@@ -93,7 +90,6 @@ body {
     max-width: 880px;
     margin: 0 auto;
 }
-
 .embed-responsive {
     position: relative;
     display: block;
@@ -102,14 +98,12 @@ body {
     overflow: hidden;
     height: 495px;
 }
-
 .embed-responsive::before {
     display: block;
     content: "";
     padding-top: 56.25%;
     /* 16:9 aspect ratio */
 }
-
 .embed-responsive .embed-responsive-item,
 .embed-responsive iframe,
 .embed-responsive embed,
@@ -123,7 +117,6 @@ body {
     height: 100%;
     border: 0;
 }
-
 /* Styles for mobile resolutions */
 @media (max-width: 767px) {
     .video-embed {
@@ -140,7 +133,6 @@ body {
         /* Preserve 16:9 aspect ratio */
     }
 }
-
 /* HomePage redirect button */
 .home-redirect-button {
     font-size: 24px;
@@ -178,6 +170,12 @@ body {
 }
 .social-media-btn-row {    
     width: 90%;
+}
+@media(max-width: 768px) {
+    .footer-headline-lp{
+        text-align: center !important;
+        width: 100%;
+    }
 }
 @media screen and (min-width: 768px) {
     .social-media-btn-row {

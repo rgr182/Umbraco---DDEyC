@@ -8,7 +8,18 @@ html {
     font-size: 62.5%;
 }
 .headlineTitle{
-    width:100%;
+    width:60%;
     margin-top:3rem;
     margin-left:3rem;
+}
+
+@media (max-width: 768px) {
+    .headlineTitle {
+        margin-left: 0;
+        text-align: center;
+    }
+    .headlineTitle.newsTitle{
+        margin-left: 3rem;
+        width: 80%;
+    }
 }

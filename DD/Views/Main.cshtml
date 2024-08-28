@@ -1,5 +1,4 @@
 ﻿@using Umbraco.Cms.Web.Common.PublishedModels;
-
 @using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
 @{
 	Layout = null;
@@ -25,7 +24,9 @@
 	@await Html.PartialAsync("~/Views/Partials/_header.cshtml")
 
 	@RenderBody()
-
+	<div>
+		@await Html.PartialAsync("~/Views/Encuesta.cshtml")
+	</div>
 	<!-- Bootstrap JS-->
 	<script src="~/Styles/bootstrap-5.1.3-dist/js/bootstrap.min.js"></script>
 </body>

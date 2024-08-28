@@ -9,7 +9,7 @@
     @await Html.PartialAsync("~/Views/Partials/_metaData.cshtml")
     <link rel="stylesheet" href="~/Styles/headlineTitles.css" />
 </head>
-<div class="headlineTitle">
+<div class="headlineTitle newsTitle">
     @if(newsHeadline != null && hideHeadline != true)
     {
         <h1 id="headline" style="color:@colorHeadline">@newsHeadline</h1>

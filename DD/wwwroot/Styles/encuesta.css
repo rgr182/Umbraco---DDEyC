@@ -1,0 +1,144 @@
+﻿
+body {
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    font-size: 16px; 
+}
+
+#survey-container {
+    display: none;
+    position: fixed;
+    color: black;
+    right: 0.625rem;
+    bottom: 0.625rem;
+    width: 30vw;
+    height: 90vh;
+    max-height: 840px;
+    border-radius: 5px;
+    z-index: 20;
+    background-color: white;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+#survey-container h2 {
+    color: white;
+    margin: 0;
+    padding: 0;
+}
+
+.survey-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.survey-form label {
+    margin-top: 10px;
+}
+
+.survey-form input {
+    margin-top: 5px;
+    padding: 0.625rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.info {
+    background-color: lightgray;
+    width: 100%;
+}
+
+.survey-form input[type="radio"]:checked {
+    accent-color: magenta;
+}
+
+.survey-form button {
+    margin-top: 20px;
+    padding: 0.625rem;
+    background-color: #c9dff6;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.survey-form button:hover {
+    background-color: #0056b3;
+}
+
+@media (max-width: 1009px) {
+    #survey-container {
+        width: 75vw;
+    }
+}
+
+/* Updated styles for minimizable functionality */
+#survey-container.minimized {
+    height: auto;
+    width: auto;
+}
+
+.survey-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.625rem;
+    background-color: #007BFF;
+    border-radius: 5px 5px 0 0;
+}
+
+.survey-header h2 {
+    flex-grow: 1;
+    margin-right: 10px;
+}
+
+.minimize-btn {
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(0, 86, 179, 0.3);
+    color: #007BFF;
+    font-size: 1.4rem;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 0.2rem 0.4rem;
+    border-radius: 3px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    margin-left: 10px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.minimize-btn:hover {
+    background-color: rgba(255, 255, 255, 1);
+    border-color: rgba(0, 86, 179, 0.5);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+
+
+.survey-content {
+    padding: 1rem;
+    max-height: calc(90vh - 60px);
+    overflow-y: auto;
+}
+
+#survey-container.minimized .survey-content {
+    display: none;
+}
+
+/* New styles for initial minimized state */
+#survey-container.initial-minimized {
+    height: auto;
+    width: auto;
+}
+
+#survey-container.initial-minimized .survey-content {
+    display: none;
+}

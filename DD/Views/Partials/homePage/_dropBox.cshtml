@@ -43,7 +43,7 @@
 {
     <body>
         <div class="DropboxContainer">
-            <label class="title">Quién eres?</label>
+            <label class="title">@Model.ComboBox1Title</label>
             <select id="parent-dropdown-@uniqueId" class="dropboxItem">
                 <option selected>@defaultText</option>
                 @foreach (var item in Model.SearchComboContents)
@@ -54,7 +54,7 @@
                     }
                 }
             </select>
-            <label class="title">Qué buscas?</label>
+            <label class="title">@Model.ComboBox2Title</label>
             <select id="child-dropdown-@uniqueId" class="dropboxItem">
                 <option selected>@defaultText</option>
             </select>
