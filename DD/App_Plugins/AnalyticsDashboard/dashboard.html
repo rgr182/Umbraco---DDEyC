@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Analytics Dashboard</title>
     <link rel="stylesheet" href="/App_Plugins/AnalyticsDashboard/analyticsDashboard.css">
 </head>
+
 <body>
     <section class="dashboard-container" ng-controller="AnalyticsDashboardController as vm">
         <h1 id="analytics-dashboard" class="dashboard-title">Analytics Dashboard</h1>
@@ -61,8 +63,15 @@
 
         <section class="chart-container" ng-if="vm.showGraph">
             <h2 id="page-views-chart" class="chart-title">Page Views Chart</h2>
-            <div style="position: relative; height: 400px;">
+            <div>
                 <canvas id="pageViewsChart"></canvas>
+            </div>
+        </section>
+
+        <section>
+            <h2 class="chart-title">Page Views Pie Chart</h2>
+            <div>
+                <canvas id="pageViewsPieChart"></canvas>
             </div>
         </section>
 
@@ -95,4 +104,5 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
 </body>
+
 </html>
