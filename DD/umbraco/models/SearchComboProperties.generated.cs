@@ -32,6 +32,11 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
 		string ComboBox2Title { get; }
 
+		/// <summary>Combo Box 3 Title</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		string ComboBox3Title { get; }
+
 		/// <summary>Default Search Combo Text</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
@@ -103,6 +108,19 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
 		[return: global::System.Diagnostics.CodeAnalysis.MaybeNull]
 		public static string GetComboBox2Title(ISearchComboProperties that, IPublishedValueFallback publishedValueFallback) => that.Value<string>(publishedValueFallback, "comboBox2Title");
+
+		///<summary>
+		/// Combo Box 3 Title
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("comboBox3Title")]
+		public virtual string ComboBox3Title => GetComboBox3Title(this, _publishedValueFallback);
+
+		/// <summary>Static getter for Combo Box 3 Title</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
+		[return: global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		public static string GetComboBox3Title(ISearchComboProperties that, IPublishedValueFallback publishedValueFallback) => that.Value<string>(publishedValueFallback, "comboBox3Title");
 
 		///<summary>
 		/// Default Search Combo Text

@@ -10,24 +10,41 @@
     var defaultText = Model.DefaultSearchComboText ?? "Selecciona una opción";
     var ComboBox1Title = Model.ComboBox1Title ?? "Quién eres?";
     var ComboBox2Title = Model.ComboBox2Title ?? "Qué buscas?";
+    var ComboBox3Title = Model.ComboBox3Title ?? "Respuestas disponibles";
+
     var data = new
     {
         blocksList = blocksList.Select(b => new
         {
-            content = new
+            content = b?.Content is ComboBoxUserType userType ? new
             {
-                ComboBoxUserName = ((ComboBoxUserType)b.Content).ComboBoxUserName.ToString(),
-                ComboBoxUserMatches = ((ComboBoxUserType)b.Content).ComboBoxUserMatches.Select(matchContent =>
+                ComboBoxUserName = userType.ComboBoxUserName?.ToString(),
+                ComboBoxUserMatches = userType.ComboBoxUserMatches?.Select(matchContent =>
                 {
-                    var match = (ComboBoxMatchElement)matchContent.Content;
+                    var match = matchContent?.Content as ComboBoxMatchElement;
                     return new
                     {
-                        ComboBoxMatchElementText = match.ComboBoxMatchElementText.ToString(),
-                        ComboBoxMatchElementUrl = match.ComboBoxMatchElementUrl.Url.ToString()
+                        ComboBoxMatchElementText = match?.ComboBoxMatchElementText?.ToString(),
+                        ComboBoxMatchElementUrl = match?.ComboBoxMatchElementUrl?.Select(block =>
+                        {
+                            var ComboBoxDropdown3 = block.Content;
+                            return new
+                            {
+                                ComboBoxThirdUrl = ComboBoxDropdown3?.comboBoxThirdURL?.Url
+                            };
+                        }).Where(x => x.ComboBoxThirdUrl != null).ToList(),
+                        ComboBoxPreferences = match?.ComboBoxPreferences?.Select(preference =>
+                        {
+                            return new
+                            {
+                                PreferenceText = preference.PreferenceText?.ToString(),
+                                PreferenceValue = preference.PreferenceValue?.ToString()
+                            };
+                        }).ToList()
                     };
-                })
-            }
-        })
+                }).ToList()
+            } : null
+        }).Where(b => b != null)
     };
     var json = Json.Serialize(data);
 }
@@ -54,10 +71,17 @@
                     }
                 }
             </select>
+
             <label class="title">@Model.ComboBox2Title</label>
             <select id="child-dropdown-@uniqueId" class="dropboxItem">
                 <option selected>@defaultText</option>
             </select>
+
+            <label class="title">@Model.ComboBox3Title</label>
+            <select id="child-dropdown-@uniqueId" class="dropboxItem">
+                <option selected>@defaultText</option>
+            </select>
+
             <a id="search-icon-@uniqueId" href="#" class="searchButton"><i class="fas fa-search"></i></a>
         </div>
     </body>
