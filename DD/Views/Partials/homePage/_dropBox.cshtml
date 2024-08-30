@@ -27,20 +27,13 @@
                         ComboBoxMatchElementText = match?.ComboBoxMatchElementText?.ToString(),
                         ComboBoxMatchElementUrl = match?.ComboBoxMatchElementUrl?.Select(block =>
                         {
-                            var ComboBoxDropdown3 = block.Content;
+                            var comboBoxDropdown3 = block.Content as ComboBoxDropdown3;
                             return new
                             {
-                                ComboBoxThirdUrl = ComboBoxDropdown3?.comboBoxThirdURL?.Url
+                                ComboBoxThirdUrl = comboBoxDropdown3?.ComboBoxThirdUrl?.Url,
+                                ComboBoxThirdTitle = comboBoxDropdown3?.ComboBoxThirdUrl?.Name
                             };
                         }).Where(x => x.ComboBoxThirdUrl != null).ToList(),
-                        ComboBoxPreferences = match?.ComboBoxPreferences?.Select(preference =>
-                        {
-                            return new
-                            {
-                                PreferenceText = preference.PreferenceText?.ToString(),
-                                PreferenceValue = preference.PreferenceValue?.ToString()
-                            };
-                        }).ToList()
                     };
                 }).ToList()
             } : null
@@ -60,7 +53,7 @@
 {
     <body>
         <div class="DropboxContainer">
-            <label class="title">@Model.ComboBox1Title</label>
+            <label class="title">@ComboBox1Title</label>
             <select id="parent-dropdown-@uniqueId" class="dropboxItem">
                 <option selected>@defaultText</option>
                 @foreach (var item in Model.SearchComboContents)
@@ -72,13 +65,13 @@
                 }
             </select>
 
-            <label class="title">@Model.ComboBox2Title</label>
+            <label class="title">@ComboBox2Title</label>
             <select id="child-dropdown-@uniqueId" class="dropboxItem">
                 <option selected>@defaultText</option>
             </select>
 
-            <label class="title">@Model.ComboBox3Title</label>
-            <select id="child-dropdown-@uniqueId" class="dropboxItem">
+            <label class="title">@ComboBox3Title</label>
+            <select id="third-dropdown-@uniqueId" class="dropboxItem">
                 <option selected>@defaultText</option>
             </select>
 
@@ -86,6 +79,7 @@
         </div>
     </body>
 }
+
 <script>
     const DefaultText = '@defaultText';
     const uniqueId = '@uniqueId';
