@@ -222,6 +222,14 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		public virtual string ComboBox2Title => global::Umbraco.Cms.Web.Common.PublishedModels.SearchComboProperties.GetComboBox2Title(this, _publishedValueFallback);
 
 		///<summary>
+		/// Combo Box 3 Title
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("comboBox3Title")]
+		public virtual string ComboBox3Title => global::Umbraco.Cms.Web.Common.PublishedModels.SearchComboProperties.GetComboBox3Title(this, _publishedValueFallback);
+
+		///<summary>
 		/// Default Search Combo Text
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
