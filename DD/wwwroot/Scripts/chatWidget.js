@@ -1,5 +1,3 @@
-// File: wwwroot/scripts/chat-widget.js
-
 document.addEventListener('DOMContentLoaded', function() {
     const chatToggle = document.getElementById('chat-toggle');
     const chatContainer = document.getElementById('chat-container');
@@ -11,6 +9,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     let threadId = null;
     let isWaitingForResponse = false;
+
+    // The base URL is now available as a global variable
+    const apiBaseUrl = assistantApiBaseUrl;
 
     chatToggle.addEventListener('click', () => {
         chatContainer.classList.toggle('hidden');
@@ -34,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function() {
         setLoading(true);
         showTypingIndicator();
         try {
-            const response = await fetch('http://localhost:5153/api/chat/StartChat', { method: 'POST' });
+            const response = await fetch(`${apiBaseUrl}/api/chat/StartChat`, { method: 'POST' });
             if (!response.ok) {
                 throw new Error('Failed to start chat');
             }
@@ -61,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function() {
         showTypingIndicator();
 
         try {
-            const response = await fetch('http://localhost:5153/api/chat/Chat', {
+            const response = await fetch(`${apiBaseUrl}/api/chat/Chat`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ threadId, userMessage: message }),
