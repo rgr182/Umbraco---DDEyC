@@ -131,3 +131,83 @@
     padding-left: 10px;
     color: #666;
 }
+.loading-spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #ffffff;
+    border-top: 2px solid #3498db;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.error-message {
+    background-color: #ffebee;
+    color: #c62828;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.chat-form button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.chat-form input:disabled {
+    background-color: #f0f0f0;
+    cursor: not-allowed;
+}
+.typing-indicator {
+    background-color: #f0f0f0;
+    padding: 6px 10px;
+    border-radius: 12px;
+    display: inline-block;
+    margin-bottom: 8px;
+}
+
+.typing-dots {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 12px;
+}
+
+.typing-dots span {
+    height: 3px;
+    width: 3.5px;
+    background-color: #3498db;
+    border-radius: 50%;
+    display: inline-block;
+    margin: 0 1px;
+    animation: typing 1s infinite ease-in-out;
+}
+
+.typing-dots span:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.typing-dots span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.typing-dots span:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+@keyframes typing {
+    0% {
+        transform: translateY(0px);
+    }
+    28% {
+        transform: translateY(-2px);
+    }
+    44% {
+        transform: translateY(0px);
+    }
+}
