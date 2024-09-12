@@ -1,83 +1,16 @@
-﻿@using Umbraco.Cms.Web.Common.PublishedModels;
-@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ContentModels.JobListingsPage>
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ContentModels.JobListingsPage>
+@using Umbraco.Cms.Web.Common.PublishedModels;
 @using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
-
-
 @{
     Layout = "Main.cshtml";
-    var richTextStyle = string.Empty;
 }
 <head>
     <link rel="stylesheet" href="~/Styles/GeneralContentPage.css" />
 </head>
-<div>
-    @await Html.PartialAsync("Partials/homePage/_navigation.cshtml")
-</div>
-<div class="general-content">
-    @foreach (var item in Model.ContentPageBlocks)
-    {
-        if (item.Content is ContentModels.LogoItems logoItem)
-        {
-            @await Html.PartialAsync("Partials/blocklistItems/_logoItem", logoItem)
 
-        }
-        if (item.Content is ContentModels.RichTextItems text)
-        {
-            richTextStyle = string.Empty;
+ @await Html.PartialAsync("_SharedContentPage", Model) 
 
-            // If the text Color is not empty/null, add it to the style
-            if (!string.IsNullOrEmpty(text.TextColor))
-            {
-                richTextStyle += $"color:{text.TextColor};";
-            }
-            // If the font size is not empty/null, add it to the style
-            if (text.FontSize != null && text.FontSize != 0)
-            {
-                richTextStyle += $"font-size:{text.FontSize}px ;";
-            }
-            else
-            {
-                richTextStyle += $"font-size:27px;";
-            }
-            // Render the text
-            <div class="rich-content-div mt-3" style="@richTextStyle">
-                <div class="rich-content-text">
-                    @Html.Raw(text.RichText)
-                </div>
-            </div>
-        }
-        if (item.Content is ContentModels.NewsCarouselRow newsRow)
-        {
-            string uniqueCarouselId = $"newsCarousel-{item.GetHashCode()}";
-            <div class="mt-3">
-                @Html.Partial("Partials/homePage/_newsCarousel", newsRow.NewsCarouselRowItems, new ViewDataDictionary(ViewContext.ViewData) { { "CarouselId", uniqueCarouselId } })
-            </div>
-        }
-        if (item.Content is ContentModels.ImageCarouselRow imageRow)
-        {
-            string uniqueCarouselId = $"imageCarousel-{item.GetHashCode()}";
-            <div class="mt-3">
-                @Html.Partial("Partials/homePage/_imageCarousel", imageRow.ImageCarouselRowItems, new ViewDataDictionary(ViewContext.ViewData) { { "CarouselId", uniqueCarouselId } })
-            </div>
-        }
-        if (item.Content is ContentModels.RichTextAndImageItems richTextAndImageItems)
-        {
-            <div class="mt-3">
-                @Html.Partial("Partials/_textAndImage", richTextAndImageItems)
-            </div>
-        }
-        if (item.Content is ContentModels.VideoEmbedElement videoEmbed)
-        {
-            <div class="mt-3">
-                @Html.Partial("Partials/blocklistItems/_embededVideo", videoEmbed)
-            </div>
-        }
-    }
-    <div class="mt-3">
-        @await Html.PartialAsync("Partials/homePage/_footer")
-    </div>
-</div>
-<div class="mt-3">
-    @await Html.PartialAsync("Partials/blocklist/_socialMediaItems")
-</div>
-	@await Html.PartialAsync("Partials/_chatWidget")
+@if (Model.ShowChatBot)
+{
+    @await Html.PartialAsync("Partials/_chatWidget")
+}
