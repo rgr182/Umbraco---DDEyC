@@ -1,0 +1,63 @@
+﻿@using Umbraco.Cms.Web.Common.PublishedModels;
+@using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
+@{
+    Layout = "Main.cshtml";
+    var title = Model.Title; // Accede directamente a las propiedades del modelo
+    var subtitle = Model.Subtitle;
+    var headerContent = Model.Header; // No necesitas hacer `Value<T>` aquí
+    var logoUrl = Model.logo?.Url; // `logo` es el nombre de la propiedad, `?.Url` para obtener la URL
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@title</title>
+    <link rel="stylesheet" href="~/Styles/LoginStyles.css">
+</head>
+<body>
+    <header class="login-header">
+        @if (headerContent != null)
+        {
+            <div class="login-header-content">
+                @headerContent
+            </div>
+        }
+    </header>
+    <div class="login-container">
+        <h1 class="login-title">@title</h1>
+        <h2 class="login-subtitle">@subtitle</h2>
+        <form action="/login" method="post" class="login-form">
+            <div class="login-form-group">
+                <label for="email" class="login-label">Correo electrónico:</label>
+                <input type="email" id="email" name="email" required class="login-input">
+            </div>
+            <div class="login-form-group">
+                <label for="password" class="login-label">Contraseña:</label>
+                <input type="password" id="password" name="password" required class="login-input">
+            </div>
+            <div class="login-form-group">
+                <input type="checkbox" id="remember" name="remember" class="login-checkbox">
+                <label for="remember" class="login-checkbox-label">Recordarme</label>
+            </div>
+            <div class="login-form-group">
+                <button type="submit" class="login-button">Iniciar Sesión</button>
+            </div>
+            <div class="login-form-group">
+                <a href="/forgot-password" class="login-link">¿Olvidaste tu contraseña?</a>
+            </div>
+            <div class="login-form-group">
+                <a href="/register" class="login-link">¿No tienes cuenta? Regístrate</a>
+            </div>
+        </form>
+        @if (logoUrl != null)
+        {
+            <div class="login-logo">
+                <img src="@logoUrl" alt="Gobierno Municipal de Chihuahua">
+            </div>
+        }
+    </div>
+</body>
+</html>
+
