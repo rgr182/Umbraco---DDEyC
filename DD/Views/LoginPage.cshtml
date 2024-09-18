@@ -2,18 +2,17 @@
 @using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
 @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ContentModels.LoginPage>
 
+
 @{
     Layout = "Main.cshtml";
+    var logo = Model.Logo as IPublishedContent;
+    var logoUrl = logo != null ? logo.GetCropUrl("default") : null;
 }
 
-<head>
-    <link rel="stylesheet" href="~/Styles/LoginPage.css" />
-</head>
-
 <div class="login-container text-center">
-    @if (Model.Logo != null)
+    @if (logoUrl != null)
     {
-        <img src="@Model.Logo.Url" alt="Logotipo Gobierno Municipal de Chihuahua" class="login-logo" />
+        <img src="@logoUrl" alt="Logotipo Gobierno Municipal de Chihuahua" class="login-logo" />
     }
     else
     {
