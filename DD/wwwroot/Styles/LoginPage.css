@@ -1,0 +1,88 @@
+﻿.login-container {
+    background-color: white;
+    padding: 40px;
+    max-width: 600px;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}
+
+.login-logo {
+    width: 150px;
+    margin-bottom: 20px;
+}
+
+.login-h1 {
+    font-size: 36px;
+    color: #007bff;
+    margin-bottom: 10px;
+}
+
+.login-h2 {
+    font-size: 18px;
+    color: gray;
+    margin-bottom: 30px;
+}
+
+.login-form-group {
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+    .login-form-group label {
+        display: block;
+        margin-bottom: 8px;
+    }
+
+    .login-form-group input {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+.login-button {
+    padding: 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 48%;
+}
+
+    .login-button:hover {
+        background-color: #0056b3;
+    }
+
+.login-action-buttons {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.login-register-link {
+    padding: 12px;
+    background-color: #f0f0f0;
+    color: #007bff;
+    border-radius: 5px;
+    text-align: center;
+    text-decoration: none;
+    width: 48%;
+}
+
+.login-forgot-password-link {
+    display: block;
+    margin-top: -10px;
+    margin-bottom: 20px;
+    color: #007bff;
+}
+
+.login-error-message {
+    color: red;
+    margin-top: 10px;
+}
