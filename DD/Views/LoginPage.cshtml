@@ -10,19 +10,14 @@
 }
 
 <div class="login-container text-center">
-    @if (logoUrl != null)
-    {
-        <img src="@logoUrl" alt="Logotipo Gobierno Municipal de Chihuahua" class="login-logo" />
-    }
-    else
-    {
-        <p>No se ha configurado un logotipo.</p>
-    }
 
+    <!-- Título y subtítulo primero -->
     <h1 class="login-h1">@Model.Title</h1>
     <h2 class="login-h2">@Model.Subtitle</h2>
 
     <form id="loginForm" method="post" action="/login/submit">
+
+        <!-- Campos de correo y contraseña -->
         <div class="login-form-group">
             <label for="email">Correo electrónico</label>
             <input type="email" id="email" name="email" required />
@@ -33,15 +28,12 @@
             <input type="password" id="password" name="password" required />
         </div>
 
+        <!-- Enlace para recuperar la contraseña -->
         <div class="login-form-group">
             <a href="@Model.RecoveryUrl" class="login-forgot-password-link">¿Olvidaste tu contraseña?</a>
         </div>
 
-        <div class="login-form-group">
-            <input type="checkbox" id="rememberMe" name="rememberMe" />
-            <label for="rememberMe">Recordarme en este dispositivo</label>
-        </div>
-
+        <!-- Botones de iniciar sesión y registro en la misma línea -->
         <div class="login-action-buttons">
             <button type="submit" class="login-button">Iniciar Sesión</button>
 
@@ -56,8 +48,19 @@
         </div>
     </form>
 
+    <!-- Mensaje de error -->
     @if (ViewData["ErrorMessage"] != null)
     {
         <div class="login-error-message">@ViewData["ErrorMessage"]</div>
+    }
+
+    <!-- Imagen del logo al final -->
+    @if (logoUrl != null)
+    {
+        <img src="@logoUrl" alt="Logotipo Gobierno Municipal de Chihuahua" class="login-logo" />
+    }
+    else
+    {
+        <p>No se ha configurado un logotipo.</p>
     }
 </div>
