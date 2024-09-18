@@ -45,7 +45,18 @@
 
         <div class="login-action-buttons">
             <button type="submit" class="login-button">Iniciar Sesión</button>
-            <a href="@Model.RegistrationPage.Url" class="login-register-link">Crear Usuario</a>
+
+            @if (Model.RegistrationPage != null && Model.RegistrationPage.Any())
+            {
+                var registrationLink = Model.RegistrationPage.FirstOrDefault().Url;
+                <a href="@registrationLink" class="login-register-button">
+                    <button type="button" class="login-button">Crear Usuario</button>
+                </a>
+            }
+            else
+            {
+                <p>No se ha configurado una página de registro.</p>
+            }
         </div>
     </form>
 
@@ -56,6 +67,6 @@
 </div>
 
 <div class="mt-3 p-5">
-    @await Html.PartialAsync("Partials/homePage/_footer")
-    @await Html.PartialAsync("Partials/blocklist/_socialMediaItems")
+    @await Html.PartialAsync("Partials/homePage/_footer", null)
+    @await Html.PartialAsync("Partials/blocklist/_socialMediaItems", null)
 </div>
