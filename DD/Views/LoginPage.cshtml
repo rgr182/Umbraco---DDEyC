@@ -2,11 +2,11 @@
 @using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
 @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ContentModels.LoginPage>
 
-
 @{
     Layout = "Main.cshtml";
     var logo = Model.Logo as IPublishedContent;
     var logoUrl = logo != null ? logo.GetCropUrl("default") : null;
+    var registrationLink = Model.RegistrationPage?.FirstOrDefault()?.Url;
 }
 
 <div class="login-container text-center">
@@ -45,12 +45,9 @@
         <div class="login-action-buttons">
             <button type="submit" class="login-button">Iniciar Sesión</button>
 
-            @if (Model.RegistrationPage != null && Model.RegistrationPage.Any())
+            @if (registrationLink != null)
             {
-                var registrationLink = Model.RegistrationPage.FirstOrDefault().Url;
-                <a href="@registrationLink" class="login-register-button">
-                    <button type="button" class="login-button">Crear Usuario</button>
-                </a>
+                <a href="@registrationLink" class="login-register-button">Crear Usuario</a>
             }
             else
             {
@@ -63,9 +60,4 @@
     {
         <div class="login-error-message">@ViewData["ErrorMessage"]</div>
     }
-</div>
-
-<div class="mt-3 p-5">
-    @await Html.PartialAsync("Partials/homePage/_footer", null)
-    @await Html.PartialAsync("Partials/blocklist/_socialMediaItems", null)
 </div>
