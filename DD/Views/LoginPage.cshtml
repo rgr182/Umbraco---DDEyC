@@ -4,16 +4,17 @@
 
 @{
     Layout = "Main.cshtml";
+
     var logo = Model.Logo as IPublishedContent;
-    var logoUrl = logo != null ? logo.GetCropUrl("default") : null;
+    var logoUrl = logo != null ? logo.Url() : null;
     var registrationLink = Model.RegistrationPage?.FirstOrDefault()?.Url;
+    var recoveryLink = Model.RecoveryUrl?.FirstOrDefault()?.Url; 
 }
 
 <head>
     <link rel="stylesheet" href="~/Styles/LoginPage.css" />
 </head>
 
-<!-- Title and subtitle in a blue header section -->
 <div class="login-header">
     <h1 class="login-h1">@Model.Title</h1>
     <h2 class="login-h2">@Model.Subtitle</h2>
@@ -21,7 +22,6 @@
 
 <div class="login-container text-center">
     <form id="loginForm" method="post" action="/login/submit">
-        <!-- Email and Password fields -->
         <div class="login-form-group">
             <label for="email">Correo electrónico</label>
             <input type="email" id="email" name="email" required />
@@ -32,12 +32,17 @@
             <input type="password" id="password" name="password" required />
         </div>
 
-        <!-- Forgot password link -->
         <div class="login-form-group">
-            <a href="@Model.RecoveryUrl" class="login-forgot-password-link">¿Olvidaste tu contraseña?</a>
+            @if (!string.IsNullOrEmpty(recoveryLink))
+            {
+                <a href="@recoveryLink" class="login-forgot-password-link">¿Olvidaste tu contraseña?</a>
+            }
+            else
+            {
+                <p>No se ha configurado una página de recuperación.</p>
+            }
         </div>
 
-        <!-- Login and Register buttons side by side -->
         <div class="login-action-buttons">
             <button type="submit" class="login-button">Iniciar Sesión</button>
 
@@ -52,13 +57,11 @@
         </div>
     </form>
 
-    <!-- Error message -->
     @if (ViewData["ErrorMessage"] != null)
     {
         <div class="login-error-message">@ViewData["ErrorMessage"]</div>
     }
 
-    <!-- Logo at the bottom -->
     @if (logoUrl != null)
     {
         <img src="@logoUrl" alt="Logotipo Gobierno Municipal de Chihuahua" class="login-logo" />
