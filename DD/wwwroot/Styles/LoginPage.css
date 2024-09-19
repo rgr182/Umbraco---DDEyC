@@ -1,36 +1,58 @@
-﻿.login-container {
+﻿/* Asegurar que el body y el html ocupen todo el alto disponible */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+/* Main container styles */
+.login-container {
     background-color: white;
-    padding: 40px;
-    max-width: 600px;
-    margin: auto;
+    padding: 20px 40px; /* Reduce el padding superior para subir los elementos */
+    width: 100%;
+    height: 100%;
+    margin: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start; /* Empieza desde la parte superior */
     border-radius: 10px;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
 }
 
-.login-logo {
-    width: 150px;
-    margin-bottom: 20px;
+/* Blue background for title and subtitle section */
+.login-header {
+    background-color: #007bff;
+    width: 100%;
+    padding: 20px 0;
+    text-align: center;
+    border-radius: 10px 10px 0 0;
 }
 
 .login-h1 {
     font-size: 36px;
-    color: #007bff;
-    margin-bottom: 10px;
+    color: white;
+    margin: 0;
 }
 
 .login-h2 {
     font-size: 18px;
-    color: gray;
-    margin-bottom: 30px;
+    color: white;
+    margin: 0;
+    margin-bottom: 10px;
 }
 
-.login-form-group {
+/* Logo styles */
+.login-logo {
+    width: 200px;
     margin-bottom: 20px;
-    width: 100%;
+}
+
+/* Form input fields */
+.login-form-group {
+    margin-bottom: 30px; /* Aumenta la separación entre los campos */
+    width: 800px;
+    
 }
 
     .login-form-group label {
@@ -45,6 +67,7 @@
         border-radius: 5px;
     }
 
+/* Login button */
 .login-button {
     padding: 12px;
     background-color: #007bff;
@@ -52,29 +75,38 @@
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    width: 48%;
+    width: 350px;
 }
 
     .login-button:hover {
         background-color: #0056b3;
     }
 
+/* Styling for both buttons in a row */
 .login-action-buttons {
     display: flex;
     justify-content: space-between;
     width: 100%;
+    margin-top: 20px; /* Añade espacio entre los campos y los botones */
 }
 
-.login-register-link {
+.login-register-button {
     padding: 12px;
-    background-color: #f0f0f0;
-    color: #007bff;
+    background-color: #007bff;
+    color: white;
+    border: none;
     border-radius: 5px;
+    cursor: pointer;
+    width: 350px;
     text-align: center;
     text-decoration: none;
-    width: 48%;
 }
 
+    .login-register-button:hover {
+        background-color: #0056b3;
+    }
+
+/* Forgot password link */
 .login-forgot-password-link {
     display: block;
     margin-top: -10px;
@@ -82,6 +114,7 @@
     color: #007bff;
 }
 
+/* Error message styles */
 .login-error-message {
     color: red;
     margin-top: 10px;
