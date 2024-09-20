@@ -1,0 +1,71 @@
+﻿@using Umbraco.Cms.Web.Common.PublishedModels;
+@using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ContentModels.LoginPage>
+
+@{
+    Layout = "Main.cshtml";
+
+    var logo = Model.Logo as IPublishedContent;
+    var logoUrl = logo != null ? logo.Url() : null;
+    var registrationLink = Model.RegistrationPage?.FirstOrDefault()?.Url;
+    var recoveryLink = Model.RecoveryUrl?.FirstOrDefault()?.Url;
+}
+
+<head>
+    <link rel="stylesheet" href="~/Styles/LoginPage.css" />
+</head>
+
+<div class="login-header">
+    <h1 class="login-h1">@Model.Title</h1>
+    <h2 class="login-h2">@Model.Subtitle</h2>
+</div>
+
+<div class="login-container text-center">
+    <form id="loginForm" method="post" action="/login/submit">
+        <div class="login-form-group">
+            <input type="email" id="email" name="email" placeholder="Correo electronico" required />
+        </div>
+
+        <div class="login-form-group">
+            <input type="password" id="password" name="password" placeholder="Contraseña" required />
+        </div>
+
+        <div class="login-form-group">
+            @if (!string.IsNullOrEmpty(recoveryLink))
+            {
+                <a href="@recoveryLink" class="login-forgot-password-link">¿Olvidaste tu contraseña?</a>
+            }
+            else
+            {
+                <p>No se ha configurado una página de recuperación.</p>
+            }
+        </div>
+
+        <div class="login-action-buttons">
+            <button type="submit" class="login-button">Iniciar Sesión</button>
+
+            @if (registrationLink != null)
+            {
+                <a href="@registrationLink" class="login-register-button">Crear Usuario</a>
+            }
+            else
+            {
+                <p>No se ha configurado una página de registro.</p>
+            }
+        </div>
+    </form>
+
+    @if (ViewData["ErrorMessage"] != null)
+    {
+        <div class="login-error-message">@ViewData["ErrorMessage"]</div>
+    }
+
+    @if (logoUrl != null)
+    {
+        <img src="@logoUrl" alt="Logotipo Gobierno Municipal de Chihuahua" class="login-logo" />
+    }
+    else
+    {
+        <p>No se ha configurado un logotipo.</p>
+    }
+</div>
