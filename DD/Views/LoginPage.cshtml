@@ -34,15 +34,15 @@
                     const data = await response.json();
                     console.log("Server response:", data); // Print the server response to the console
 
-                    // Check the structure of the response
-                    if (data && data.token) { // Ensure the token property is correct
-                        const token = data.token; // Change according to the response structure
-                        localStorage.setItem('authToken', token); // You can use sessionStorage if preferred
+                    // Cambiar 'data.token' a 'data.userToken'
+                    if (data && data.userToken) { // Asegúrate de que la propiedad userToken sea correcta
+                        const token = data.userToken; // Cambia según la estructura de la respuesta
+                        localStorage.setItem('authToken', token); // Puedes usar sessionStorage si lo prefieres
 
-                        // Redirect to Google if the login is successful
+                        // Redirigir a Google
                         window.location.href = 'https://www.google.com';
                     } else {
-                        // Display an error message if the token is not found
+                        // Mostrar un mensaje de error si no se encuentra el token
                         document.getElementById("loginError").innerText = "Error in server response. Token not found.";
                     }
                 } else {
@@ -59,7 +59,6 @@
     </script>
 </head>
 
-
 <div class="login-header">
     <h1 class="login-h1">@Model.Title</h1>
     <h2 class="login-h2">@Model.Subtitle</h2>
@@ -68,7 +67,7 @@
 <div class="login-container text-center">
     <form id="loginForm" onsubmit="handleLogin(event)">
         <div class="login-form-group">
-            <input type="email" id="email" name="email" placeholder="Correo electronico" required />
+            <input type="email" id="email" name="email" placeholder="Correo electrónico" required />
         </div>
 
         <div class="login-form-group">
