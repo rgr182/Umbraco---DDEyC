@@ -11,8 +11,7 @@
     var logoUrl = logo != null ? logo.Url() : null;
     var registrationLink = Model.RegistrationPage?.FirstOrDefault()?.Url;
     var recoveryLink = Model.RecoveryUrl?.Url ?? "/";
-
-    // Acceder a la configuración de appsettings
+    var loginUrl = Model.LoginUrl?.Url ?? "/"; 
     var authApiUrl = Configuration["ApiSettings:AuthApiUrl"];
 }
 
@@ -42,7 +41,7 @@
                         if (data && data.userToken) {
                             const token = data.userToken;
                             localStorage.setItem('authToken', token);
-                            window.location.href = 'https://www.google.com';
+                            window.location.href = '@loginUrl'; 
                         } else {
                             document.getElementById("loginError").innerText = "Error in server response. Token not found.";
                         }
@@ -59,7 +58,6 @@
         });
     </script>
 </head>
-
 
 <div class="login-header">
     <h1 class="login-h1">@Model.Title</h1>
