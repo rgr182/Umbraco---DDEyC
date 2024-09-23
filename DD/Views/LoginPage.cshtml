@@ -2,6 +2,8 @@
 @using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
 @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ContentModels.LoginPage>
 
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
+
 @{
     Layout = "Main.cshtml";
 
@@ -9,6 +11,9 @@
     var logoUrl = logo != null ? logo.Url() : null;
     var registrationLink = Model.RegistrationPage?.FirstOrDefault()?.Url;
     var recoveryLink = Model.RecoveryUrl?.Url ?? "/";
+
+    // Acceder a la configuración de appsettings
+    var authApiUrl = Configuration["ApiSettings:AuthApiUrl"];
 }
 
 <head>
@@ -17,13 +22,13 @@
         document.addEventListener("DOMContentLoaded", function () {
             const loginForm = document.getElementById("loginForm");
             loginForm.addEventListener("submit", async function (event) {
-                event.preventDefault(); // Prevent the form from being submitted by default
+                event.preventDefault();
 
                 const email = document.getElementById("email").value;
                 const password = document.getElementById("password").value;
 
                 try {
-                    const response = await fetch(`https://ddeycapi.duckdns.org/api/Auth/login?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`, {
+                    const response = await fetch(`@authApiUrl?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`, {
                         method: 'POST',
                         headers: {
                             'accept': '*/*'
@@ -54,6 +59,7 @@
         });
     </script>
 </head>
+
 
 <div class="login-header">
     <h1 class="login-h1">@Model.Title</h1>
