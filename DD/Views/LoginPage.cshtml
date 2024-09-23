@@ -8,11 +8,53 @@
     var logo = Model.Logo as IPublishedContent;
     var logoUrl = logo != null ? logo.Url() : null;
     var registrationLink = Model.RegistrationPage?.FirstOrDefault()?.Url;
-    var recoveryLink = Model.RecoveryUrl?.FirstOrDefault()?.Url;
+    var recoveryLink = Model.RecoveryUrl?.Url ?? "/";
 }
 
 <head>
     <link rel="stylesheet" href="~/Styles/LoginPage.css" />
+    <script>
+        async function handleLogin(event) {
+            event.preventDefault(); // Evita que el formulario se envíe de forma predeterminada
+
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+
+            try {
+                // Realiza el POST a la API de login usando parámetros de consulta
+                const response = await fetch(`https://ddeycapi.duckdns.org/api/Auth/login?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`, {
+                    method: 'POST',
+                    headers: {
+                        'accept': '*/*'
+                    }
+                });
+
+                // Si el login es exitoso, almacena el token en localStorage y redirige a Google
+                if (response.ok) {
+                    const data = await response.json();
+
+                    // Verifica la estructura de la respuesta
+                    if (data.session && data.session.token) {
+                        const token = data.session.token;
+                        localStorage.setItem('authToken', token); // Puedes usar sessionStorage si prefieres
+
+                        // Redirige a Google si el login es exitoso
+                        window.location.href = 'https://www.google.com';
+                    } else {
+                        // Muestra un mensaje de error si no se encuentra el token
+                        document.getElementById("loginError").innerText = "Error en la respuesta del servidor. No se encontró el token.";
+                    }
+                } else {
+                    // Muestra un mensaje de error si el login falla
+                    const errorMessage = await response.text();
+                    document.getElementById("loginError").innerText = "Error al iniciar sesión. Verifique sus credenciales.";
+                }
+            } catch (error) {
+                console.error("Error al intentar iniciar sesión:", error);
+                document.getElementById("loginError").innerText = "Ocurrió un error al intentar iniciar sesión.";
+            }
+        }
+    </script>
 </head>
 
 <div class="login-header">
@@ -21,7 +63,7 @@
 </div>
 
 <div class="login-container text-center">
-    <form id="loginForm" method="post" action="/login/submit">
+    <form id="loginForm" onsubmit="handleLogin(event)">
         <div class="login-form-group">
             <input type="email" id="email" name="email" placeholder="Correo electronico" required />
         </div>
@@ -55,10 +97,7 @@
         </div>
     </form>
 
-    @if (ViewData["ErrorMessage"] != null)
-    {
-        <div class="login-error-message">@ViewData["ErrorMessage"]</div>
-    }
+    <div id="loginError" class="login-error-message"></div>
 
     @if (logoUrl != null)
     {
