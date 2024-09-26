@@ -1,4 +1,3 @@
-
 // chatWidget.js
 document.addEventListener('DOMContentLoaded', function() {
     const chatForm = document.getElementById('chat-form');
@@ -6,12 +5,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const chatMessages = document.getElementById('chat-messages');
     const chatLoading = document.getElementById('chat-loading');
     const chatSubmitButton = document.querySelector('#chat-form button[type="submit"]');
-    
+
     let threadId = null;
     let isWaitingForResponse = false;
     const token = 'hardcodedtokenfordebugging'
-    const apiBaseUrl = assistantApiBaseUrl;
 
+    const apiBaseUrl = assistantApiBaseUrl;
     function startChat() {
         showLoading(true);
         fetch(`${apiBaseUrl}/api/chat/StartChat`, { 
@@ -20,7 +19,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 'Authorization': token
             }
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
         .then(data => {
             threadId = data.threadId;
             
@@ -57,7 +61,12 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             body: JSON.stringify({ threadId, userMessage: message }),
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
         .then(data => {
             addMessage(data.response, 'assistant');
         })
@@ -74,10 +83,17 @@ document.addEventListener('DOMContentLoaded', function() {
         const messageElement = document.createElement('div');
         messageElement.classList.add('message', `${role}-message`);
         
+        let senderPrefix = '';
+        if (role === 'user') {
+            senderPrefix = '<span class="message-sender">User:</span> ';
+        } else if (role === 'assistant' || role === 'bot') {
+            senderPrefix = '<span class="message-sender">DDEyC:</span> ';
+        }
+        
         if (role === 'assistant' || role === 'bot') {
-            messageElement.innerHTML = marked.parse(content);
+            messageElement.innerHTML = senderPrefix + marked.parse(content);
         } else {
-            messageElement.textContent = content;
+            messageElement.innerHTML = senderPrefix + escapeHtml(content);
         }
         
         chatMessages.appendChild(messageElement);
@@ -121,6 +137,15 @@ document.addEventListener('DOMContentLoaded', function() {
         if (typingIndicator) {
             typingIndicator.remove();
         }
+    }
+
+    function escapeHtml(unsafe) {
+        return unsafe
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
     }
 
     chatForm.addEventListener('submit', (e) => {
