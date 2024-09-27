@@ -1,17 +1,27 @@
 @using Microsoft.Extensions.Configuration
 @inject IConfiguration Configuration
 
+
 <div id="chat-widget" class="chat-widget">
     <div class="chat-header">
         <h2>Bolsa de Trabajo IDEA</h2>
         <p>Tu próximo gran paso comienza aquí.</p>
+        <button id="past-conversations-btn" class="icon-button">
+            <span class="material-icons">history</span>
+        </button>
     </div>
     <div class="chat-container">
-        <div id="recent-threads" class="recent-threads">
-            <h3>Conversaciones recientes</h3>
-            <ul id="thread-list"></ul>
+        <div id="past-conversations" class="past-conversations hidden">
+            <div class="past-conversations-header">
+                <h3>Conversaciones recientes</h3>
+                <button id="close-past-conversations-btn" class="icon-button">
+                    <span class="material-icons">arrow_back</span>
+                </button>
+            </div>
+            <ul id="conversation-list"></ul>
         </div>
         <div class="chat-main">
+            <div id="read-only-indicator" class="read-only-indicator hidden">Read-only mode</div>
             <div id="chat-messages" class="chat-messages"></div>
             <div id="chat-loading" class="chat-loading">
                 <div class="loading-spinner"></div>
@@ -24,7 +34,7 @@
         </div>
     </div>
 </div>
-
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <link rel="stylesheet" href="/Styles/chatWidget.css">
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script>

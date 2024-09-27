@@ -1,39 +1,55 @@
-// chatWidget.js
 document.addEventListener('DOMContentLoaded', function() {
+    const chatWidget = document.getElementById('chat-widget');
     const chatForm = document.getElementById('chat-form');
     const chatInput = document.getElementById('chat-input');
     const chatMessages = document.getElementById('chat-messages');
     const chatLoading = document.getElementById('chat-loading');
     const chatSubmitButton = document.querySelector('#chat-form button[type="submit"]');
-    const threadList = document.getElementById('thread-list');
+    const pastConversationsBtn = document.getElementById('past-conversations-btn');
+    const pastConversations = document.getElementById('past-conversations');
+    const conversationList = document.getElementById('conversation-list');
+    const readOnlyIndicator = document.getElementById('read-only-indicator');
+    const closePastConversationsBtn = document.getElementById('close-past-conversations-btn');
 
     let currentThreadId = null;
     let isWaitingForResponse = false;
     const token = 'hardcodedtokenfordebugging'
+    let recentThreads = [];
 
     const apiBaseUrl = assistantApiBaseUrl;
+
+    function togglePastConversations() {
+        pastConversations.classList.toggle('hidden');
+        chatWidget.querySelector('.chat-main').classList.toggle('shifted');
+    }
+
+    function setReadOnly(readonly) {
+        isReadOnly = readonly;
+        chatForm.style.display = readonly ? 'none' : 'flex';
+        readOnlyIndicator.classList.toggle('hidden', !readonly);
+        if (readonly) {
+            readOnlyIndicator.textContent = "Modo de solo lectura";
+        }
+    }
 
     function startChat() {
         showLoading(true);
         fetch(`${apiBaseUrl}/api/chat/StartChat`, { 
             method: 'POST',
-            headers: {
-                'Authorization': token
-            }
+            headers: { 'Authorization': token }
         })
         .then(handleResponse)
         .then(data => {
             currentThreadId = data.threadId;
             chatMessages.innerHTML = '';
-            data.messages.forEach(message => {
-                addMessage(message.content, message.role);
-            });
-            fetchRecentThreads();
+            data.messages.forEach(message => addMessage(message.content, message.role));
+            return fetchRecentThreads();
+        })
+        .then(() => {
+            // Any additional initialization after fetching threads can go here
         })
         .catch(handleError)
-        .finally(() => {
-            showLoading(false);
-        });
+        .finally(() => showLoading(false));
     }
 
     function sendMessage() {
@@ -55,59 +71,63 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(handleResponse)
         .then(data => {
             addMessage(data.response, 'assistant');
-            fetchRecentThreads();
+            updateRecentThreads();
         })
         .catch(handleError)
-        .finally(() => {
-            setWaitingForResponse(false);
-        });
-    }
-
-    function fetchRecentThreads() {
-        fetch(`${apiBaseUrl}/api/chat/threads/recent/5`, {
-            headers: {
-                'Authorization': token
-            }
-        })
-        .then(handleResponse)
-        .then(threads => {
-            displayRecentThreads(threads);
-        })
-        .catch(handleError);
-    }
-
-    function displayRecentThreads(threads) {
-        threadList.innerHTML = '';
-        threads.forEach(thread => {
-            const li = document.createElement('li');
-            li.textContent = `Conversación ${new Date(thread.lastUsed).toLocaleString()}`;
-            li.onclick = () => loadThread(thread.id);
-            if (thread.id === currentThreadId) {
-                li.classList.add('active');
-            }
-            threadList.appendChild(li);
-        });
+        .finally(() => setWaitingForResponse(false));
     }
 
     function loadThread(threadId) {
+        if (threadId === currentThreadId) {
+            setReadOnly(false);
+            return;
+        }
+
         showLoading(true);
         fetch(`${apiBaseUrl}/api/chat/threads/${threadId}/messages`, {
-            headers: {
-                'Authorization': token
-            }
+            headers: { 'Authorization': token }
         })
         .then(handleResponse)
         .then(messages => {
             currentThreadId = threadId;
             chatMessages.innerHTML = '';
-            messages.forEach(message => {
-                addMessage(message.content, message.role);
-            });
-            fetchRecentThreads(); // Update the thread list to show the active thread
+            messages.forEach(message => addMessage(message.content, message.role));
+            setReadOnly(threadId !== recentThreads[0].id);
+            updateRecentThreads();
         })
         .catch(handleError)
-        .finally(() => {
-            showLoading(false);
+        .finally(() => showLoading(false));
+    }
+
+    function fetchRecentThreads() {
+        return fetch(`${apiBaseUrl}/api/chat/threads/recent/10`, {
+            headers: { 'Authorization': token }
+        })
+        .then(handleResponse)
+        .then(threads => {
+            recentThreads = threads;
+            displayRecentThreads();
+        })
+        .catch(handleError);
+    }
+
+    function updateRecentThreads() {
+        const currentThread = recentThreads.find(thread => thread.id === currentThreadId);
+        if (currentThread) {
+            currentThread.lastUsed = new Date().toISOString();
+            recentThreads.sort((a, b) => new Date(b.lastUsed) - new Date(a.lastUsed));
+        }
+        displayRecentThreads();
+    }
+
+    function displayRecentThreads() {
+        conversationList.innerHTML = '';
+        recentThreads.forEach((thread, index) => {
+            const li = document.createElement('li');
+            li.textContent = index === 0 ? 'Conversación Actual' : `Conversación ${new Date(thread.lastUsed).toLocaleString()}`;
+            li.onclick = () => loadThread(thread.id);
+            if (thread.id === currentThreadId) li.classList.add('active');
+            conversationList.appendChild(li);
         });
     }
 
@@ -117,7 +137,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         let senderPrefix = '';
         if (role === 'user') {
-            senderPrefix = '<span class="message-sender">User:</span> ';
+            senderPrefix = '<span class="message-sender">Usuario:</span> ';
         } else if (role === 'assistant' || role === 'bot') {
             senderPrefix = '<span class="message-sender">DDEyC:</span> ';
         }
@@ -182,23 +202,47 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function handleResponse(response) {
         if (!response.ok) {
-            throw new Error('Network response was not ok');
+            throw new Error(response.status.toString());
         }
         return response.json();
     }
 
     function handleError(error) {
         console.error('Error:', error);
-        addErrorMessage('An error occurred. Please try again.');
+        let errorMessage = 'Ha ocurrido un error. Por favor, inténtelo de nuevo.';
+
+        if (error.message) {
+            switch (error.message) {
+                case '401':
+                    errorMessage = 'Su sesión ha expirado. Por favor, inicie sesión nuevamente.';
+                    break;
+                case '403':
+                    errorMessage = 'No tiene permiso para realizar esta acción.';
+                    break;
+                case '404':
+                    errorMessage = 'No se pudo encontrar el recurso solicitado.';
+                    break;
+                case '500':
+                    errorMessage = 'Ha ocurrido un error en el servidor. Por favor, inténtelo más tarde.';
+                    break;
+                case '503':
+                    errorMessage = 'El servicio no está disponible en este momento. Por favor, espere unos minutos y vuelva a intentarlo.';
+                    break;
+            }
+        }
+
+        addErrorMessage(errorMessage);
     }
+
+    pastConversationsBtn.addEventListener('click', togglePastConversations);
+    closePastConversationsBtn.addEventListener('click', togglePastConversations);
 
     chatForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        if (!isWaitingForResponse) {
+        if (!isWaitingForResponse && !isReadOnly) {
             sendMessage();
         }
     });
 
     startChat();
-    fetchRecentThreads();
 });

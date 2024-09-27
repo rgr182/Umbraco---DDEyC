@@ -1,4 +1,3 @@
-/* chatWidget.css */
 .chat-widget {
     width: 100%;
     max-width: 800px;
@@ -7,6 +6,7 @@
     border-radius: 10px;
     overflow: hidden;
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    position: relative;
 }
 
 .chat-header {
@@ -14,6 +14,7 @@
     color: white;
     padding: 20px;
     text-align: center;
+    position: relative;
 }
 
 .chat-header h2 {
@@ -24,6 +25,28 @@
 .chat-header p {
     margin: 10px 0 0;
     font-size: 16px;
+}
+
+.icon-button {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-button .material-icons {
+    font-size: 24px;
+}
+
+#past-conversations-btn {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
 .chat-messages {
@@ -115,6 +138,84 @@
     color: #0056b3;
 }
 
+.past-conversations {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 300px;
+    height: 100%;
+    background-color: #0056b3;
+    color: white;
+    overflow-y: auto;
+    z-index: 10;
+    transition: transform 0.3s ease-in-out;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+}
+
+.past-conversations.hidden {
+    transform: translateX(-100%);
+}
+
+.past-conversations-header {
+    background-color: #004494;
+    color: white;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.past-conversations-header h3 {
+    margin: 0;
+}
+
+#close-past-conversations-btn {
+    padding: 5px;
+}
+
+#conversation-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+#conversation-list li {
+    padding: 10px;
+    border-bottom: 1px solid #1e6bb8;
+    cursor: pointer;
+}
+
+#conversation-list li:hover {
+    background-color: #1e6bb8;
+}
+
+#conversation-list li.active {
+    background-color: #004494;
+}
+
+.chat-main {
+    transition: margin-left 0.3s ease-in-out;
+}
+
+.chat-main.shifted {
+    margin-left: 300px;
+}
+
+.read-only-indicator {
+    background-color: #ff4d4d;
+    color: white;
+    padding: 5px 10px;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 0 0 5px 5px;
+}
+
+.hidden {
+    display: none;
+}
+
 .typing-indicator {
     background-color: #86b7fe;
     color: #000;
@@ -161,79 +262,4 @@
     box-sizing: border-box;
     text-align: center;
     font-weight: bold;
-}
-/* Add these styles to your existing chatWidget.css */
-
-.chat-widget {
-    position: relative;
-}
-
-.chat-header button {
-    position: absolute;
-    right: 10px;
-    top: 10px;
-    background-color: #0056b3;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.past-conversations {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 300px;
-    height: 100%;
-    background-color: #1e1e1e;
-    color: #ffffff;
-    overflow-y: auto;
-    z-index: 10;
-    transition: transform 0.3s ease-in-out;
-}
-
-.past-conversations.hidden {
-    transform: translateX(-100%);
-}
-
-.past-conversations h3 {
-    padding: 10px;
-    margin: 0;
-    background-color: #2d2d2d;
-}
-
-#conversation-list {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-}
-
-#conversation-list li {
-    padding: 10px;
-    border-bottom: 1px solid #333;
-    cursor: pointer;
-}
-
-#conversation-list li:hover {
-    background-color: #2d2d2d;
-}
-
-.chat-main {
-    transition: margin-left 0.3s ease-in-out;
-}
-
-.chat-main.shifted {
-    margin-left: 300px;
-}
-
-.read-only-indicator {
-    background-color: #ff4d4d;
-    color: white;
-    padding: 5px 10px;
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    border-radius: 0 0 5px 5px;
 }
