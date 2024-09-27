@@ -162,3 +162,78 @@
     text-align: center;
     font-weight: bold;
 }
+/* Add these styles to your existing chatWidget.css */
+
+.chat-widget {
+    position: relative;
+}
+
+.chat-header button {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    background-color: #0056b3;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.past-conversations {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 300px;
+    height: 100%;
+    background-color: #1e1e1e;
+    color: #ffffff;
+    overflow-y: auto;
+    z-index: 10;
+    transition: transform 0.3s ease-in-out;
+}
+
+.past-conversations.hidden {
+    transform: translateX(-100%);
+}
+
+.past-conversations h3 {
+    padding: 10px;
+    margin: 0;
+    background-color: #2d2d2d;
+}
+
+#conversation-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+#conversation-list li {
+    padding: 10px;
+    border-bottom: 1px solid #333;
+    cursor: pointer;
+}
+
+#conversation-list li:hover {
+    background-color: #2d2d2d;
+}
+
+.chat-main {
+    transition: margin-left 0.3s ease-in-out;
+}
+
+.chat-main.shifted {
+    margin-left: 300px;
+}
+
+.read-only-indicator {
+    background-color: #ff4d4d;
+    color: white;
+    padding: 5px 10px;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 0 0 5px 5px;
+}

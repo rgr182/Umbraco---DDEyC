@@ -5,12 +5,14 @@ document.addEventListener('DOMContentLoaded', function() {
     const chatMessages = document.getElementById('chat-messages');
     const chatLoading = document.getElementById('chat-loading');
     const chatSubmitButton = document.querySelector('#chat-form button[type="submit"]');
+    const threadList = document.getElementById('thread-list');
 
-    let threadId = null;
+    let currentThreadId = null;
     let isWaitingForResponse = false;
     const token = 'hardcodedtokenfordebugging'
 
     const apiBaseUrl = assistantApiBaseUrl;
+
     function startChat() {
         showLoading(true);
         fetch(`${apiBaseUrl}/api/chat/StartChat`, { 
@@ -19,27 +21,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 'Authorization': token
             }
         })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
+        .then(handleResponse)
         .then(data => {
-            threadId = data.threadId;
-            
-            // Clear existing messages
+            currentThreadId = data.threadId;
             chatMessages.innerHTML = '';
-            
-            // Display message history
             data.messages.forEach(message => {
                 addMessage(message.content, message.role);
             });
+            fetchRecentThreads();
         })
-        .catch(error => {
-            console.error('Error starting chat:', error);
-            addErrorMessage('Failed to start the chat. Please try again.');
-        })
+        .catch(handleError)
         .finally(() => {
             showLoading(false);
         });
@@ -59,23 +50,64 @@ document.addEventListener('DOMContentLoaded', function() {
                 'Content-Type': 'application/json',
                 'Authorization': token
             },
-            body: JSON.stringify({ threadId, userMessage: message }),
+            body: JSON.stringify({ threadId: currentThreadId, userMessage: message }),
         })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
+        .then(handleResponse)
         .then(data => {
             addMessage(data.response, 'assistant');
+            fetchRecentThreads();
         })
-        .catch(error => {
-            console.error('Error sending message:', error);
-            addErrorMessage('Failed to send the message. Please try again.');
-        })
+        .catch(handleError)
         .finally(() => {
             setWaitingForResponse(false);
+        });
+    }
+
+    function fetchRecentThreads() {
+        fetch(`${apiBaseUrl}/api/chat/threads/recent/5`, {
+            headers: {
+                'Authorization': token
+            }
+        })
+        .then(handleResponse)
+        .then(threads => {
+            displayRecentThreads(threads);
+        })
+        .catch(handleError);
+    }
+
+    function displayRecentThreads(threads) {
+        threadList.innerHTML = '';
+        threads.forEach(thread => {
+            const li = document.createElement('li');
+            li.textContent = `Conversación ${new Date(thread.lastUsed).toLocaleString()}`;
+            li.onclick = () => loadThread(thread.id);
+            if (thread.id === currentThreadId) {
+                li.classList.add('active');
+            }
+            threadList.appendChild(li);
+        });
+    }
+
+    function loadThread(threadId) {
+        showLoading(true);
+        fetch(`${apiBaseUrl}/api/chat/threads/${threadId}/messages`, {
+            headers: {
+                'Authorization': token
+            }
+        })
+        .then(handleResponse)
+        .then(messages => {
+            currentThreadId = threadId;
+            chatMessages.innerHTML = '';
+            messages.forEach(message => {
+                addMessage(message.content, message.role);
+            });
+            fetchRecentThreads(); // Update the thread list to show the active thread
+        })
+        .catch(handleError)
+        .finally(() => {
+            showLoading(false);
         });
     }
 
@@ -148,6 +180,18 @@ document.addEventListener('DOMContentLoaded', function() {
             .replace(/'/g, "&#039;");
     }
 
+    function handleResponse(response) {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    }
+
+    function handleError(error) {
+        console.error('Error:', error);
+        addErrorMessage('An error occurred. Please try again.');
+    }
+
     chatForm.addEventListener('submit', (e) => {
         e.preventDefault();
         if (!isWaitingForResponse) {
@@ -156,4 +200,5 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     startChat();
+    fetchRecentThreads();
 });

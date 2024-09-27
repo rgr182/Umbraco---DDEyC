@@ -6,15 +6,23 @@
         <h2>Bolsa de Trabajo IDEA</h2>
         <p>Tu próximo gran paso comienza aquí.</p>
     </div>
-    <div id="chat-messages" class="chat-messages"></div>
-    <div id="chat-loading" class="chat-loading">
-        <div class="loading-spinner"></div>
-        <p>Iniciando chat...</p>
+    <div class="chat-container">
+        <div id="recent-threads" class="recent-threads">
+            <h3>Conversaciones recientes</h3>
+            <ul id="thread-list"></ul>
+        </div>
+        <div class="chat-main">
+            <div id="chat-messages" class="chat-messages"></div>
+            <div id="chat-loading" class="chat-loading">
+                <div class="loading-spinner"></div>
+                <p>Cargando...</p>
+            </div>
+            <form id="chat-form" class="chat-form">
+                <input type="text" id="chat-input" placeholder="Escribe tu mensaje aquí..." required>
+                <button type="submit">Enviar</button>
+            </form>
+        </div>
     </div>
-    <form id="chat-form" class="chat-form">
-        <input type="text" id="chat-input" placeholder="Escribe tu mensaje aquí..." required>
-        <button type="submit">Enviar</button>
-    </form>
 </div>
 
 <link rel="stylesheet" href="/Styles/chatWidget.css">
