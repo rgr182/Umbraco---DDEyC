@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentThreadId = null;
     let isWaitingForResponse = false;
     const token = 'hardcodedtokenfordebugging'
+    let isReadOnly = false;
     let recentThreads = [];
 
     const apiBaseUrl = assistantApiBaseUrl;
@@ -46,7 +47,8 @@ document.addEventListener('DOMContentLoaded', function() {
             return fetchRecentThreads();
         })
         .then(() => {
-            // Any additional initialization after fetching threads can go here
+            currentThreadId= recentThreads[0].id;
+            updateThreadDisplay();
         })
         .catch(handleError)
         .finally(() => showLoading(false));
@@ -78,10 +80,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function loadThread(threadId) {
-        if (threadId === currentThreadId) {
-            setReadOnly(false);
-            return;
-        }
+        if (threadId === currentThreadId) return;
 
         showLoading(true);
         fetch(`${apiBaseUrl}/api/chat/threads/${threadId}/messages`, {
@@ -92,8 +91,8 @@ document.addEventListener('DOMContentLoaded', function() {
             currentThreadId = threadId;
             chatMessages.innerHTML = '';
             messages.forEach(message => addMessage(message.content, message.role));
-            setReadOnly(threadId !== recentThreads[0].id);
             updateRecentThreads();
+            updateThreadDisplay();
         })
         .catch(handleError)
         .finally(() => showLoading(false));
@@ -106,7 +105,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(handleResponse)
         .then(threads => {
             recentThreads = threads;
-            displayRecentThreads();
+            updateThreadDisplay();
         })
         .catch(handleError);
     }
@@ -114,21 +113,28 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateRecentThreads() {
         const currentThread = recentThreads.find(thread => thread.id === currentThreadId);
         if (currentThread) {
-            currentThread.lastUsed = new Date().toISOString();
             recentThreads.sort((a, b) => new Date(b.lastUsed) - new Date(a.lastUsed));
         }
-        displayRecentThreads();
+        updateThreadDisplay();
     }
 
-    function displayRecentThreads() {
+    function updateThreadDisplay() {
         conversationList.innerHTML = '';
         recentThreads.forEach((thread, index) => {
             const li = document.createElement('li');
             li.textContent = index === 0 ? 'Conversación Actual' : `Conversación ${new Date(thread.lastUsed).toLocaleString()}`;
             li.onclick = () => loadThread(thread.id);
-            if (thread.id === currentThreadId) li.classList.add('active');
+            
+            if (thread.id === currentThreadId) {
+                li.classList.add('active');
+                li.onclick = null; // Disable click for the active thread
+            }
+
             conversationList.appendChild(li);
         });
+
+        const isCurrentThreadMostRecent = currentThreadId === recentThreads[0]?.id;
+        setReadOnly(!isCurrentThreadMostRecent);
     }
 
     function addMessage(content, role) {
