@@ -62,18 +62,25 @@ document.addEventListener('DOMContentLoaded', function() {
         chatInput.value = '';
         setWaitingForResponse(true);
 
+        const currentThread = recentThreads.find(thread => thread.id === currentThreadId);
+        if (!currentThread) {
+            handleError(new Error('Current thread not found'));
+            setWaitingForResponse(false);
+            return;
+        }
+
         fetch(`${apiBaseUrl}/api/chat/Chat`, {
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/json',
                 'Authorization': token
             },
-            body: JSON.stringify({ threadId: currentThreadId, userMessage: message }),
+            body: JSON.stringify({ threadId: currentThread.threadId, userMessage: message }),
         })
         .then(handleResponse)
         .then(data => {
             addMessage(data.response, 'assistant');
-            updateRecentThreads();
+            updateThreadDisplay();
         })
         .catch(handleError)
         .finally(() => setWaitingForResponse(false));
@@ -91,7 +98,6 @@ document.addEventListener('DOMContentLoaded', function() {
             currentThreadId = threadId;
             chatMessages.innerHTML = '';
             messages.forEach(message => addMessage(message.content, message.role));
-            updateRecentThreads();
             updateThreadDisplay();
         })
         .catch(handleError)
@@ -110,14 +116,6 @@ document.addEventListener('DOMContentLoaded', function() {
         .catch(handleError);
     }
 
-    function updateRecentThreads() {
-        const currentThread = recentThreads.find(thread => thread.id === currentThreadId);
-        if (currentThread) {
-            recentThreads.sort((a, b) => new Date(b.lastUsed) - new Date(a.lastUsed));
-        }
-        updateThreadDisplay();
-    }
-
     function updateThreadDisplay() {
         conversationList.innerHTML = '';
         recentThreads.forEach((thread, index) => {
@@ -127,7 +125,6 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if (thread.id === currentThreadId) {
                 li.classList.add('active');
-                li.onclick = null; // Disable click for the active thread
             }
 
             conversationList.appendChild(li);
