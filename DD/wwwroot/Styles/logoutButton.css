@@ -2,7 +2,7 @@
 }
 .logoutButton {
     width:40px; 
-    height:40px;
+    height:100%;
 }
     .logoutButton:hover {
         background-color: #007bff;
