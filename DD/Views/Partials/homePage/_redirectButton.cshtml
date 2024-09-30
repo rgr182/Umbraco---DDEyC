@@ -10,11 +10,6 @@
 
     // Retrieve the ValidateSessionUrl from appsettings.json
     var validateSessionUrl = Configuration["ApiSettings:ValidateSessionUrl"];
-
-    // Constants for alert messages
-    const string noSessionAlert = "No tienes una sesion activa. Por favor, inicia sesion o registrate.";
-    const string sessionExpiredAlert = "Tu sesion ha expirado o no estas autenticado. Por favor, inicia sesion o registrate.";
-    const string activeSessionAlert = "Se encontro una sesion activa";
 }
 
 @if (!Model.HideHomeRedirectButton)
@@ -27,10 +22,27 @@
 
 <script>
     document.getElementById('homeRedirectButton').addEventListener('click', function () {
-        const token = localStorage.getItem('authToken'); // Get the token from localStorage
+        const authToken = localStorage.getItem('authToken'); // Get the token string from localStorage
+
+        if (!authToken) {
+            alert('No tienes una sesion activa. Por favor, inicia sesion o registrate.');
+            window.location.href = '/loginpage'; // Redirect to login page if there is no token
+            return;
+        }
+
+        let token;
+        try {
+            const parsedToken = JSON.parse(authToken); // Attempt to parse the token
+            token = parsedToken.token; // Get the token property
+        } catch (e) {
+            alert('El token de autenticacion es invalido. Por favor, inicia sesion o registrate.');
+            console.error('Error parsing token:', e);
+            window.location.href = '/loginpage'; // Redirect to login page if parsing fails
+            return;
+        }
 
         if (!token) {
-            alert('@noSessionAlert');
+            alert('No tienes una sesion activa. Por favor, inicia sesion o registrate.');
             window.location.href = '/loginpage'; // Redirect to login page if there is no token
             return;
         }
@@ -57,13 +69,13 @@
             if (data.Message) {
                 alert(data.Message); // Show message with remaining token minutes
             } else {
-                alert('@activeSessionAlert'); // Default message if no message is returned
+                alert('Se encontro una sesion activa'); // Default message if no message is returned
             }
-            window.location.href = 'https://chatbot.bolsadetrabajo.com'; // this need to be changed to the real URL
+            window.location.href = 'https://chatbot.bolsadetrabajo.com'; // Redirect to chatbot if the token is valid
         })
         .catch(error => {
             console.error('Error while validating the token:', error);
-            alert('@sessionExpiredAlert');
+            alert('Tu sesion ha expirado o no estas autenticado. Por favor, inicia sesion o registrate.');
             window.location.href = '/loginpage'; // Redirect to login page
         });
     });
