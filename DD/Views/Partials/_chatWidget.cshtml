@@ -30,6 +30,7 @@
             <form id="chat-form" class="chat-form">
                 <input type="text" id="chat-input" placeholder="Escribe tu mensaje aquí..." required>
                 <button type="submit">Enviar</button>
+                @await Html.PartialAsync("components/_logoutButton.cshtml")
             </form>
         </div>
     </div>
