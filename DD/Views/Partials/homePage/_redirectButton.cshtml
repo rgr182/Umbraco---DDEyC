@@ -10,6 +10,11 @@
 
     // Retrieve the ValidateSessionUrl from appsettings.json
     var validateSessionUrl = Configuration["ApiSettings:ValidateSessionUrl"];
+
+    // Constants for alert messages
+    const string noSessionAlert = "No tienes una sesion activa. Por favor, inicia sesion o registrate.";
+    const string sessionExpiredAlert = "Tu sesion ha expirado o no estas autenticado. Por favor, inicia sesion o registrate.";
+    const string activeSessionAlert = "Se encontro una sesion activa";
 }
 
 @if (!Model.HideHomeRedirectButton)
@@ -25,7 +30,7 @@
         const token = localStorage.getItem('authToken'); // Get the token from localStorage
 
         if (!token) {
-            alert('No tienes una sesion activa. Por favor, inicia sesion o registrate.');
+            alert('@noSessionAlert');
             window.location.href = '/loginpage'; // Redirect to login page if there is no token
             return;
         }
@@ -52,13 +57,13 @@
             if (data.Message) {
                 alert(data.Message); // Show message with remaining token minutes
             } else {
-                alert('Se encontro una sesion activa'); // Default message if no message is returned
+                alert('@activeSessionAlert'); // Default message if no message is returned
             }
             window.location.href = 'https://chatbot.bolsadetrabajo.com'; // this need to be changed to the real URL
-
+        })
         .catch(error => {
             console.error('Error while validating the token:', error);
-            alert('Tu sesion ha expirado o no estas autenticado. Por favor, inicia sesion o registrate.');
+            alert('@sessionExpiredAlert');
             window.location.href = '/loginpage'; // Redirect to login page
         });
     });
