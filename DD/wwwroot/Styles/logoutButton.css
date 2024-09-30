@@ -1,0 +1,20 @@
+﻿body {
+}
+.logoutButton {
+    width:40px; 
+    height:40px;
+}
+    .logoutButton:hover {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .logoutButton:active {
+        transform: scale(0.95);
+        transition: transform 0.1s ease;
+    }
+
+    .logoutButton.selected {
+        font-weight: bold;
+        border: 2px solid;
+    }

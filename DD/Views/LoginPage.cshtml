@@ -1,0 +1,113 @@
+﻿@using Umbraco.Cms.Web.Common.PublishedModels;
+@using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ContentModels.LoginPage>
+
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
+
+@{
+    Layout = "Main.cshtml";
+
+    var logo = Model.Logo as IPublishedContent;
+    var logoUrl = logo != null ? logo.Url() : null;
+    var registrationLink = Model.RegistrationPage?.FirstOrDefault()?.Url;
+    var recoveryLink = Model.RecoveryUrl?.Url ?? "/";
+    var loginUrl = Model.LoginUrl?.Url ?? "/"; 
+    var authApiUrl = Configuration["ApiSettings:AuthApiUrl"];
+}
+
+<head>
+    <link rel="stylesheet" href="~/Styles/LoginPage.css" />
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const loginForm = document.getElementById("loginForm");
+            loginForm.addEventListener("submit", async function (event) {
+                event.preventDefault();
+
+                const email = document.getElementById("email").value;
+                const password = document.getElementById("password").value;
+
+                try {
+                    const response = await fetch(`@authApiUrl?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`, {
+                        method: 'POST',
+                        headers: {
+                            'accept': '*/*'
+                        }
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        console.log("Server response:", data);
+
+                        if (data && data.userToken && data.expirationDate) {
+                            const token = data.userToken;
+                            const expirationDate = data.expirationDate;
+                            localStorage.setItem('authToken', JSON.stringify({ token: token, expiration: expirationDate }));
+                            window.location.href = '@loginUrl'; 
+                        } else {
+                            document.getElementById("loginError").innerText = "Error in server response. Token not found.";
+                        }
+                    } else {
+                        const errorData = await response.json();
+                        console.error("Authentication error:", errorData);
+                        document.getElementById("loginError").innerText = "Error logging in. Please check your credentials.";
+                    }
+                } catch (error) {
+                    console.error("Error attempting to log in:", error);
+                    document.getElementById("loginError").innerText = "An error occurred while trying to log in.";
+                }
+            });
+        });
+    </script>
+</head>
+
+<div class="login-header">
+    <h1 class="login-h1">@Model.Title</h1>
+    <h2 class="login-h2">@Model.Subtitle</h2>
+</div>
+
+<div class="login-container text-center">
+    <form id="loginForm">
+        <div class="login-form-group">
+            <input type="email" id="email" name="email" placeholder="Correo electrónico" required />
+        </div>
+
+        <div class="login-form-group">
+            <input type="password" id="password" name="password" placeholder="Contraseña" required />
+        </div>
+
+        <div class="login-form-group">
+            @if (!string.IsNullOrEmpty(recoveryLink))
+            {
+                <a href="@recoveryLink" class="login-forgot-password-link">¿Olvidaste tu contraseña?</a>
+            }
+            else
+            {
+                <p>No se ha configurado una página de recuperación.</p>
+            }
+        </div>
+
+        <div class="login-action-buttons">
+            <button type="submit" class="login-button">Iniciar Sesión</button>
+
+            @if (registrationLink != null)
+            {
+                <a href="@registrationLink" class="login-register-button">Crear Usuario</a>
+            }
+            else
+            {
+                <p>No se ha configurado una página de registro.</p>
+            }
+        </div>
+    </form>
+
+    <div id="loginError" class="login-error-message"></div>
+
+    @if (logoUrl != null)
+    {
+        <img src="@logoUrl" alt="Logotipo Gobierno Municipal de Chihuahua" class="login-logo" />
+    }
+    else
+    {
+        <p>No se ha configurado un logotipo.</p>
+    }
+</div>

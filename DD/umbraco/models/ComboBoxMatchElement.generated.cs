@@ -63,6 +63,6 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.0.3+a0f3c15")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
 		[ImplementPropertyType("comboBoxMatchElementURL")]
-		public virtual global::Umbraco.Cms.Core.Models.Link ComboBoxMatchElementUrl => this.Value<global::Umbraco.Cms.Core.Models.Link>(_publishedValueFallback, "comboBoxMatchElementURL");
+		public virtual global::Umbraco.Cms.Core.Models.Blocks.BlockListModel ComboBoxMatchElementUrl => this.Value<global::Umbraco.Cms.Core.Models.Blocks.BlockListModel>(_publishedValueFallback, "comboBoxMatchElementURL");
 	}
 }
