@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function startChat() {
         showLoading(true);
-        fetch(`${apiBaseUrl}/api/chat/StartChat`, { 
+        fetch(`${apiBaseUrl}${assistantStartChatEndpoint}`, { 
             method: 'POST',
             headers: { 'Authorization': token }
         })
@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        fetch(`${apiBaseUrl}/api/chat/Chat`, {
+        fetch(`${apiBaseUrl}${assistantChatEndpoint}`, {
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/json',
@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (threadId === currentThreadId) return;
 
         showLoading(true);
-        fetch(`${apiBaseUrl}/api/chat/threads/${threadId}/messages`, {
+        fetch(`${apiBaseUrl}${assistantGetMessageEndpointStart}${threadId}${assistantGetMessageEndpointContinue}`, {
             headers: { 'Authorization': token }
         })
         .then(handleResponse)
@@ -105,7 +105,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function fetchRecentThreads() {
-        return fetch(`${apiBaseUrl}/api/chat/threads/recent/10`, {
+        return fetch(`${apiBaseUrl}${assistantRecentThreadsEndpoint}`, {
             headers: { 'Authorization': token }
         })
         .then(handleResponse)
