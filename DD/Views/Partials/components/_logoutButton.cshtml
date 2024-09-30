@@ -20,12 +20,12 @@
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Función para verificar la caducidad del token
-        function verificarCaducidadToken() {
-            const authTokenData = JSON.parse(localStorage.getItem('authToken'));
-            if (authTokenData && authTokenData.expiration) {
+        const authToken = JSON.parse(localStorage.getItem('authToken'));
+        // function to verify expirationDate
+        function TokenExpirationDate() {
+            if (authToken && authToken.expiration) {
                 const tiempoActual = new Date().getTime();
-                const expirationTime = new Date(authTokenData.expiration).getTime();
+                const expirationTime = new Date(authToken.expiration).getTime();
                 if (tiempoActual > expirationTime) {
                     alert('El token ha caducado.');
                     logout();
@@ -36,12 +36,11 @@
                 console.error('No hay ningún token almacenado o no tiene fecha de expiración.');
             }
         }
-        setInterval(verificarCaducidadToken, 1 * 60 * 1000);
-        verificarCaducidadToken();
+        setInterval(TokenExpirationDate, 15 * 60 * 1000);
+        TokenExpirationDate();
 
         // function to logout and remove authToken
         async function logout() {
-            const authToken = JSON.parse(localStorage.getItem('authToken'));
             if (!authToken || !authToken.token) {
                 alert("No hay una sesión activa.");
                 return;
@@ -54,7 +53,6 @@
                         'Authorization': `Bearer ${authToken.token}`
                     }
                 });
-
                 if (response.ok) {
                     localStorage.removeItem('authToken');
                     alert("Sesión cerrada exitosamente.");
