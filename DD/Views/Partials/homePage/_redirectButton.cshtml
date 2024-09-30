@@ -10,6 +10,12 @@
 
     // Retrieve the ValidateSessionUrl from appsettings.json
     var validateSessionUrl = Configuration["ApiSettings:ValidateSessionUrl"];
+
+    // Define constants for alert messages and redirect URL
+    const string alertNoActiveSession = "No tienes una sesion activa. Por favor, inicia sesion o registrate.";
+    const string alertInvalidAuthToken = "El token de autenticacion es invalido. Por favor, inicia sesion o registrate.";
+    const string alertTokenExpiredOrNotAuthenticated = "Tu sesion ha expirado o no estas autenticado. Por favor, inicia sesion o registrate.";
+    const string loginPageUrl = "/loginpage";
 }
 
 @if (!Model.HideHomeRedirectButton)
@@ -25,8 +31,8 @@
         const authToken = localStorage.getItem('authToken'); // Get the token string from localStorage
 
         if (!authToken) {
-            alert('No tienes una sesion activa. Por favor, inicia sesion o registrate.');
-            window.location.href = '/loginpage'; // Redirect to login page if there is no token
+            alert('@alertNoActiveSession');
+            window.location.href = '@loginPageUrl'; // Redirect to login page if there is no token
             return;
         }
 
@@ -35,15 +41,15 @@
             const parsedToken = JSON.parse(authToken); // Attempt to parse the token
             token = parsedToken.token; // Get the token property
         } catch (e) {
-            alert('El token de autenticacion es invalido. Por favor, inicia sesion o registrate.');
+            alert('@alertInvalidAuthToken');
             console.error('Error parsing token:', e);
-            window.location.href = '/loginpage'; // Redirect to login page if parsing fails
+            window.location.href = '@loginPageUrl'; // Redirect to login page if parsing fails
             return;
         }
 
         if (!token) {
-            alert('No tienes una sesion activa. Por favor, inicia sesion o registrate.');
-            window.location.href = '/loginpage'; // Redirect to login page if there is no token
+            alert('@alertNoActiveSession');
+            window.location.href = '@loginPageUrl'; // Redirect to login page if there is no token
             return;
         }
 
@@ -75,8 +81,8 @@
         })
         .catch(error => {
             console.error('Error while validating the token:', error);
-            alert('Tu sesion ha expirado o no estas autenticado. Por favor, inicia sesion o registrate.');
-            window.location.href = '/loginpage'; // Redirect to login page
+            alert('@alertTokenExpiredOrNotAuthenticated');
+            window.location.href = '@loginPageUrl'; // Redirect to login page
         });
     });
 </script>
