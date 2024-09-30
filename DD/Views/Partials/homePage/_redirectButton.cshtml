@@ -54,8 +54,8 @@
             } else {
                 alert('Se encontro una sesion activa'); // Default message if no message is returned
             }
-            window.location.href = 'https://chatbot.bolsadetrabajo.com'; // Redirect to chatbot if the token is valid
-        })
+            window.location.href = 'https://chatbot.bolsadetrabajo.com'; // this need to be changed to the real URL
+
         .catch(error => {
             console.error('Error while validating the token:', error);
             alert('Tu sesion ha expirado o no estas autenticado. Por favor, inicia sesion o registrate.');
