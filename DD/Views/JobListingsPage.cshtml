@@ -8,9 +8,11 @@
     <link rel="stylesheet" href="~/Styles/GeneralContentPage.css" />
 </head>
 
- @await Html.PartialAsync("_SharedContentPage", Model) 
-
+<div>
+    @await Html.PartialAsync("Partials/homePage/_navigation.cshtml")
+</div>
 @if (Model.ShowChatBot)
 {
     @await Html.PartialAsync("Partials/_chatWidget")
 }
+ @await Html.PartialAsync("_SharedContentPage", Model) 

@@ -1,96 +1,154 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const chatToggle = document.getElementById('chat-toggle');
-    const chatContainer = document.getElementById('chat-container');
-    const chatClose = document.getElementById('chat-close');
+    const chatWidget = document.getElementById('chat-widget');
     const chatForm = document.getElementById('chat-form');
     const chatInput = document.getElementById('chat-input');
     const chatMessages = document.getElementById('chat-messages');
+    const chatLoading = document.getElementById('chat-loading');
     const chatSubmitButton = document.querySelector('#chat-form button[type="submit"]');
+    const pastConversationsBtn = document.getElementById('past-conversations-btn');
+    const pastConversations = document.getElementById('past-conversations');
+    const conversationList = document.getElementById('conversation-list');
+    const readOnlyIndicator = document.getElementById('read-only-indicator');
+    const closePastConversationsBtn = document.getElementById('close-past-conversations-btn');
 
-    let threadId = null;
+    let currentThreadId = null;
     let isWaitingForResponse = false;
+    const token = localStorage.getItem('authToken') || '';
+    let isReadOnly = false;
+    let recentThreads = [];
 
-    // The base URL is now available as a global variable
     const apiBaseUrl = assistantApiBaseUrl;
 
-    chatToggle.addEventListener('click', () => {
-        chatContainer.classList.toggle('hidden');
-        if (!threadId) {
-            startChat();
-        }
-    });
+    function togglePastConversations() {
+        pastConversations.classList.toggle('hidden');
+        chatWidget.querySelector('.chat-main').classList.toggle('shifted');
+    }
 
-    chatClose.addEventListener('click', () => {
-        chatContainer.classList.add('hidden');
-    });
-
-    chatForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        if (!isWaitingForResponse) {
-            sendMessage();
-        }
-    });
-
-    async function startChat() {
-        setLoading(true);
-        showTypingIndicator();
-        try {
-            const response = await fetch(`${apiBaseUrl}/api/chat/StartChat`, { method: 'POST' });
-            if (!response.ok) {
-                throw new Error('Failed to start chat');
-            }
-            const data = await response.json();
-            threadId = data.threadId;
-            hideTypingIndicator();
-            addMessage(data.welcomeMessage, 'bot');
-        } catch (error) {
-            console.error('Error starting chat:', error);
-            hideTypingIndicator();
-            addErrorMessage('Failed to start the chat. Please try again.');
-        } finally {
-            setLoading(false);
+    function setReadOnly(readonly) {
+        isReadOnly = readonly;
+        chatForm.style.display = readonly ? 'none' : 'flex';
+        readOnlyIndicator.classList.toggle('hidden', !readonly);
+        if (readonly) {
+            readOnlyIndicator.textContent = "Modo de solo lectura";
         }
     }
 
-    async function sendMessage() {
+    function startChat() {
+        showLoading(true);
+        fetch(`${apiBaseUrl}${assistantStartChatEndpoint}`, { 
+            method: 'POST',
+            headers: { 'Authorization': token }
+        })
+        .then(handleResponse)
+        .then(data => {
+            currentThreadId = data.threadId;
+            chatMessages.innerHTML = '';
+            data.messages.forEach(message => addMessage(message.content, message.role));
+            return fetchRecentThreads();
+        })
+        .then(() => {
+            currentThreadId= recentThreads[0].id;
+            updateThreadDisplay();
+        })
+        .catch(handleError)
+        .finally(() => showLoading(false));
+    }
+
+    function sendMessage() {
         const message = chatInput.value.trim();
         if (!message) return;
 
         addMessage(message, 'user');
         chatInput.value = '';
-        setLoading(true);
-        showTypingIndicator();
+        setWaitingForResponse(true);
 
-        try {
-            const response = await fetch(`${apiBaseUrl}/api/chat/Chat`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ threadId, userMessage: message }),
-            });
-            if (!response.ok) {
-                throw new Error('Failed to send message');
-            }
-            const data = await response.json();
-            hideTypingIndicator();
-            addMessage(data.response, 'bot');
-        } catch (error) {
-            console.error('Error sending message:', error);
-            hideTypingIndicator();
-            addErrorMessage('Failed to send the message. Please try again.');
-        } finally {
-            setLoading(false);
+        const currentThread = recentThreads.find(thread => thread.id === currentThreadId);
+        if (!currentThread) {
+            handleError(new Error('Current thread not found'));
+            setWaitingForResponse(false);
+            return;
         }
+
+        fetch(`${apiBaseUrl}${assistantChatEndpoint}`, {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': token
+            },
+            body: JSON.stringify({ threadId: currentThread.threadId, userMessage: message }),
+        })
+        .then(handleResponse)
+        .then(data => {
+            addMessage(data.response, 'assistant');
+            updateThreadDisplay();
+        })
+        .catch(handleError)
+        .finally(() => setWaitingForResponse(false));
     }
 
-    function addMessage(content, sender) {
+    function loadThread(threadId) {
+        if (threadId === currentThreadId) return;
+
+        showLoading(true);
+        fetch(`${apiBaseUrl}${assistantGetMessageEndpointStart}${threadId}${assistantGetMessageEndpointContinue}`, {
+            headers: { 'Authorization': token }
+        })
+        .then(handleResponse)
+        .then(messages => {
+            currentThreadId = threadId;
+            chatMessages.innerHTML = '';
+            messages.forEach(message => addMessage(message.content, message.role));
+            updateThreadDisplay();
+        })
+        .catch(handleError)
+        .finally(() => showLoading(false));
+    }
+
+    function fetchRecentThreads() {
+        return fetch(`${apiBaseUrl}${assistantRecentThreadsEndpoint}`, {
+            headers: { 'Authorization': token }
+        })
+        .then(handleResponse)
+        .then(threads => {
+            recentThreads = threads;
+            updateThreadDisplay();
+        })
+        .catch(handleError);
+    }
+
+    function updateThreadDisplay() {
+        conversationList.innerHTML = '';
+        recentThreads.forEach((thread, index) => {
+            const li = document.createElement('li');
+            li.textContent = index === 0 ? 'Conversación Actual' : `Conversación ${new Date(thread.lastUsed).toLocaleString()}`;
+            li.onclick = () => loadThread(thread.id);
+            
+            if (thread.id === currentThreadId) {
+                li.classList.add('active');
+            }
+
+            conversationList.appendChild(li);
+        });
+
+        const isCurrentThreadMostRecent = currentThreadId === recentThreads[0]?.id;
+        setReadOnly(!isCurrentThreadMostRecent);
+    }
+
+    function addMessage(content, role) {
         const messageElement = document.createElement('div');
-        messageElement.classList.add('message', `${sender}-message`);
+        messageElement.classList.add('message', `${role}-message`);
         
-        if (sender === 'bot') {
-            const renderedContent = marked.parse(content);
-            messageElement.innerHTML = `<span>${renderedContent}</span>`;
+        let senderPrefix = '';
+        if (role === 'user') {
+            senderPrefix = '<span class="message-sender">Usuario:</span> ';
+        } else if (role === 'assistant' || role === 'bot') {
+            senderPrefix = '<span class="message-sender">DDEyC:</span> ';
+        }
+        
+        if (role === 'assistant' || role === 'bot') {
+            messageElement.innerHTML = senderPrefix + marked.parse(content);
         } else {
-            messageElement.innerHTML = `<span>${escapeHtml(content)}</span>`;
+            messageElement.innerHTML = senderPrefix + escapeHtml(content);
         }
         
         chatMessages.appendChild(messageElement);
@@ -99,16 +157,32 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function addErrorMessage(content) {
         const errorElement = document.createElement('div');
-        errorElement.classList.add('message', 'error-message');
-        errorElement.innerHTML = `<span>${escapeHtml(content)}</span>`;
+        errorElement.classList.add('error-message');
+        errorElement.textContent = content;
         chatMessages.appendChild(errorElement);
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }
 
+    function showLoading(show) {
+        chatLoading.style.display = show ? 'flex' : 'none';
+        chatMessages.style.display = show ? 'none' : 'block';
+    }
+
+    function setWaitingForResponse(waiting) {
+        isWaitingForResponse = waiting;
+        chatSubmitButton.disabled = waiting;
+        chatInput.disabled = waiting;
+        if (waiting) {
+            showTypingIndicator();
+        } else {
+            hideTypingIndicator();
+        }
+    }
+
     function showTypingIndicator() {
         const typingIndicator = document.createElement('div');
-        typingIndicator.classList.add('message', 'bot-message', 'typing-indicator');
-        typingIndicator.innerHTML = '<span><div class="typing-dots"><span></span><span></span><span></span></div></span>';
+        typingIndicator.classList.add('typing-indicator');
+        typingIndicator.innerHTML = '<span class="typing-dots"><span></span><span></span><span></span></span>';
         chatMessages.appendChild(typingIndicator);
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }
@@ -120,14 +194,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    function setLoading(loading) {
-        isWaitingForResponse = loading;
-        chatSubmitButton.disabled = loading;
-        chatSubmitButton.innerHTML = loading 
-            ? '<div class="loading-spinner"></div>' 
-            : '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>';
-    }
-
     function escapeHtml(unsafe) {
         return unsafe
             .replace(/&/g, "&amp;")
@@ -136,4 +202,50 @@ document.addEventListener('DOMContentLoaded', function() {
             .replace(/"/g, "&quot;")
             .replace(/'/g, "&#039;");
     }
+
+    function handleResponse(response) {
+        if (!response.ok) {
+            throw new Error(response.status.toString());
+        }
+        return response.json();
+    }
+
+    function handleError(error) {
+        console.error('Error:', error);
+        let errorMessage = 'Ha ocurrido un error. Por favor, inténtelo de nuevo.';
+
+        if (error.message) {
+            switch (error.message) {
+                case '401':
+                    errorMessage = 'Su sesión ha expirado. Por favor, inicie sesión nuevamente.';
+                    break;
+                case '403':
+                    errorMessage = 'No tiene permiso para realizar esta acción.';
+                    break;
+                case '404':
+                    errorMessage = 'No se pudo encontrar el recurso solicitado.';
+                    break;
+                case '500':
+                    errorMessage = 'Ha ocurrido un error en el servidor. Por favor, inténtelo más tarde.';
+                    break;
+                case '503':
+                    errorMessage = 'El servicio no está disponible en este momento. Por favor, espere unos minutos y vuelva a intentarlo.';
+                    break;
+            }
+        }
+
+        addErrorMessage(errorMessage);
+    }
+
+    pastConversationsBtn.addEventListener('click', togglePastConversations);
+    closePastConversationsBtn.addEventListener('click', togglePastConversations);
+
+    chatForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        if (!isWaitingForResponse && !isReadOnly) {
+            sendMessage();
+        }
+    });
+
+    startChat();
 });
