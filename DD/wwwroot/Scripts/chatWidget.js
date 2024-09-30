@@ -13,12 +13,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     let currentThreadId = null;
     let isWaitingForResponse = false;
-    const token = localStorage.getItem('authToken') || '';
+    const tokenObj = JSON.parse(localStorage.getItem('authToken') || '{}');
+    const token = tokenObj.token || '';
     let isReadOnly = false;
     let recentThreads = [];
 
     const apiBaseUrl = assistantApiBaseUrl;
-
+    
     function togglePastConversations() {
         pastConversations.classList.toggle('hidden');
         chatWidget.querySelector('.chat-main').classList.toggle('shifted');
