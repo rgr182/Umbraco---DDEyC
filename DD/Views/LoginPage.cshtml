@@ -38,9 +38,10 @@
                         const data = await response.json();
                         console.log("Server response:", data);
 
-                        if (data && data.userToken) {
+                        if (data && data.userToken && data.expirationDate) {
                             const token = data.userToken;
-                            localStorage.setItem('authToken', token);
+                            const expirationDate = data.expirationDate;
+                            localStorage.setItem('authToken', JSON.stringify({ token: token, expiration: expirationDate }));
                             window.location.href = '@loginUrl'; 
                         } else {
                             document.getElementById("loginError").innerText = "Error in server response. Token not found.";
