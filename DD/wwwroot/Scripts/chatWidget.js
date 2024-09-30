@@ -13,7 +13,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     let currentThreadId = null;
     let isWaitingForResponse = false;
-    const token = localStorage.getItem('authToken') || '';
+    const tokenObj = JSON.parse(localStorage.getItem('authToken') || '{}');
+    const token = tokenObj.token || '';
     let isReadOnly = false;
     let recentThreads = [];
 
