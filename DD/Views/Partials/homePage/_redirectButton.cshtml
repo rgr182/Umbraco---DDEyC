@@ -75,9 +75,10 @@
             if (data.Message) {
                 alert(data.Message); // Show message with remaining token minutes
             } else {
-                alert('Se encontro una sesion activa'); // Default message if no message is returned
+                // Default message if no message is returned
+                alert('Se encontro una sesion activa');
             }
-            window.location.href = 'https://chatbot.bolsadetrabajo.com'; // Redirect to chatbot if the token is valid, change this later
+            window.location.href = '@Model.HomeRedirectButtonUrl?.Url'; // Redirect to chatbot if the token is valid, change this later
         })
         .catch(error => {
             console.error('Error while validating the token:', error);
