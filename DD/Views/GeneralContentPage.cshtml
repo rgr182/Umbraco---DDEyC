@@ -8,5 +8,7 @@
 <head>
     <link rel="stylesheet" href="~/Styles/GeneralContentPage.css" />
 </head>
-
+<div>
+    @await Html.PartialAsync("Partials/homePage/_navigation.cshtml")
+</div>
 @await Html.PartialAsync("_SharedContentPage", Model)
