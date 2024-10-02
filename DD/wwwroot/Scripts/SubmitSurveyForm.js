@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
             return;
         }
-        console.log('Survey data to be sent:', surveyData);
+ 
         // Send the data to the backend
         fetch('/api/Survey/submit', {
             method: 'POST',
@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function () {
             return JSON.parse(jsonString);
         })
         .then(data => {
-            console.log('Success:', data);
+ 
             Swal.fire({
                 icon: 'success',
                 title: 'Encuesta enviada',
@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('survey-container').style.display = 'none';
         })
         .catch((error) => {
-            console.error('Error:', error);
+ 
             Swal.fire({
                 icon: 'error',
                 title: 'Error al enviar',

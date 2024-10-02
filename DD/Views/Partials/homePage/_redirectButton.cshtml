@@ -11,10 +11,8 @@
     // Retrieve the ValidateSessionUrl from appsettings.json
     var validateSessionUrl = Configuration["ApiSettings:ValidateSessionUrl"];
 
-    // Define constants for alert messages and redirect URL
-    const string alertNoActiveSession = "No tienes una sesion activa. Por favor, inicia sesion o registrate.";
-    const string alertInvalidAuthToken = "El token de autenticacion es invalido. Por favor, inicia sesion o registrate.";
-    const string alertTokenExpiredOrNotAuthenticated = "Tu sesion ha expirado o no estas autenticado. Por favor, inicia sesion o registrate.";
+
+    
     const string loginPageUrl = "/loginpage";
 }
 
@@ -31,7 +29,7 @@
         const authToken = localStorage.getItem('authToken'); // Get the token string from localStorage
 
         if (!authToken) {
-            alert('@alertNoActiveSession');
+
             window.location.href = '@loginPageUrl'; // Redirect to login page if there is no token
             return;
         }
@@ -41,14 +39,14 @@
             const parsedToken = JSON.parse(authToken); // Attempt to parse the token
             token = parsedToken.token; // Get the token property
         } catch (e) {
-            alert('@alertInvalidAuthToken');
-            console.error('Error parsing token:', e);
+
+
             window.location.href = '@loginPageUrl'; // Redirect to login page if parsing fails
             return;
         }
 
         if (!token) {
-            alert('@alertNoActiveSession');
+
             window.location.href = '@loginPageUrl'; // Redirect to login page if there is no token
             return;
         }
@@ -61,7 +59,7 @@
             }
         })
         .then(response => {
-            console.log('Response status:', response.status); // Check response status
+
             if (response.ok) {
                 return response.json(); // If the response is valid
             } else if (response.status === 401) {
@@ -71,17 +69,17 @@
             }
         })
         .then(data => {
-            console.log('Response data:', data); // Check backend response
+
             if (data.Message) {
-                alert(data.Message); // Show message with remaining token minutes
+
             } else {
-                alert('Se encontro una sesion activa'); // Default message if no message is returned
+
             }
-            window.location.href = 'https://chatbot.bolsadetrabajo.com'; // Redirect to chatbot if the token is valid, change this later
+            window.location.href = '@Model.HomeRedirectButtonUrl?.Url'; // Redirect to chatbot if the token is valid, change this later
         })
         .catch(error => {
-            console.error('Error while validating the token:', error);
-            alert('@alertTokenExpiredOrNotAuthenticated');
+
+
             window.location.href = '@loginPageUrl'; // Redirect to login page
         });
     });

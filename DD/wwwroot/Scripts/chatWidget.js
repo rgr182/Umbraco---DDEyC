@@ -212,7 +212,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function handleError(error) {
-        console.error('Error:', error);
+ 
         let errorMessage = 'Ha ocurrido un error. Por favor, inténtelo de nuevo.';
 
         if (error.message) {
