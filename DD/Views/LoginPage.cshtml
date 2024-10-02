@@ -44,16 +44,16 @@
                             localStorage.setItem('authToken', JSON.stringify({ token: token, expiration: expirationDate }));
                             window.location.href = '@loginUrl'; 
                         } else {
-                            document.getElementById("loginError").innerText = "Error in server response. Token not found.";
+                            document.getElementById("loginError").innerText = "Error en la respuesta del servidor. Token no encontrado.";
                         }
                     } else {
                         const errorData = await response.json();
                         console.error("Authentication error:", errorData);
-                        document.getElementById("loginError").innerText = "Error logging in. Please check your credentials.";
+                        document.getElementById("loginError").innerText = "Error al iniciar sesión. Por favor, revisa tus credenciales.";
                     }
                 } catch (error) {
                     console.error("Error attempting to log in:", error);
-                    document.getElementById("loginError").innerText = "An error occurred while trying to log in.";
+                    document.getElementById("loginError").innerText = "Ocurrió un error al intentar iniciar sesión.";
                 }
             });
         });
