@@ -27,11 +27,14 @@
                 <div class="loading-spinner"></div>
                 <p>Cargando...</p>
             </div>
-            <form id="chat-form" class="chat-form">
-                <input type="text" id="chat-input" placeholder="Escribe tu mensaje aquí..." required>
-                <button type="submit">Enviar</button>
+            <div id="chat-form" class="w-100 justify-content-between">
+                <form  class=" chat-form">
+                    <input type="text" id="chat-input" placeholder="Escribe tu mensaje aquí..." required>
+                    <button type="submit">Enviar</button>
+                </form>
                 @await Html.PartialAsync("components/_logoutButton.cshtml")
-            </form>
+            </div>
+            
         </div>
     </div>
 </div>
