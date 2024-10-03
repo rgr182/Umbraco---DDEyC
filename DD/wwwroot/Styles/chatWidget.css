@@ -73,10 +73,7 @@
     background-color: #86b7fe;
     text-align: left;
 }
-/*    .bot-message, .assistant-message p{
-        color:black;
-    }
-*/
+
     .message-sender {
         font-weight: bold;
         margin-right: 5px;
@@ -268,7 +265,3 @@
     text-align: center;
     font-weight: bold;
 }
-/*
-p{
-    color:white;
-}*/
