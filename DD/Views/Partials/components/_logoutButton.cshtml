@@ -27,13 +27,8 @@
                 const tiempoActual = new Date().getTime();
                 const expirationTime = new Date(authToken.expiration).getTime();
                 if (tiempoActual > expirationTime) {
-
                     logout();
-                } else {
-
                 }
-            } else {
-
             }
         }
         setInterval(TokenExpirationDate, 15 * 60 * 1000);
@@ -42,7 +37,6 @@
         // function to logout and remove authToken
         async function logout() {
             if (!authToken || !authToken.token) {
-
                 return;
             }
             try {
@@ -55,14 +49,8 @@
                 });
                 if (response.ok) {
                     localStorage.removeItem('authToken');
-
                     window.location.href = '/loginpage/';
-                } else {
-
                 }
-            } catch (error) {
-
-
             }
         }
     </script>
