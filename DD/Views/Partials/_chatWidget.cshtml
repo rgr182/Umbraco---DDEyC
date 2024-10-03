@@ -5,7 +5,7 @@
 <div id="chat-widget" class="chat-widget">
     <div class="chat-header">
         <h2>Bolsa de Trabajo IDEA</h2>
-        <p>Tu próximo gran paso comienza aquí.</p>
+        <p class="chatHeaderText">Tu próximo gran paso comienza aquí.</p>
         <button id="past-conversations-btn" class="icon-button">
             <span class="material-icons">history</span>
         </button>
@@ -25,13 +25,15 @@
             <div id="chat-messages" class="chat-messages"></div>
             <div id="chat-loading" class="chat-loading">
                 <div class="loading-spinner"></div>
-                <p>Cargando...</p>
+                <p class="loadingText">Cargando...</p>
             </div>
-            <form id="chat-form" class="chat-form">
-                <input type="text" id="chat-input" placeholder="Escribe tu mensaje aquí..." required>
-                <button type="submit">Enviar</button>
+            <div id="chat-form" class="w-100 justify-content-between">
+                <form  class=" chat-form">
+                    <input type="text" id="chat-input" placeholder="Escribe tu mensaje aquí..." required>
+                    <button type="submit">Enviar</button>
+                </form>
                 @await Html.PartialAsync("components/_logoutButton.cshtml")
-            </form>
+            </div>
         </div>
     </div>
 </div>

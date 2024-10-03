@@ -22,10 +22,10 @@
     font-size: 24px;
 }
 
-.chat-header p {
-    margin: 10px 0 0;
-    font-size: 16px;
-}
+    .chat-header .chatHeaderText {
+        margin: 10px 0 0;
+        font-size: 16px;
+    }
 
 .icon-button {
     background: none;
@@ -74,12 +74,13 @@
     text-align: left;
 }
 
-.message-sender {
-    font-weight: bold;
-    margin-right: 5px;
-}
+    .message-sender {
+        font-weight: bold;
+        margin-right: 5px;
+    }
 
 .chat-form {
+    width:100%;
     display: flex;
     padding: 15px;
     background-color: #ffffff;
@@ -87,6 +88,7 @@
 }
 
 .chat-form input {
+    width:100%;
     flex-grow: 1;
     border: 1px solid #ddd;
     padding: 10px;
@@ -133,7 +135,7 @@
     100% { transform: rotate(360deg); }
 }
 
-.chat-loading p {
+.chat-loading .loadingText {
     margin-top: 10px;
     color: #0056b3;
 }

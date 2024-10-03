@@ -13,6 +13,11 @@
 </div>
 @if (Model.ShowChatBot)
 {
-    @await Html.PartialAsync("Partials/_chatWidget")
+    <div>
+        @await Html.PartialAsync("Partials/_chatWidget")
+    </div>
 }
- @await Html.PartialAsync("_SharedContentPage", Model) 
+<div>
+    @await Html.PartialAsync("_SharedContentPage", Model)
+</div>
+ 
