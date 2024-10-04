@@ -39,20 +39,16 @@
             if (!authToken || !authToken.token) {
                 return;
             }
-            try {
-                const response = await fetch('@authApiLogout', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${authToken.token}`
-                    }
-                });
-                if (response.ok) {
-                    localStorage.removeItem('authToken');
-                    window.location.href = '/loginpage/';
+            const response = await fetch('@authApiLogout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken.token}`
                 }
-            } catch {
-
+            });
+            if (response.ok) {
+                localStorage.removeItem('authToken');
+                window.location.href = '/loginpage/';
             }
         }
     </script>
