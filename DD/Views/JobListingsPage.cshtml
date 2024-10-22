@@ -4,20 +4,18 @@
 @{
     Layout = "Main.cshtml";
 }
-<head>
-    <link rel="stylesheet" href="~/Styles/GeneralContentPage.css" />
-</head>
 
-<div>
+<div class="job-listings-page">
     @await Html.PartialAsync("Partials/homePage/_navigation.cshtml")
-</div>
-@if (Model.ShowChatBot)
-{
-    <div>
-        @await Html.PartialAsync("Partials/_chatWidget")
+    
+    @if (Model.ShowChatBot)
+    {
+        <div>
+            @await Html.PartialAsync("Partials/_chatWidget")
+        </div>
+    }
+    
+    <div class="job-listings-content">
+        @await Html.PartialAsync("_SharedContentPage", Model)
     </div>
-}
-<div>
-    @await Html.PartialAsync("_SharedContentPage", Model)
 </div>
- 
