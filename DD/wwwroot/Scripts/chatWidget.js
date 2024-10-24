@@ -201,7 +201,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     function handleError(error) {
-        console.error('Chat error:', error);
+        
         let errorMessage = 'Ha ocurrido un error. Por favor, inténtelo de nuevo.';
         let statusMessage = 'Error en la operación';
     
@@ -355,30 +355,45 @@ document.addEventListener('DOMContentLoaded', function() {
 
     async function startChat() {
         showLoading(true);
-        try {
-            const response = await fetch(`${apiBaseUrl}${assistantStartChatEndpoint}`, { 
-                method: 'POST',
-                headers: { 'Authorization': token }
-            });
-            
-            const data = await handleResponse(response);
-            currentConversationId = data.threadId;
-            chatMessages.innerHTML = '';
-            data.messages.forEach(message => addMessage(message.content, message.role.toLowerCase()));
-            
-            await fetchRecentConversations();
-            
-            if (recentConversations.length > 0) {
-                currentConversationId = recentConversations[0].id;
-                updateConversationDisplay();
+        let success = false;
+        let retryAttempt = 0;
+        const MAX_RETRIES = 3;
+        const RETRY_DELAY = 2000; // 2 seconds
+    
+        while (retryAttempt < MAX_RETRIES && !success) {
+            try {
+                const response = await fetch(`${apiBaseUrl}${assistantStartChatEndpoint}`, { 
+                    method: 'POST',
+                    headers: { 'Authorization': token }
+                });
+                
+                const data = await handleResponse(response);
+                currentConversationId = data.threadId;
+                chatMessages.innerHTML = '';
+                data.messages.forEach(message => addMessage(message.content, message.role.toLowerCase()));
+                
+                await fetchRecentConversations();
+                
+                if (recentConversations.length > 0) {
+                    currentConversationId = recentConversations[0].id;
+                    updateConversationDisplay();
+                }
+                
+                updateStatus('success', 'Conversación iniciada');
+                success = true;
+    
+            } catch (error) {
+                retryAttempt++;
+                if (retryAttempt === MAX_RETRIES) {
+                    handleError(error);
+                } else {
+                    updateStatus('processing', `Reintentando iniciar chat (${retryAttempt}/${MAX_RETRIES})...`);
+                    await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
+                }
             }
-            
-            updateStatus('success', 'Conversación iniciada');
-        } catch (error) {
-            handleError(error);
-        } finally {
-            showLoading(false);
         }
+    
+        showLoading(false);
     }
 
     async function loadThread(threadId) {
@@ -405,17 +420,32 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     async function fetchRecentConversations() {
-        try {
-            const response = await fetch(`${apiBaseUrl}${assistantRecentThreadsEndpoint}`, {
-                headers: { 'Authorization': token }
-            });
-            
-            const threads = await handleResponse(response);
-            recentConversations = threads;
-            updateConversationDisplay();
-        } catch (error) {
-            handleError(error);
-            return [];
+        let success = false;
+        let retryAttempt = 0;
+        const MAX_RETRIES = 3;
+        const RETRY_DELAY = 2000;
+    
+        while (retryAttempt < MAX_RETRIES && !success) {
+            try {
+                const response = await fetch(`${apiBaseUrl}${assistantRecentThreadsEndpoint}`, {
+                    headers: { 'Authorization': token }
+                });
+                
+                const threads = await handleResponse(response);
+                recentConversations = threads;
+                updateConversationDisplay();
+                success = true;
+    
+            } catch (error) {
+                retryAttempt++;
+                if (retryAttempt === MAX_RETRIES) {
+                    handleError(error);
+                    return [];
+                } else {
+                    updateStatus('processing', `Reintentando obtener conversaciones (${retryAttempt}/${MAX_RETRIES})...`);
+                    await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
+                }
+            }
         }
     }
 
@@ -475,17 +505,9 @@ document.addEventListener('DOMContentLoaded', function() {
         chatForm.classList.remove('focused');
     });
 
-    // Window visibility handling
-    document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'visible') {
-            // Refresh conversations when tab becomes visible
-            fetchRecentConversations();
-        }
-    });
-
     // Error boundary for unexpected errors
     window.addEventListener('error', (event) => {
-        console.error('Global error:', event.error);
+        
         updateStatus('error', 'Ha ocurrido un error inesperado');
         addSystemMessage('Ha ocurrido un error inesperado. Por favor, recargue la página.');
     });
