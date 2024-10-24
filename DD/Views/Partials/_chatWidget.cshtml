@@ -1,12 +1,11 @@
 @using Microsoft.Extensions.Configuration
 @inject IConfiguration Configuration
 
-
 <div id="chat-widget" class="chat-widget">
     <div class="chat-header">
         <h2>Bolsa de Trabajo IDEA</h2>
         <p class="chatHeaderText">Tu próximo gran paso comienza aquí.</p>
-        <button id="past-conversations-btn" class="icon-button">
+        <button id="past-conversations-btn" class="icon-button" title="Ver conversaciones anteriores">
             <span class="material-icons">history</span>
         </button>
     </div>
@@ -14,31 +13,46 @@
         <div id="past-conversations" class="past-conversations hidden">
             <div class="past-conversations-header">
                 <h3>Conversaciones recientes</h3>
-                <button id="close-past-conversations-btn" class="icon-button">
+                <button id="close-past-conversations-btn" class="icon-button" title="Cerrar historial">
                     <span class="material-icons">arrow_back</span>
                 </button>
             </div>
             <ul id="conversation-list"></ul>
         </div>
         <div class="chat-main">
-            <div id="read-only-indicator" class="read-only-indicator hidden">Read-only mode</div>
+            <div id="chat-status" class="chat-status hidden">
+                <span class="status-icon material-icons"></span>
+                <span class="status-text"></span>
+            </div>
             <div id="chat-messages" class="chat-messages"></div>
             <div id="chat-loading" class="chat-loading">
                 <div class="loading-spinner"></div>
                 <p class="loadingText">Cargando...</p>
             </div>
-            <div id="chat-form" class="w-100 justify-content-between">
-                <form  class=" chat-form">
-                    <input type="text" id="chat-input" placeholder="Escribe tu mensaje aquí..." required>
-                    <button type="submit">Enviar</button>
+            <div id="chat-form">
+                <form class="chat-form">
+                    <div class="input-wrapper">
+                        <input type="text" id="chat-input" placeholder="Escribe tu mensaje aquí..." required
+                            autocomplete="off">
+                        <div class="input-status">
+                            <span class="material-icons typing-indicator">more_horiz</span>
+                            <span class="material-icons error-indicator">error_outline</span>
+                        </div>
+                    </div>
+                    <button type="submit">
+                        Enviar
+                    </button>
                 </form>
                 @await Html.PartialAsync("components/_logoutButton.cshtml")
             </div>
         </div>
     </div>
 </div>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
 <link rel="stylesheet" href="/Styles/chatWidget.css">
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
 <script>
     const assistantApiBaseUrl = '@Configuration["AppSettings:AssistantApiBaseUrl"]';
     const assistantChatEndpoint = '@Configuration["AppSettings:AssistantChatEndpoint"]';
@@ -46,5 +60,16 @@
     const assistantRecentThreadsEndpoint = '@Configuration["AppSettings:AssistantRecentThreadsEndpoint"]';
     const assistantGetMessageEndpointStart = '@Configuration["AppSettings:AssistantGetMessageEndpointStart"]';
     const assistantGetMessageEndpointContinue = '@Configuration["AppSettings:AssistantGetMessageEndpointContinue"]';
+    const loginPageRoute = '@Configuration["AppSettings:LoginPageRoute"]';
+    // Configure marked for better markdown rendering
+    marked.setOptions({
+        gfm: true,
+        breaks: true,
+        smartLists: true,
+        smartypants: true,
+        highlight: function (code, lang) {
+            return code;
+        }
+    });
 </script>
 <script src="/Scripts/chatWidget.js"></script>
