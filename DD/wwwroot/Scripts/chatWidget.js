@@ -78,21 +78,37 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function setProcessing(processing) {
         isProcessing = processing;
-        updateUIState();
+        chatInput.disabled = processing;
+        chatSubmitButton.disabled = processing;
+        
+        // Update input status indicators
+        const typingIcon = document.querySelector('.input-status .typing-indicator');
+        const errorIcon = document.querySelector('.input-status .error-indicator');
+        
         if (processing) {
-            updateStatus('processing', 'Procesando mensaje...');
+            errorIcon.classList.add('visible');
+            typingIcon.classList.remove('visible');
         } else {
-            chatStatus.classList.add('hidden');
+            errorIcon.classList.remove('visible');
         }
     }
 
     function setWaitingForResponse(waiting) {
         isWaitingForResponse = waiting;
-        updateUIState();
+        chatInput.disabled = waiting;
+        chatSubmitButton.disabled = waiting;
+        
+        // Update input status indicators
+        const typingIcon = document.querySelector('.input-status .typing-indicator');
+        const errorIcon = document.querySelector('.input-status .error-indicator');
+        
         if (waiting) {
             showTypingIndicator();
+            typingIcon.classList.add('visible');
+            errorIcon.classList.remove('visible');
         } else {
             hideTypingIndicator();
+            typingIcon.classList.remove('visible');
         }
     }
 
@@ -153,12 +169,10 @@ document.addEventListener('DOMContentLoaded', function() {
         chatMessages.appendChild(typingIndicator);
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }
-
+    
     function hideTypingIndicator() {
-        const typingIndicator = chatMessages.querySelector('.typing-indicator');
-        if (typingIndicator) {
-            typingIndicator.remove();
-        }
+        const indicators = chatMessages.querySelectorAll('.typing-indicator');
+        indicators.forEach(indicator => indicator.remove());
     }
 
     function togglePastConversations() {
@@ -168,65 +182,90 @@ document.addEventListener('DOMContentLoaded', function() {
 
     async function handleResponse(response) {
         if (!response.ok) {
-            let errorMessage;
+            // Create an error object with both the status and message
+            const error = new Error();
+            error.status = response.status;
+            
             try {
+                // Try to get error details from response body
                 const errorData = await response.json();
-                errorMessage = errorData.message || errorData.error || response.statusText;
+                error.message = errorData.message || errorData.error || response.statusText;
             } catch {
-                errorMessage = response.statusText;
+                // If we can't parse the error body, just use statusText
+                error.message = response.statusText;
             }
-            throw new Error(errorMessage);
+            
+            throw error;
         }
         return response.json();
     }
-
+    
     function handleError(error) {
+        console.error('Chat error:', error);
         let errorMessage = 'Ha ocurrido un error. Por favor, inténtelo de nuevo.';
-        let statusMessage = 'Error al procesar el mensaje';
-
-        if (error.message) {
-            switch (error.message) {
-                case '401':
+        let statusMessage = 'Error en la operación';
+    
+        // First check for status code
+        if (error.status) {
+            switch (error.status) {
+                case 401:
                     errorMessage = 'Su sesión ha expirado. Por favor, inicie sesión nuevamente.';
                     statusMessage = 'Sesión expirada';
                     break;
-                case '403':
+                case 403:
                     errorMessage = 'No tiene permiso para realizar esta acción.';
                     statusMessage = 'Acceso denegado';
                     break;
-                case '404':
+                case 404:
                     errorMessage = 'No se pudo encontrar el recurso solicitado.';
                     statusMessage = 'Recurso no encontrado';
                     break;
-                case '409':
+                case 409:
                     errorMessage = 'Esta conversación está ocupada. Por favor, espere.';
                     statusMessage = 'Conversación ocupada';
                     break;
-                case '500':
+                case 500:
                     errorMessage = 'Ha ocurrido un error en el servidor. Por favor, inténtelo más tarde.';
                     statusMessage = 'Error del servidor';
                     break;
-                case '503':
-                    errorMessage = 'El servicio no está disponible en este momento. Por favor, espere unos minutos.';
+                case 503:
+                    errorMessage = 'El servicio no está disponible en este momento. Por favor, espere.';
                     statusMessage = 'Servicio no disponible';
                     break;
-                default:
-                    if (error.message.includes('CONVERSATION_BUSY') || 
-                        error.message.includes('PROCESSING_IN_PROGRESS')) {
-                        errorMessage = 'Esta conversación está ocupada. Por favor, espere.';
-                        statusMessage = 'Conversación ocupada';
-                    } else {
-                        errorMessage = error.message;
-                        statusMessage = 'Error desconocido';
-                    }
             }
         }
-
+        // If no status code, check the error message
+        else if (error.message) {
+            if (error.message.toLowerCase().includes('unauthorized')) {
+                errorMessage = 'Su sesión ha expirado. Por favor, inicie sesión nuevamente.';
+                statusMessage = 'Sesión expirada';
+            }
+            else if (error.message.includes('CONVERSATION_BUSY') || 
+                error.message.includes('PROCESSING_IN_PROGRESS')) {
+                errorMessage = 'Esta conversación está ocupada. Por favor, espere.';
+                statusMessage = 'Conversación ocupada';
+            }
+            else if (error.message.includes('INVALID_THREAD')) {
+                errorMessage = 'La conversación no es válida o ha expirado.';
+                statusMessage = 'Conversación inválida';
+            }
+            else if (error.message.includes('Failed to fetch') || 
+                    error.message.includes('NetworkError')) {
+                errorMessage = 'Error de conexión. Por favor, verifique su conexión a internet.';
+                statusMessage = 'Error de red';
+            }
+        }
+    
         updateStatus('error', statusMessage);
-        addSystemMessage(errorMessage);
-        console.error('Chat error:', error);
+        addSystemMessage(errorMessage, 'error');
+    
+        // If it's an auth error, might want to redirect to login
+        if (error.status === 401 || error.message?.toLowerCase().includes('unauthorized')) {
+            setTimeout(() => {
+                window.location.href = loginPageRoute;  // or whatever your login path is
+            }, 2000);
+        }
     }
-
     function escapeHtml(unsafe) {
         return unsafe
             .replace(/&/g, "&amp;")
