@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', function() {
         chatInput.disabled = isDisabled;
         chatSubmitButton.disabled = isDisabled;
         
-        typingIndicator.classList.toggle('hidden', !isWaitingForResponse);
+        if(typingIndicator!=null) typingIndicator.classList.toggle('hidden', !isWaitingForResponse);
         errorIndicator.classList.toggle('hidden', !isProcessing);
         
         chatInput.placeholder = isProcessing ? 'Procesando mensaje anterior...' : 
@@ -82,12 +82,10 @@ document.addEventListener('DOMContentLoaded', function() {
         chatSubmitButton.disabled = processing;
         
         // Update input status indicators
-        const typingIcon = document.querySelector('.input-status .typing-indicator');
         const errorIcon = document.querySelector('.input-status .error-indicator');
         
         if (processing) {
             errorIcon.classList.add('visible');
-            typingIcon.classList.remove('visible');
         } else {
             errorIcon.classList.remove('visible');
         }
@@ -99,16 +97,13 @@ document.addEventListener('DOMContentLoaded', function() {
         chatSubmitButton.disabled = waiting;
         
         // Update input status indicators
-        const typingIcon = document.querySelector('.input-status .typing-indicator');
         const errorIcon = document.querySelector('.input-status .error-indicator');
         
         if (waiting) {
             showTypingIndicator();
-            typingIcon.classList.add('visible');
             errorIcon.classList.remove('visible');
         } else {
             hideTypingIndicator();
-            typingIcon.classList.remove('visible');
         }
     }
 
@@ -157,6 +152,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function showTypingIndicator() {
+        const indicators = chatMessages.querySelectorAll('.typing-indicator');
+        if(indicators.length > 0) {
+            return;
+        }
         const typingIndicator = document.createElement('div');
         typingIndicator.classList.add('typing-indicator');
         typingIndicator.innerHTML = `
@@ -201,7 +200,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     function handleError(error) {
-        
+        console.error('Error:', error);
         let errorMessage = 'Ha ocurrido un error. Por favor, inténtelo de nuevo.';
         let statusMessage = 'Error en la operación';
     
