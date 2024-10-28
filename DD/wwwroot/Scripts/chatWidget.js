@@ -33,6 +33,7 @@ document.addEventListener("DOMContentLoaded", function () {
     currentView: "messages",
     recentConversations: [],
     token: JSON.parse(localStorage.getItem("authToken") || "{}").token || "",
+    isFavoritesLoading: false,
   };
 
   // Constants
@@ -67,27 +68,29 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function updateUIState() {
-    const isDisabled =
-      state.isWaitingForResponse || state.isReadOnly || state.isProcessing;
+    const isDisabled = state.isWaitingForResponse || 
+                      state.isReadOnly || 
+                      state.isProcessing || 
+                      state.currentView === "favorites"; // Add favorites view check
+
     elements.input.disabled = isDisabled;
     elements.submitButton.disabled = isDisabled;
 
     if (elements.indicators.typing) {
-      elements.indicators.typing.classList.toggle(
-        "hidden",
-        !state.isWaitingForResponse
-      );
+        elements.indicators.typing.classList.toggle("hidden", !state.isWaitingForResponse);
     }
     elements.indicators.error.classList.toggle("hidden", !state.isProcessing);
 
-    elements.input.placeholder = state.isProcessing
-      ? "Procesando mensaje anterior..."
-      : state.isWaitingForResponse
-      ? "Esperando respuesta..."
-      : state.isReadOnly
-      ? "Modo solo lectura"
-      : "Escribe tu mensaje aquí...";
-  }
+    elements.input.placeholder = state.currentView === "favorites" 
+        ? "No se pueden enviar mensajes en la vista de favoritos"
+        : state.isProcessing
+            ? "Procesando mensaje anterior..."
+            : state.isWaitingForResponse
+                ? "Esperando respuesta..."
+                : state.isReadOnly
+                    ? "Modo solo lectura"
+                    : "Escribe tu mensaje aquí...";
+}
 
   function setProcessing(processing) {
     state.isProcessing = processing;
@@ -200,13 +203,11 @@ document.addEventListener("DOMContentLoaded", function () {
   function createMessage(content, role, message = {}) {
     const messageElement = document.createElement("div");
     messageElement.classList.add("message", `${role}-message`);
-
-    // Add message ID to the element's dataset if available
+    
     if (message.id) {
         messageElement.dataset.messageId = message.id;
     }
 
-    // Create main message structure
     const messageContent = `
         <div class="message-sender">${role === "user" ? "Usuario" : "DDEyC"}</div>
         <div class="message-content">
@@ -232,8 +233,19 @@ document.addEventListener("DOMContentLoaded", function () {
             try {
                 const note = await promptForNote();
                 const result = await api.post(`/api/chat/messages/${message.id}/favorite`, note);
+                
+                // Update the button state immediately
                 updateMessageFavoriteUI(favoriteButton, messageElement, result, note);
                 updateStatus("success", `Mensaje ${result.isFavorite ? "agregado a" : "eliminado de"} favoritos`);
+                
+                // If we're in favorites view and unfavoriting, remove the message
+                if (state.currentView === "favorites" && !result.isFavorite) {
+                    messageElement.remove();
+                    // Check if there are any messages left
+                    if (!elements.messages.querySelector('.message')) {
+                        addSystemMessage("No hay mensajes favoritos", "info");
+                    }
+                }
             } catch (error) {
                 handleError(error);
             }
@@ -350,7 +362,6 @@ function updateMessageFavoriteUI(button, messageElement, result, note) {
         state.currentView = "messages";
         elements.messages.innerHTML = "";
 
-        // Clear existing messages and render new ones
         messages.forEach(message => {
             createMessage(message.content, message.role.toLowerCase(), {
                 id: message.id,
@@ -360,9 +371,9 @@ function updateMessageFavoriteUI(button, messageElement, result, note) {
         });
 
         updateConversationDisplay();
+        updateUIState(); // Update UI state after loading thread
         updateStatus("success", "Conversación cargada");
 
-        // Update toolbar state
         const toolbar = document.querySelector(".messages-toolbar");
         if (toolbar) {
             const allButton = toolbar.children[0];
@@ -375,7 +386,6 @@ function updateMessageFavoriteUI(button, messageElement, result, note) {
         showLoading(false);
     }
 }
-
   async function fetchRecentConversations() {
     try {
       state.recentConversations = await api.get(assistantRecentThreadsEndpoint);
@@ -533,6 +543,9 @@ function updateMessageFavoriteUI(button, messageElement, result, note) {
   // TODO: make URL configurable
   async function showFavoriteMessages() {
     try {
+        state.isFavoritesLoading = true;
+        showLoading(true);
+
         const favorites = await api.get("/api/chat/favorites/messages");
         elements.messages.innerHTML = "";
 
@@ -544,16 +557,21 @@ function updateMessageFavoriteUI(button, messageElement, result, note) {
         favorites.forEach(message => {
             createMessage(message.content, message.role.toLowerCase(), {
                 id: message.id,
-                isFavorite: true,
+                isFavorite: true, // Always true in favorites view
                 favoriteNote: message.favoriteNote
             });
         });
 
         state.currentView = "favorites";
+        updateUIState(); // Update UI state after switching view
     } catch (error) {
         handleError(error);
+    } finally {
+        state.isFavoritesLoading = false;
+        showLoading(false);
     }
 }
+
 async function refreshCurrentView() {
     if (state.currentView === "favorites") {
         await showFavoriteMessages();

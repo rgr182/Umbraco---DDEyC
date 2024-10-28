@@ -1,4 +1,3 @@
-
 :root {
     --chat-primary: #0056b3;
     --chat-text: #000;
@@ -9,7 +8,6 @@
     --chat-error: #ff4d4d;
 }
 
-
 .chat-widget {
     width: 100%;
     max-width: 800px;
@@ -19,7 +17,6 @@
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
     position: relative;
 }
-
 
 .chat-header {
     background-color: var(--chat-primary);
@@ -36,7 +33,6 @@
 .chat-header .chatHeaderText {
     margin: 10px 0 0;
 }
-
 
 .icon-button {
     background: none;
@@ -60,7 +56,6 @@
     transform: translateY(-50%);
 }
 
-
 .chat-messages {
     height: calc(100vh - 200px);
     overflow-y: auto;
@@ -68,9 +63,11 @@
     background-color: var(--chat-bg);
 }
 
+/* Updated message styles */
 .message {
-    padding: 15px 20px;
-    margin-bottom: 5px;
+    position: relative;
+    padding: 15px 40px 15px 20px;
+    margin-bottom: 2px;
     width: 100%;
     box-sizing: border-box;
     color: var(--chat-text);
@@ -92,7 +89,6 @@
     margin-right: 5px;
 }
 
-
 .assistant-message ul,
 .assistant-message ol {
     padding-left: 40px;
@@ -102,7 +98,6 @@
 .assistant-message li {
     margin: 5px 0;
 }
-
 
 #chat-form {
     width: 100%;
@@ -114,8 +109,6 @@
     border-top: 1px solid var(--chat-border);
 }
 
-
-
 .logout-button {
     height: 48px;  
     padding: 0 20px;  
@@ -124,13 +117,13 @@
     color: white;
     border: none;
 }
+
 .chat-form {
     flex: 1;
     display: flex;
     gap: 10px;
     margin-right: 10px;
 }
-
 
 .input-wrapper {
     position: relative;
@@ -145,6 +138,7 @@
     height: 48px;  
     font-size: 14px;
 }
+
 .chat-form button {
     background-color: var(--chat-primary);
     color: white;
@@ -156,6 +150,7 @@
     min-width: 90px;  
     font-size: 14px;
 }
+
 .chat-form button .material-icons {
     font-size: 18px;
 }
@@ -164,8 +159,6 @@
     opacity: 0.7;
     cursor: not-allowed;
 }
-
-
 
 .input-status {
     position: absolute;
@@ -186,9 +179,6 @@
 .input-status .error-indicator.visible {
     display: block;
 }
-
-
-
 
 .system-message {
     padding: 15px 20px;
@@ -217,7 +207,6 @@
     color: var(--chat-primary);
     border: 1px solid var(--chat-primary);
 }
-
 
 .chat-status {
     position: absolute;
@@ -255,7 +244,6 @@
     border-top: none;
 }
 
-
 .chat-form input.error {
     border-color: var(--chat-error);
 }
@@ -291,7 +279,6 @@
     margin-top: 10px;
     color: var(--chat-primary);
 }
-
 
 .past-conversations {
     position: absolute;
@@ -356,7 +343,6 @@
     margin-left: 300px;
 }
 
-
 .read-only-indicator {
     background-color: var(--chat-error);
     color: white;
@@ -368,12 +354,9 @@
     border-radius: 0 0 5px 5px;
 }
 
-
 .hidden {
     display: none;
 }
-
-
 
 .typing-indicator {
     background-color: var(--chat-message-bot);
@@ -402,7 +385,6 @@
     animation: typing 1s infinite ease-in-out;
 }
 
-
 .typing-dots span:nth-child(2) {
     animation-delay: 0.2s;
 }
@@ -417,11 +399,9 @@
     100% { transform: translateY(0); opacity: 0.4; }
 }
 
-
 .material-icons {
     font-size: 20px;
 }
-
 
 @media (max-width: 768px) {
     .chat-widget {
@@ -437,7 +417,7 @@
     }
 }
 
-/* Favorite buttons */
+/* Updated favorite buttons and actions styles */
 .favorite-button,
 .conversation-favorite-button {
     background: none;
@@ -458,21 +438,53 @@
     color: #ffd700;
 }
 
+/* Updated message actions styles - now always visible */
 .message-actions {
     position: absolute;
     right: 8px;
     top: 8px;
     display: flex;
     gap: 8px;
-    opacity: 0;
     transition: opacity 0.2s ease;
 }
-
-.message:hover .message-actions {
+.message .favorite-button {
+    opacity: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    color: #666;
+    transition: all 0.2s ease;
+}
+.message:hover .favorite-button {
     opacity: 1;
 }
 
-/* Favorites section */
+/* Always show active (favorited) buttons */
+.message .favorite-button.active {
+    opacity: 1;
+    color: #ffd700;
+}
+.favorite-button:hover,
+.conversation-favorite-button:hover {
+    color: #ffd700;
+    transform: scale(1.1);
+}
+
+/* Conversation list favorite buttons */
+.conversation-favorite-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    color: #666;
+    transition: all 0.2s ease;
+}
+
+.conversation-favorite-button.active {
+    color: #ffd700;
+}
+/* Favorites section styles */
 .favorites-section {
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     margin-top: 16px;
@@ -515,6 +527,8 @@
     font-size: 0.85em;
     color: rgba(255, 255, 255, 0.7);
 }
+
+/* Messages toolbar styles */
 .messages-toolbar {
     padding: 8px 16px;
     background-color: var(--chat-bg);
@@ -523,60 +537,6 @@
     gap: 8px;
 }
 
-.messages-toolbar button {
-    padding: 6px 12px;
-    border: 1px solid var(--chat-primary);
-    background: none;
-    color: var(--chat-primary);
-    border-radius: 4px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.messages-toolbar button:hover {
-    background-color: var(--chat-primary);
-    color: white;
-}
-
-.favorite-note {
-    font-size: 0.85em;
-    color: #666;
-    font-style: italic;
-    margin-top: 4px;
-    padding-left: 8px;
-    border-left: 2px solid #ffd700;
-}
-
-.message-actions {
-    position: absolute;
-    right: 8px;
-    top: 8px;
-    display: flex;
-    gap: 8px;
-    opacity: 0;
-    transition: opacity 0.2s ease;
-}
-
-.message:hover .message-actions {
-    opacity: 1;
-}
-
-.favorite-button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 4px;
-    color: #666;
-    transition: color 0.2s ease;
-}
-
-.favorite-button:hover {
-    color: #ffd700;
-}
-
-.favorite-button.active {
-    color: #ffd700;
-}
 .messages-toolbar button {
     padding: 6px 12px;
     border: 1px solid var(--chat-primary);
@@ -596,70 +556,19 @@
     background-color: var(--chat-primary);
     color: white;
 }
-.message {
-    position: relative;
-    padding: 15px 40px 15px 20px; /* Increased right padding to accommodate the favorite button */
-}
 
-.message-actions {
-    position: absolute;
-    right: 8px;
-    top: 50%;
-    transform: translateY(-50%);
-    display: flex;
-    gap: 8px;
-    opacity: 0;
-    transition: opacity 0.2s ease;
-}
-
-.message:hover .message-actions {
-    opacity: 1;
-}
-
-.favorite-button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 4px;
-    color: #666;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.favorite-button:hover {
-    color: #ffd700;
-    transform: scale(1.1);
-}
-
-.favorite-button.active {
-    color: #ffd700;
-}
-
+/* Updated favorite note styles */
 .favorite-note {
     font-size: 0.85em;
     color: #666;
     font-style: italic;
     margin-top: 8px;
-    padding-top: 8px;
+    padding: 8px;
     border-top: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-/* Add a subtle animation for the star icon */
-.favorite-button .material-icons {
-    transition: transform 0.2s ease;
-}
-
-.favorite-button:hover .material-icons {
-    transform: rotate(72deg);
-}
-
-/* Make sure the messages container has proper positioning */
-.chat-messages {
-    position: relative;
-    height: calc(100vh - 200px);
-    overflow-y: auto;
-    padding: 0;
-    background-color: var(--chat-bg);
+    display: block;
+    clear: both;
+    width: 100%;
+    box-sizing: border-box;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 4px;
 }
