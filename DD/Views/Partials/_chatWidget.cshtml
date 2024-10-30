@@ -17,7 +17,16 @@
                     <span class="material-icons">arrow_back</span>
                 </button>
             </div>
+            <!-- Regular conversations list -->
             <ul id="conversation-list"></ul>
+
+            <!-- Add favorites section -->
+            <div class="favorites-section">
+                <div class="favorites-header">
+                    <h3>Conversaciones Favoritas</h3>
+                </div>
+                <ul id="favorites-list"></ul>
+            </div>
         </div>
         <div class="chat-main">
             <div id="chat-status" class="chat-status hidden">
@@ -35,7 +44,6 @@
                         <input type="text" id="chat-input" placeholder="Escribe tu mensaje aquí..." required
                             autocomplete="off">
                         <div class="input-status">
-                            <span class="material-icons typing-indicator">more_horiz</span>
                             <span class="material-icons error-indicator">error_outline</span>
                         </div>
                     </div>
@@ -47,6 +55,17 @@
             </div>
         </div>
     </div>
+    <div id="note-modal" class="note-modal hidden">
+    <div class="note-modal-content">
+        <h3>Agregar nota al favorito</h3>
+        <p class="modal-subtitle">Agrega una nota opcional para ayudarte a recordar por qué guardaste esto</p>
+        <textarea id="note-input" placeholder="Escribe tu nota aquí..." rows="3"></textarea>
+        <div class="modal-buttons">
+            <button class="modal-button cancel">Guardar sin nota</button>
+            <button class="modal-button confirm">Guardar con nota</button>
+        </div>
+    </div>
+</div>
 </div>
 
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
@@ -61,15 +80,5 @@
     const assistantGetMessageEndpointStart = '@Configuration["AppSettings:AssistantGetMessageEndpointStart"]';
     const assistantGetMessageEndpointContinue = '@Configuration["AppSettings:AssistantGetMessageEndpointContinue"]';
     const loginPageRoute = '@Configuration["AppSettings:LoginPageRoute"]';
-    // Configure marked for better markdown rendering
-    marked.setOptions({
-        gfm: true,
-        breaks: true,
-        smartLists: true,
-        smartypants: true,
-        highlight: function (code, lang) {
-            return code;
-        }
-    });
 </script>
 <script src="/Scripts/chatWidget.js"></script>
