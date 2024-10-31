@@ -511,7 +511,32 @@ document.addEventListener("DOMContentLoaded", function () {
       return false;
     }
   }
+  function updateThreadFavoriteStatus(threadId, isFavorite, note = "") {
+    // Update in regular conversation list
+    const regularListItem = elements.conversationList.querySelector(
+      `li[data-thread-id="${threadId}"]`
+    );
+    if (regularListItem) {
+      const favButton = regularListItem.querySelector(
+        ".conversation-favorite-button"
+      );
+      if (favButton) {
+        favButton.innerHTML = `<span class="material-icons">${
+          isFavorite ? "star" : "star_border"
+        }</span>`;
+        favButton.classList.toggle("active", isFavorite);
+      }
+    }
 
+    // Find corresponding conversation in state and update it
+    const conversation = state.recentConversations.find(
+      (c) => c.id === threadId
+    );
+    if (conversation) {
+      conversation.isFavorite = isFavorite;
+      conversation.favoriteNote = isFavorite ? note : null;
+    }
+  }
   async function updateFavoritesDisplay() {
     const favorites = await api.get("/api/chat/favorites/threads");
     const favoritesList = document.getElementById("favorites-list");
@@ -522,6 +547,7 @@ document.addEventListener("DOMContentLoaded", function () {
     favorites.forEach((favorite) => {
       const li = document.createElement("li");
       li.classList.add("favorite-thread");
+      li.dataset.threadId = favorite.id; // Add thread ID for reference
 
       const contentDiv = document.createElement("div");
       contentDiv.classList.add("favorite-content");
@@ -550,24 +576,20 @@ document.addEventListener("DOMContentLoaded", function () {
             ""
           );
           if (response && response.isFavorite !== undefined) {
+            // Update both lists
+            updateThreadFavoriteStatus(favorite.id, response.isFavorite);
+
             if (!response.isFavorite) {
-              // Remove from favorites list if unfavorited
+              // Remove from favorites list
               li.remove();
               updateStatus("success", "Conversación eliminada de favoritos");
 
-              // Update the main conversation list if visible
-              const mainListItem = elements.conversationList.querySelector(
-                `li[data-thread-id="${favorite.id}"]`
-              );
-              if (mainListItem) {
-                const mainFavButton = mainListItem.querySelector(
-                  ".conversation-favorite-button"
-                );
-                if (mainFavButton) {
-                  mainFavButton.innerHTML =
-                    '<span class="material-icons">star_border</span>';
-                  mainFavButton.classList.remove("active");
-                }
+              // Check if favorites list is empty and add message if needed
+              if (!favoritesList.querySelector(".favorite-thread")) {
+                const emptyMessage = document.createElement("li");
+                emptyMessage.classList.add("empty-favorites");
+                emptyMessage.textContent = "No hay conversaciones favoritas";
+                favoritesList.appendChild(emptyMessage);
               }
             }
           }
@@ -583,18 +605,14 @@ document.addEventListener("DOMContentLoaded", function () {
       li.appendChild(favoriteButton);
       li.onclick = () => loadThread(favorite.id);
 
-      // Add active class if this is the current thread
       if (favorite.id === state.currentConversationId) {
         li.classList.add("active");
       }
 
-      // Add thread ID for reference
-      li.dataset.threadId = favorite.id;
-
       favoritesList.appendChild(li);
     });
 
-    // Add a message if no favorites exist
+    // Add empty message if no favorites exist
     if (favorites.length === 0) {
       const emptyMessage = document.createElement("li");
       emptyMessage.classList.add("empty-favorites");
@@ -608,6 +626,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     state.recentConversations.forEach((conversation) => {
       const li = document.createElement("li");
+      li.dataset.threadId = conversation.id; // Add thread ID for reference
       li.textContent = `Conversación ${new Date(
         conversation.lastUsed
       ).toLocaleString()}`;
@@ -619,6 +638,7 @@ document.addEventListener("DOMContentLoaded", function () {
         conversation.isFavorite ? "star" : "star_border"
       }</span>`;
       if (conversation.isFavorite) favoriteButton.classList.add("active");
+
       favoriteButton.onclick = async (e) => {
         e.stopPropagation();
         try {
@@ -630,24 +650,20 @@ document.addEventListener("DOMContentLoaded", function () {
             note
           );
           if (response && response.isFavorite !== undefined) {
-            // Update the conversation object to match the new state
-            conversation.isFavorite = response.isFavorite;
-            conversation.favoriteNote = response.isFavorite ? note : null;
+            // Update both lists
+            updateThreadFavoriteStatus(
+              conversation.id,
+              response.isFavorite,
+              note
+            );
+            await updateFavoritesDisplay();
 
-            // Update button visuals
-            favoriteButton.innerHTML = `<span class="material-icons">${
-              response.isFavorite ? "star" : "star_border"
-            }</span>`;
-            favoriteButton.classList.toggle("active", response.isFavorite);
-
-            // Update status and refresh favorites
             updateStatus(
               "success",
               `Conversación ${
                 response.isFavorite ? "agregada a" : "eliminada de"
               } favoritos`
             );
-            await updateFavoritesDisplay();
           }
         } catch (error) {
           handleError(error);
