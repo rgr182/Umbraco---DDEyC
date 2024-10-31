@@ -291,70 +291,53 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Add click handler to the favorite button
     const favoriteButton = messageElement.querySelector(".favorite-button");
+    
     if (favoriteButton && message.id) {
       // For message favorites:
+      // Message favorite handler
       favoriteButton.addEventListener("click", async (e) => {
         e.stopPropagation();
         try {
           const isFavorited = favoriteButton.classList.contains("active");
           let note = "";
 
-          // Only prompt for note if we're adding a favorite, not removing
           if (!isFavorited) {
             note = await promptForNote();
-            // If user cancelled the note modal, don't proceed with favoriting
             if (note === null) return;
           }
 
-          const result = await api.post(
+          const response = await api.post(
             `/api/chat/messages/${message.id}/favorite`,
             note
           );
-          updateMessageFavoriteUI(favoriteButton, messageElement, result, note);
-          updateStatus(
-            "success",
-            `Mensaje ${
-              result.isFavorite ? "agregado a" : "eliminado de"
-            } favoritos`
-          );
+          if (response && response.isFavorite !== undefined) {
+            updateMessageFavoriteUI(
+              favoriteButton,
+              messageElement,
+              response,
+              note
+            );
+            updateStatus(
+              "success",
+              `Mensaje ${
+                response.isFavorite ? "agregado a" : "eliminado de"
+              } favoritos`
+            );
 
-          // If we're in favorites view and unfavoriting, remove the message
-          if (state.currentView === "favorites" && !result.isFavorite) {
-            messageElement.remove();
-            // Check if there are any messages left
-            if (!elements.messages.querySelector(".message")) {
-              addSystemMessage("No hay mensajes favoritos", "info");
+            if (state.currentView === "favorites" && !response.isFavorite) {
+              messageElement.remove();
+              if (!elements.messages.querySelector(".message")) {
+                addSystemMessage("No hay mensajes favoritos", "info");
+              }
             }
+          } else {
+            throw new Error("Invalid response from server");
           }
         } catch (error) {
           handleError(error);
         }
       });
 
-      // And for thread favorites:
-      favoriteButton.onclick = async (e) => {
-        e.stopPropagation();
-        try {
-          const isFavorited = favoriteButton.classList.contains("active");
-          let note = "";
-
-          // Only prompt for note if we're adding a favorite, not removing
-          if (!isFavorited) {
-            note = await promptForNote();
-            // If user cancelled the note modal, don't proceed with favoriting
-            if (note === null) return;
-          }
-
-          const result = await toggleThreadFavorite(conversation.id, note);
-          favoriteButton.innerHTML = `<span class="material-icons">${
-            result ? "star" : "star_border"
-          }</span>`;
-          favoriteButton.classList.toggle("active", result);
-          await updateFavoritesDisplay();
-        } catch (error) {
-          handleError(error);
-        }
-      };
     }
 
     elements.messages.appendChild(messageElement);
@@ -582,16 +565,35 @@ document.addEventListener("DOMContentLoaded", function () {
       favoriteButton.innerHTML = `<span class="material-icons">${
         conversation.isFavorite ? "star" : "star_border"
       }</span>`;
-
+      if(conversation.isFavorite) favoriteButton.classList.add("active");
       favoriteButton.onclick = async (e) => {
         e.stopPropagation();
-        const isFavorite = await toggleThreadFavorite(conversation.id);
-        favoriteButton.innerHTML = `<span class="material-icons">${
-          isFavorite ? "star" : "star_border"
-        }</span>`;
-        favoriteButton.classList.toggle("active", isFavorite);
-        await updateFavoritesDisplay();
-      };
+        try {
+            const note = conversation.isFavorite ? "" : await promptForNote();
+            if (!conversation.isFavorite && note === null) return;
+
+            const response = await api.post(`/api/chat/threads/${conversation.id}/favorite`, note);
+            if (response && response.isFavorite !== undefined) {
+                // Update the conversation object to match the new state
+                conversation.isFavorite = response.isFavorite;
+                conversation.favoriteNote = response.isFavorite ? note : null;
+                
+                // Update button visuals
+                favoriteButton.innerHTML = `<span class="material-icons">${
+                    response.isFavorite ? "star" : "star_border"
+                }</span>`;
+                favoriteButton.classList.toggle("active", response.isFavorite);
+                
+                // Update status and refresh favorites
+                updateStatus("success", 
+                    `Conversación ${response.isFavorite ? "agregada a" : "eliminada de"} favoritos`
+                );
+                await updateFavoritesDisplay();
+            }
+        } catch (error) {
+            handleError(error);
+        }
+    };
 
       if (conversation.id === state.currentConversationId) {
         li.classList.add("active");
