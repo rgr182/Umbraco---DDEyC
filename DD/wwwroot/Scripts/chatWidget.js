@@ -1,252 +1,892 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const chatWidget = document.getElementById('chat-widget');
-    const chatForm = document.getElementById('chat-form');
-    const chatInput = document.getElementById('chat-input');
-    const chatMessages = document.getElementById('chat-messages');
-    const chatLoading = document.getElementById('chat-loading');
-    const chatSubmitButton = document.querySelector('#chat-form button[type="submit"]');
-    const pastConversationsBtn = document.getElementById('past-conversations-btn');
-    const pastConversations = document.getElementById('past-conversations');
-    const conversationList = document.getElementById('conversation-list');
-    const readOnlyIndicator = document.getElementById('read-only-indicator');
-    const closePastConversationsBtn = document.getElementById('close-past-conversations-btn');
+document.addEventListener("DOMContentLoaded", function () {
+  // DOM Elements
+  const elements = {
+    widget: document.getElementById("chat-widget"),
+    form: document.getElementById("chat-form"),
+    input: document.getElementById("chat-input"),
+    messages: document.getElementById("chat-messages"),
+    loading: document.getElementById("chat-loading"),
+    submitButton: document.querySelector('#chat-form button[type="submit"]'),
+    pastConversationsBtn: document.getElementById("past-conversations-btn"),
+    pastConversations: document.getElementById("past-conversations"),
+    conversationList: document.getElementById("conversation-list"),
+    status: {
+      container: document.getElementById("chat-status"),
+      icon: document.querySelector("#chat-status .status-icon"),
+      text: document.querySelector("#chat-status .status-text"),
+    },
+    indicators: {
+      typing: document.querySelector(".typing-indicator"),
+      error: document.querySelector(".error-indicator"),
+    },
+    closePastConversationsBtn: document.getElementById(
+      "close-past-conversations-btn"
+    ),
+  };
 
-    let currentThreadId = null;
-    let isWaitingForResponse = false;
-    const tokenObj = JSON.parse(localStorage.getItem('authToken') || '{}');
-    const token = tokenObj.token || '';
-    let isReadOnly = false;
-    let recentThreads = [];
+  // State
+  const state = {
+    currentConversationId: null,
+    isWaitingForResponse: false,
+    isProcessing: false,
+    isReadOnly: false,
+    currentView: "messages",
+    recentConversations: [],
+    token: JSON.parse(localStorage.getItem("authToken") || "{}").token || "",
+    isFavoritesLoading: false,
+  };
 
-    const apiBaseUrl = assistantApiBaseUrl;
+  // Constants
+  const constants = {
+    MAX_RETRIES: 3,
+    RETRY_DELAY: 2000,
+    apiBaseUrl: assistantApiBaseUrl,
+  };
 
-    function togglePastConversations() {
-        pastConversations.classList.toggle('hidden');
-        chatWidget.querySelector('.chat-main').classList.toggle('shifted');
+  // Core UI Functions
+  function updateStatus(type, message) {
+    elements.status.container.className = "chat-status";
+    elements.status.icon.textContent = "";
+
+    const iconMap = {
+      processing: "sync",
+      error: "error_outline",
+      success: "check_circle",
+      busy: "hourglass_empty",
+    };
+
+    elements.status.icon.textContent = iconMap[type] || "";
+    elements.status.container.classList.add(
+      type === "busy" ? "processing" : type
+    );
+    elements.status.text.textContent = message;
+    elements.status.container.classList.remove("hidden");
+
+    if (type === "success") {
+      setTimeout(() => elements.status.container.classList.add("hidden"), 3000);
     }
+  }
 
-    function setReadOnly(readonly) {
-        isReadOnly = readonly;
-        chatForm.style.display = readonly ? 'none' : 'flex';
-        readOnlyIndicator.classList.toggle('hidden', !readonly);
-        if (readonly) {
-            readOnlyIndicator.textContent = "Modo de solo lectura";
+  function updateUIState() {
+    const isDisabled =
+      state.isWaitingForResponse ||
+      state.isReadOnly ||
+      state.isProcessing ||
+      state.currentView === "favorites"; // Add favorites view check
+
+    elements.input.disabled = isDisabled;
+    elements.submitButton.disabled = isDisabled;
+
+    if (elements.indicators.typing) {
+      elements.indicators.typing.classList.toggle(
+        "hidden",
+        !state.isWaitingForResponse
+      );
+    }
+    elements.indicators.error.classList.toggle("hidden", !state.isProcessing);
+
+    elements.input.placeholder =
+      state.currentView === "favorites"
+        ? "No se pueden enviar mensajes en la vista de favoritos"
+        : state.isProcessing
+        ? "Procesando mensaje anterior..."
+        : state.isWaitingForResponse
+        ? "Esperando respuesta..."
+        : state.isReadOnly
+        ? "Modo solo lectura"
+        : "Escribe tu mensaje aquí...";
+  }
+
+  function setProcessing(processing) {
+    state.isProcessing = processing;
+    elements.input.disabled = processing;
+    elements.submitButton.disabled = processing;
+    elements.indicators.error.classList.toggle("visible", processing);
+  }
+
+  function setWaitingForResponse(waiting) {
+    state.isWaitingForResponse = waiting;
+    elements.input.disabled = waiting;
+    elements.submitButton.disabled = waiting;
+
+    if (waiting) {
+      showTypingIndicator();
+    } else {
+      hideTypingIndicator();
+    }
+    elements.indicators.error.classList.remove("visible");
+  }
+
+  function setReadOnly(readonly) {
+    state.isReadOnly = readonly;
+    updateUIState();
+  }
+
+  function showLoading(show) {
+    elements.loading.style.display = show ? "flex" : "none";
+    elements.messages.style.display = show ? "none" : "block";
+  }
+
+  function showTypingIndicator() {
+    if (elements.messages.querySelector(".typing-indicator")) return;
+
+    const indicator = document.createElement("div");
+    indicator.classList.add("typing-indicator");
+    indicator.innerHTML = `
+            <div class="typing-dots">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        `;
+    elements.messages.appendChild(indicator);
+    elements.messages.scrollTop = elements.messages.scrollHeight;
+  }
+
+  function hideTypingIndicator() {
+    elements.messages
+      .querySelectorAll(".typing-indicator")
+      .forEach((indicator) => indicator.remove());
+  }
+
+  function addSystemMessage(content, type = "error") {
+    const messageElement = document.createElement("div");
+    messageElement.classList.add("message", "system-message", type);
+    messageElement.textContent = content;
+    elements.messages.appendChild(messageElement);
+    elements.messages.scrollTop = elements.messages.scrollHeight;
+    return messageElement;
+  }
+
+  // Replace the promptForNote function with this new version
+  function promptForNote() {
+    return new Promise((resolve) => {
+      const modal = document.getElementById("note-modal");
+      const noteInput = document.getElementById("note-input");
+      const confirmButton = modal.querySelector(".confirm");
+      const cancelButton = modal.querySelector(".cancel");
+
+      // Show modal
+      modal.classList.remove("hidden");
+      noteInput.value = ""; // Clear previous input
+      noteInput.focus();
+
+      // Handle confirmation
+      const handleConfirm = () => {
+        const note = noteInput.value.trim();
+        modal.classList.add("hidden");
+        cleanup();
+        resolve(note);
+      };
+
+      // Handle cancel
+      const handleCancel = () => {
+        modal.classList.add("hidden");
+        cleanup();
+        resolve("");
+      };
+
+      // Handle Enter key
+      const handleKeydown = (e) => {
+        if (e.key === "Enter" && !e.shiftKey) {
+          e.preventDefault();
+          handleConfirm();
+        } else if (e.key === "Escape") {
+          handleCancel();
         }
-    }
+      };
 
-    function startChat() {
-        showLoading(true);
-        fetch(`${apiBaseUrl}${assistantStartChatEndpoint}`, { 
-            method: 'POST',
-            headers: { 'Authorization': token }
-        })
-        .then(handleResponse)
-        .then(data => {
-            currentThreadId = data.threadId;
-            chatMessages.innerHTML = '';
-            data.messages.forEach(message => addMessage(message.content, message.role));
-            return fetchRecentThreads();
-        })
-        .then(() => {
-            currentThreadId= recentThreads[0].id;
-            updateThreadDisplay();
-        })
-        .catch(handleError)
-        .finally(() => showLoading(false));
-    }
+      // Clean up event listeners
+      const cleanup = () => {
+        confirmButton.removeEventListener("click", handleConfirm);
+        cancelButton.removeEventListener("click", handleCancel);
+        noteInput.removeEventListener("keydown", handleKeydown);
+      };
 
-    function sendMessage() {
-        const message = chatInput.value.trim();
-        if (!message) return;
+      // Add event listeners
+      confirmButton.addEventListener("click", handleConfirm);
+      cancelButton.addEventListener("click", handleCancel);
+      noteInput.addEventListener("keydown", handleKeydown);
+    });
+  }
+  // API Functions
+  const api = {
+    async request(endpoint, options = {}) {
+      const response = await fetch(`${constants.apiBaseUrl}${endpoint}`, {
+        ...options,
+        headers: {
+          ...options.headers,
+          Authorization: state.token,
+          "Content-Type": "application/json",
+        },
+      });
 
-        addMessage(message, 'user');
-        chatInput.value = '';
-        setWaitingForResponse(true);
-
-        const currentThread = recentThreads.find(thread => thread.id === currentThreadId);
-        if (!currentThread) {
-            handleError(new Error('Current thread not found'));
-            setWaitingForResponse(false);
-            return;
+      if (!response.ok) {
+        const error = new Error();
+        error.status = response.status;
+        try {
+          const errorData = await response.json();
+          error.message =
+            errorData.message || errorData.error || response.statusText;
+        } catch {
+          error.message = response.statusText;
         }
+        throw error;
+      }
 
-        fetch(`${apiBaseUrl}${assistantChatEndpoint}`, {
-            method: 'POST',
-            headers: { 
-                'Content-Type': 'application/json',
-                'Authorization': token
-            },
-            body: JSON.stringify({ threadId: currentThread.threadId, userMessage: message }),
-        })
-        .then(handleResponse)
-        .then(data => {
-            addMessage(data.response, 'assistant');
-            updateThreadDisplay();
-        })
-        .catch(handleError)
-        .finally(() => setWaitingForResponse(false));
+      return response.json();
+    },
+
+    get(endpoint) {
+      return this.request(endpoint);
+    },
+
+    post(endpoint, data) {
+      return this.request(endpoint, {
+        method: "POST",
+        body: JSON.stringify(data),
+      });
+    },
+  };
+
+  // Message Handling Functions
+  function createMessage(content, role, message = {}) {
+    const messageElement = document.createElement("div");
+    messageElement.classList.add("message", `${role}-message`);
+
+    if (message.id) {
+      messageElement.dataset.messageId = message.id;
     }
 
-    function loadThread(threadId) {
-        if (threadId === currentThreadId) return;
-
-        showLoading(true);
-        fetch(`${apiBaseUrl}${assistantGetMessageEndpointStart}${threadId}${assistantGetMessageEndpointContinue}`, {
-            headers: { 'Authorization': token }
-        })
-        .then(handleResponse)
-        .then(messages => {
-            currentThreadId = threadId;
-            chatMessages.innerHTML = '';
-            messages.forEach(message => addMessage(message.content, message.role));
-            updateThreadDisplay();
-        })
-        .catch(handleError)
-        .finally(() => showLoading(false));
-    }
-
-    function fetchRecentThreads() {
-        return fetch(`${apiBaseUrl}${assistantRecentThreadsEndpoint}`, {
-            headers: { 'Authorization': token }
-        })
-        .then(handleResponse)
-        .then(threads => {
-            recentThreads = threads;
-            updateThreadDisplay();
-        })
-        .catch(handleError);
-    }
-
-    function updateThreadDisplay() {
-        conversationList.innerHTML = '';
-        recentThreads.forEach((thread, index) => {
-            const li = document.createElement('li');
-            li.textContent = index === 0 ? 'Conversación Actual' : `Conversación ${new Date(thread.lastUsed).toLocaleString()}`;
-            li.onclick = () => loadThread(thread.id);
-            
-            if (thread.id === currentThreadId) {
-                li.classList.add('active');
+    const messageContent = `
+        <div class="message-sender">${
+          role === "user" ? "Usuario" : "DDEyC"
+        }</div>
+        <div class="message-content">
+            ${
+              role === "assistant"
+                ? DOMPurify.sanitize(marked.parse(content))
+                : content
             }
+        </div>
+        <div class="message-actions">
+            <button class="favorite-button ${
+              message.isFavorite ? "active" : ""
+            }" title="Marcar como favorito">
+                <span class="material-icons">${
+                  message.isFavorite ? "star" : "star_border"
+                }</span>
+            </button>
+        </div>
+        ${
+          message.isFavorite && message.favoriteNote
+            ? `
+            <div class="favorite-note">Nota: ${message.favoriteNote}</div>
+        `
+            : ""
+        }
+    `;
 
-            conversationList.appendChild(li);
+    messageElement.innerHTML = messageContent;
+
+    // Add click handler to the favorite button
+    const favoriteButton = messageElement.querySelector(".favorite-button");
+    if (favoriteButton && message.id) {
+      // For message favorites:
+      favoriteButton.addEventListener("click", async (e) => {
+        e.stopPropagation();
+        try {
+          const isFavorited = favoriteButton.classList.contains("active");
+          let note = "";
+
+          // Only prompt for note if we're adding a favorite, not removing
+          if (!isFavorited) {
+            note = await promptForNote();
+            // If user cancelled the note modal, don't proceed with favoriting
+            if (note === null) return;
+          }
+
+          const result = await api.post(
+            `/api/chat/messages/${message.id}/favorite`,
+            note
+          );
+          updateMessageFavoriteUI(favoriteButton, messageElement, result, note);
+          updateStatus(
+            "success",
+            `Mensaje ${
+              result.isFavorite ? "agregado a" : "eliminado de"
+            } favoritos`
+          );
+
+          // If we're in favorites view and unfavoriting, remove the message
+          if (state.currentView === "favorites" && !result.isFavorite) {
+            messageElement.remove();
+            // Check if there are any messages left
+            if (!elements.messages.querySelector(".message")) {
+              addSystemMessage("No hay mensajes favoritos", "info");
+            }
+          }
+        } catch (error) {
+          handleError(error);
+        }
+      });
+
+      // And for thread favorites:
+      favoriteButton.onclick = async (e) => {
+        e.stopPropagation();
+        try {
+          const isFavorited = favoriteButton.classList.contains("active");
+          let note = "";
+
+          // Only prompt for note if we're adding a favorite, not removing
+          if (!isFavorited) {
+            note = await promptForNote();
+            // If user cancelled the note modal, don't proceed with favoriting
+            if (note === null) return;
+          }
+
+          const result = await toggleThreadFavorite(conversation.id, note);
+          favoriteButton.innerHTML = `<span class="material-icons">${
+            result ? "star" : "star_border"
+          }</span>`;
+          favoriteButton.classList.toggle("active", result);
+          await updateFavoritesDisplay();
+        } catch (error) {
+          handleError(error);
+        }
+      };
+    }
+
+    elements.messages.appendChild(messageElement);
+    elements.messages.scrollTop = elements.messages.scrollHeight;
+    return messageElement;
+  }
+  function updateMessageFavoriteUI(button, messageElement, result, note) {
+    // Update star icon
+    button.innerHTML = `<span class="material-icons">${
+      result.isFavorite ? "star" : "star_border"
+    }</span>`;
+    button.classList.toggle("active", result.isFavorite);
+
+    // Update or remove note
+    let noteElement = messageElement.querySelector(".favorite-note");
+    if (result.isFavorite && note) {
+      if (!noteElement) {
+        noteElement = document.createElement("div");
+        noteElement.classList.add("favorite-note");
+        messageElement.appendChild(noteElement);
+      }
+      noteElement.textContent = `Nota: ${note}`;
+    } else if (noteElement) {
+      noteElement.remove();
+    }
+  }
+  // Chat Core Functions
+  async function startChat() {
+    showLoading(true);
+    try {
+      const data = await api.post(assistantStartChatEndpoint);
+      state.currentConversationId = data.id;
+      elements.messages.innerHTML = "";
+
+      addMessageToolbar();
+
+      data.messages.forEach((message) =>
+        createMessage(message.content, message.role.toLowerCase(), {
+          id: message.id,
+          isFavorite: message.isFavorite,
+          favoriteNote: message.favoriteNote,
+        })
+      );
+
+      await fetchRecentConversations();
+      updateStatus("success", "Conversación iniciada");
+    } catch (error) {
+      handleError(error);
+    } finally {
+      showLoading(false);
+    }
+  }
+
+  async function sendMessage() {
+    const message = elements.input.value.trim();
+    if (
+      !message ||
+      state.isWaitingForResponse ||
+      state.isReadOnly ||
+      state.isProcessing
+    ) {
+      return;
+    }
+
+    try {
+      setProcessing(true);
+      const currentConversation = state.recentConversations.find(
+        (c) => c.id === state.currentConversationId
+      );
+
+      if (!currentConversation) {
+        throw new Error("Current conversation not found");
+      }
+
+      elements.input.value = "";
+      const messageElement = createMessage(message, "user", {});
+
+      const data = await api.post(assistantChatEndpoint, {
+        threadId: currentConversation.threadId,
+        userMessage: message,
+      });
+
+      createMessage(data.response, "assistant", {
+        id: data.messageId,
+        isFavorite: false,
+      });
+
+      await updateConversationDisplay();
+      updateStatus("success", "Mensaje enviado correctamente");
+    } catch (error) {
+      handleError(error);
+      const lastMessage = elements.messages.querySelector(
+        ".user-message:last-child"
+      );
+      if (lastMessage) lastMessage.remove();
+    } finally {
+      setWaitingForResponse(false);
+      setProcessing(false);
+    }
+  }
+
+  async function loadThread(threadId) {
+    if (
+      threadId === state.currentConversationId &&
+      state.currentView === "messages"
+    )
+      return;
+
+    showLoading(true);
+    try {
+      const messages = await api.get(
+        `${assistantGetMessageEndpointStart}${threadId}${assistantGetMessageEndpointContinue}`
+      );
+
+      state.currentConversationId = threadId;
+      state.currentView = "messages";
+      elements.messages.innerHTML = "";
+
+      messages.forEach((message) => {
+        createMessage(message.content, message.role.toLowerCase(), {
+          id: message.id,
+          isFavorite: message.isFavorite,
+          favoriteNote: message.favoriteNote,
         });
+      });
 
-        const isCurrentThreadMostRecent = currentThreadId === recentThreads[0]?.id;
-        setReadOnly(!isCurrentThreadMostRecent);
+      updateConversationDisplay();
+      updateUIState(); // Update UI state after loading thread
+      updateStatus("success", "Conversación cargada");
+
+      const toolbar = document.querySelector(".messages-toolbar");
+      if (toolbar) {
+        const allButton = toolbar.children[0];
+        const favButton = toolbar.children[1];
+        updateToolbarState(allButton, favButton);
+      }
+    } catch (error) {
+      handleError(error);
+    } finally {
+      showLoading(false);
     }
-
-    function addMessage(content, role) {
-        const messageElement = document.createElement('div');
-        messageElement.classList.add('message', `${role}-message`);
-        
-        let senderPrefix = '';
-        if (role === 'user') {
-            senderPrefix = '<span class="message-sender">Usuario:</span> ';
-        } else if (role === 'assistant' || role === 'bot') {
-            senderPrefix = '<span class="message-sender">DDEyC:</span> ';
-        }
-        
-        if (role === 'assistant' || role === 'bot') {
-            messageElement.innerHTML = senderPrefix + marked.parse(content);
-        } else {
-            messageElement.innerHTML = senderPrefix + escapeHtml(content);
-        }
-        
-        chatMessages.appendChild(messageElement);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+  async function fetchRecentConversations() {
+    try {
+      state.recentConversations = await api.get(assistantRecentThreadsEndpoint);
+      updateConversationDisplay();
+    } catch (error) {
+      handleError(error);
+      return [];
     }
+  }
+  // Favorites and Display Functions
+  async function toggleThreadFavorite(threadId) {
+    try {
+      const note = await promptForNote();
+      const result = await api.post(
+        `/api/chat/threads/${threadId}/favorite`,
+        note
+      );
 
-    function addErrorMessage(content) {
-        const errorElement = document.createElement('div');
-        errorElement.classList.add('error-message');
-        errorElement.textContent = content;
-        chatMessages.appendChild(errorElement);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
+      updateStatus(
+        "success",
+        `Conversación ${
+          result.isFavorite ? "agregada a" : "eliminada de"
+        } favoritos`
+      );
+
+      await updateConversationDisplay();
+      return result.isFavorite;
+    } catch (error) {
+      handleError(error);
+      return false;
     }
+  }
 
-    function showLoading(show) {
-        chatLoading.style.display = show ? 'flex' : 'none';
-        chatMessages.style.display = show ? 'none' : 'block';
-    }
+  async function updateFavoritesDisplay() {
+    const favorites = await api.get("/api/chat/favorites/threads");
+    const favoritesList = document.getElementById("favorites-list");
+    if (!favoritesList) return;
 
-    function setWaitingForResponse(waiting) {
-        isWaitingForResponse = waiting;
-        chatSubmitButton.disabled = waiting;
-        chatInput.disabled = waiting;
-        if (waiting) {
-            showTypingIndicator();
-        } else {
-            hideTypingIndicator();
-        }
-    }
+    favoritesList.innerHTML = "";
 
-    function showTypingIndicator() {
-        const typingIndicator = document.createElement('div');
-        typingIndicator.classList.add('typing-indicator');
-        typingIndicator.innerHTML = '<span class="typing-dots"><span></span><span></span><span></span></span>';
-        chatMessages.appendChild(typingIndicator);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
+    favorites.forEach((favorite) => {
+      const li = document.createElement("li");
+      li.classList.add("favorite-thread");
 
-    function hideTypingIndicator() {
-        const typingIndicator = chatMessages.querySelector('.typing-indicator');
-        if (typingIndicator) {
-            typingIndicator.remove();
-        }
-    }
+      const contentDiv = document.createElement("div");
+      contentDiv.classList.add("favorite-content");
 
-    function escapeHtml(unsafe) {
-        return unsafe
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#039;");
-    }
+      const title = document.createElement("div");
+      title.classList.add("favorite-title");
+      title.textContent =
+        favorite.favoriteNote ||
+        `Conversación del ${new Date(favorite.lastUsed).toLocaleDateString()}`;
 
-    function handleResponse(response) {
-        if (!response.ok) {
-            throw new Error(response.status.toString());
-        }
-        return response.json();
-    }
+      const date = document.createElement("div");
+      date.classList.add("favorite-date");
+      date.textContent = new Date(favorite.lastUsed).toLocaleString();
 
-    function handleError(error) {
- 
-        let errorMessage = 'Ha ocurrido un error. Por favor, inténtelo de nuevo.';
+      contentDiv.appendChild(title);
+      contentDiv.appendChild(date);
+      li.appendChild(contentDiv);
+      li.onclick = () => loadThread(favorite.id);
 
-        if (error.message) {
-            switch (error.message) {
-                case '401':
-                    errorMessage = 'Su sesión ha expirado. Por favor, inicie sesión nuevamente.';
-                    break;
-                case '403':
-                    errorMessage = 'No tiene permiso para realizar esta acción.';
-                    break;
-                case '404':
-                    errorMessage = 'No se pudo encontrar el recurso solicitado.';
-                    break;
-                case '500':
-                    errorMessage = 'Ha ocurrido un error en el servidor. Por favor, inténtelo más tarde.';
-                    break;
-                case '503':
-                    errorMessage = 'El servicio no está disponible en este momento. Por favor, espere unos minutos y vuelva a intentarlo.';
-                    break;
-            }
-        }
+      if (favorite.id === state.currentConversationId) {
+        li.classList.add("active");
+      }
 
-        addErrorMessage(errorMessage);
-    }
+      favoritesList.appendChild(li);
+    });
+  }
 
-    pastConversationsBtn.addEventListener('click', togglePastConversations);
-    closePastConversationsBtn.addEventListener('click', togglePastConversations);
+  function updateConversationDisplay() {
+    elements.conversationList.innerHTML = "";
 
-    chatForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        if (!isWaitingForResponse && !isReadOnly) {
-            sendMessage();
-        }
+    state.recentConversations.forEach((conversation) => {
+      const li = document.createElement("li");
+      li.textContent = `Conversación ${new Date(
+        conversation.lastUsed
+      ).toLocaleString()}`;
+      li.onclick = () => loadThread(conversation.id);
+
+      const favoriteButton = document.createElement("button");
+      favoriteButton.classList.add("conversation-favorite-button");
+      favoriteButton.innerHTML = `<span class="material-icons">${
+        conversation.isFavorite ? "star" : "star_border"
+      }</span>`;
+
+      favoriteButton.onclick = async (e) => {
+        e.stopPropagation();
+        const isFavorite = await toggleThreadFavorite(conversation.id);
+        favoriteButton.innerHTML = `<span class="material-icons">${
+          isFavorite ? "star" : "star_border"
+        }</span>`;
+        favoriteButton.classList.toggle("active", isFavorite);
+        await updateFavoritesDisplay();
+      };
+
+      if (conversation.id === state.currentConversationId) {
+        li.classList.add("active");
+      }
+
+      li.appendChild(favoriteButton);
+      elements.conversationList.appendChild(li);
     });
 
+    const isCurrentConversationMostRecent =
+      state.currentConversationId === state.recentConversations[0]?.id;
+    setReadOnly(!isCurrentConversationMostRecent);
+
+    updateFavoritesDisplay();
+  }
+
+  function addMessageToolbar() {
+    const existingToolbar = document.querySelector(".messages-toolbar");
+    if (existingToolbar) {
+      existingToolbar.remove();
+    }
+
+    const toolbar = document.createElement("div");
+    toolbar.classList.add("messages-toolbar");
+
+    const viewAllButton = document.createElement("button");
+    viewAllButton.textContent = "Hilo actual";
+    viewAllButton.onclick = () => {
+      if (
+        state.currentView !== "messages" ||
+        !elements.messages.querySelector(".message")
+      ) {
+        loadThread(state.currentConversationId);
+      }
+      state.currentView = "messages";
+      updateToolbarState(viewAllButton, viewFavoritesButton);
+    };
+
+    const viewFavoritesButton = document.createElement("button");
+    viewFavoritesButton.textContent = "Mensajes favoritos";
+    viewFavoritesButton.onclick = () => {
+      showFavoriteMessages();
+      state.currentView = "favorites";
+      updateToolbarState(viewAllButton, viewFavoritesButton);
+    };
+
+    toolbar.appendChild(viewAllButton);
+    toolbar.appendChild(viewFavoritesButton);
+
+    elements.messages.parentNode.insertBefore(toolbar, elements.messages);
+    updateToolbarState(viewAllButton, viewFavoritesButton);
+  }
+  function updateToolbarState(allButton, favoritesButton) {
+    allButton.classList.toggle("active", state.currentView === "messages");
+    favoritesButton.classList.toggle(
+      "active",
+      state.currentView === "favorites"
+    );
+  }
+  // TODO: make URL configurable
+  async function showFavoriteMessages() {
+    try {
+      state.isFavoritesLoading = true;
+      showLoading(true);
+
+      const favorites = await api.get("/api/chat/favorites/messages");
+      elements.messages.innerHTML = "";
+
+      if (favorites.length === 0) {
+        addSystemMessage("No hay mensajes favoritos", "info");
+        return;
+      }
+
+      favorites.forEach((message) => {
+        createMessage(message.content, message.role.toLowerCase(), {
+          id: message.id,
+          isFavorite: true, // Always true in favorites view
+          favoriteNote: message.favoriteNote,
+        });
+      });
+
+      state.currentView = "favorites";
+      updateUIState(); // Update UI state after switching view
+    } catch (error) {
+      handleError(error);
+    } finally {
+      state.isFavoritesLoading = false;
+      showLoading(false);
+    }
+  }
+
+  async function refreshCurrentView() {
+    if (state.currentView === "favorites") {
+      await showFavoriteMessages();
+    } else if (state.currentConversationId) {
+      await loadThread(state.currentConversationId);
+    }
+  }
+  // Error Handling Function
+  function handleError(error) {
+    console.error("Error:", error);
+    let errorMessage = "Ha ocurrido un error. Por favor, inténtelo de nuevo.";
+    let statusMessage = "Error en la operación";
+
+    if (error.status) {
+      const errorMessages = {
+        401: {
+          message:
+            "Su sesión ha expirado. Por favor, inicie sesión nuevamente.",
+          status: "Sesión expirada",
+        },
+        403: {
+          message: "No tiene permiso para realizar esta acción.",
+          status: "Acceso denegado",
+        },
+        404: {
+          message: "No se pudo encontrar el recurso solicitado.",
+          status: "Recurso no encontrado",
+        },
+        409: {
+          message: "Esta conversación está ocupada. Por favor, espere.",
+          status: "Conversación ocupada",
+        },
+        500: {
+          message:
+            "Ha ocurrido un error en el servidor. Por favor, inténtelo más tarde.",
+          status: "Error del servidor",
+        },
+        503: {
+          message:
+            "El servicio no está disponible en este momento. Por favor, espere.",
+          status: "Servicio no disponible",
+        },
+      };
+
+      if (errorMessages[error.status]) {
+        errorMessage = errorMessages[error.status].message;
+        statusMessage = errorMessages[error.status].status;
+      }
+    } else if (error.message) {
+      if (error.message.toLowerCase().includes("unauthorized")) {
+        errorMessage =
+          "Su sesión ha expirado. Por favor, inicie sesión nuevamente.";
+        statusMessage = "Sesión expirada";
+      } else if (
+        error.message.includes("CONVERSATION_BUSY") ||
+        error.message.includes("PROCESSING_IN_PROGRESS")
+      ) {
+        errorMessage = "Esta conversación está ocupada. Por favor, espere.";
+        statusMessage = "Conversación ocupada";
+      } else if (error.message.includes("INVALID_THREAD")) {
+        errorMessage = "La conversación no es válida o ha expirado.";
+        statusMessage = "Conversación inválida";
+      } else if (
+        error.message.includes("Failed to fetch") ||
+        error.message.includes("NetworkError")
+      ) {
+        errorMessage =
+          "Error de conexión. Por favor, verifique su conexión a internet.";
+        statusMessage = "Error de red";
+      }
+    }
+
+    updateStatus("error", statusMessage);
+    addSystemMessage(errorMessage, "error");
+
+    if (
+      error.status === 401 ||
+      error.message?.toLowerCase().includes("unauthorized")
+    ) {
+      setTimeout(() => {
+        window.location.href = loginPageRoute;
+      }, 2000);
+    }
+  }
+
+  // Event Listeners Setup
+  function setupEventListeners() {
+    elements.pastConversationsBtn.addEventListener("click", () => {
+      elements.pastConversations.classList.toggle("hidden");
+      elements.widget.querySelector(".chat-main").classList.toggle("shifted");
+    });
+
+    elements.closePastConversationsBtn.addEventListener("click", () => {
+      elements.pastConversations.classList.toggle("hidden");
+      elements.widget.querySelector(".chat-main").classList.toggle("shifted");
+    });
+
+    elements.form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      if (
+        !state.isWaitingForResponse &&
+        !state.isReadOnly &&
+        !state.isProcessing
+      ) {
+        sendMessage();
+      }
+    });
+
+    elements.input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        if (
+          !state.isWaitingForResponse &&
+          !state.isReadOnly &&
+          !state.isProcessing
+        ) {
+          sendMessage();
+        }
+      }
+    });
+
+    elements.input.addEventListener("paste", (e) => {
+      e.preventDefault();
+      const text = e.clipboardData.getData("text/plain");
+      document.execCommand("insertText", false, text);
+    });
+
+    window.addEventListener("online", () => {
+      updateStatus("success", "Conexión restaurada");
+      if (state.currentConversationId) {
+        fetchRecentConversations();
+      }
+    });
+
+    window.addEventListener("offline", () => {
+      updateStatus("error", "Sin conexión");
+      addSystemMessage("Se ha perdido la conexión a Internet. Reconectando...");
+    });
+
+    window.addEventListener("beforeunload", (e) => {
+      if (state.isProcessing || state.isWaitingForResponse) {
+        e.returnValue = "Hay un mensaje en proceso. ¿Seguro que desea salir?";
+        return e.returnValue;
+      }
+    });
+
+    if ("visualViewport" in window) {
+      window.visualViewport.addEventListener("resize", () => {
+        elements.messages.scrollTop = elements.messages.scrollHeight;
+      });
+    }
+  }
+
+  // Initialize Function
+  function initialize() {
+    // Initialize markdown
+    marked.setOptions({
+      gfm: true,
+      breaks: true,
+      sanitize: false,
+      smartLists: true,
+      smartypants: true,
+    });
+
+    // Initialize DOMPurify
+    DOMPurify.setConfig({
+      ALLOWED_TAGS: [
+        "p",
+        "br",
+        "b",
+        "i",
+        "em",
+        "strong",
+        "a",
+        "ul",
+        "ol",
+        "li",
+        "code",
+        "pre",
+        "h1",
+        "h2",
+        "h3",
+        "h4",
+        "h5",
+        "h6",
+        "blockquote",
+        "hr",
+        "table",
+        "thead",
+        "tbody",
+        "tr",
+        "th",
+        "td",
+      ],
+      ALLOWED_ATTR: ["href", "target", "class", "id"],
+      ALLOW_DATA_ATTR: false,
+      ADD_ATTR: [["target", "_blank"]],
+      USE_PROFILES: { html: true },
+    });
+
+    setupEventListeners();
     startChat();
+  }
+
+  // Start the application
+  initialize();
 });

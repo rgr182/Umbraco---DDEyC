@@ -40,7 +40,6 @@
 }
 <head>
     <link rel="stylesheet" href="~/Styles/encuesta.css" />
-    <link rel="stylesheet" href="~/Styles/encuesta-minimizable.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
 </head>
@@ -97,7 +96,6 @@
         var surveyStructure = @Html.Raw(surveyStructureJson);
         var displayTimer = @DefaultSurveyNode.DisplayTimer;
     </script>
-    <script src="~/Scripts/MinimizeSurvey.js"></script>
     <script src="~/Scripts/DisplayTimerSurveyForm.js"></script>
     <script src="~/Scripts/SubmitSurveyForm.js"></script>
 </body>

@@ -69,9 +69,11 @@ td {
 }
 header {
     background-color: #fcfcfc;
+    width: 100%;
 }
 /* Global styles */
 body {
+    
     overflow-x: hidden;
     font-family: 'Montserrat', sans-serif;
     font-size: 16px;
