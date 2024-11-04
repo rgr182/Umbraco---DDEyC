@@ -72,36 +72,42 @@ document.addEventListener("DOMContentLoaded", function () {
       state.isWaitingForResponse ||
       state.isReadOnly ||
       state.isProcessing ||
-      state.currentView === "favorites"; // Add favorites view check
+      state.currentView === "favorites";
 
     elements.input.disabled = isDisabled;
     elements.submitButton.disabled = isDisabled;
 
-    if (elements.indicators.typing) {
-      elements.indicators.typing.classList.toggle(
-        "hidden",
-        !state.isWaitingForResponse
-      );
+    // Update placeholder text based on state
+    if (state.currentView === "favorites") {
+      elements.input.placeholder =
+        "No se pueden enviar mensajes en la vista de favoritos";
+    } else if (state.isProcessing) {
+      elements.input.placeholder = "Procesando mensaje anterior...";
+    } else if (state.isWaitingForResponse) {
+      elements.input.placeholder = "Esperando respuesta...";
+    } else if (state.isReadOnly) {
+      elements.input.placeholder = "Modo solo lectura";
+    } else {
+      elements.input.placeholder = "Escribe tu mensaje aquí...";
     }
-    elements.indicators.error.classList.toggle("hidden", !state.isProcessing);
-
-    elements.input.placeholder =
-      state.currentView === "favorites"
-        ? "No se pueden enviar mensajes en la vista de favoritos"
-        : state.isProcessing
-        ? "Procesando mensaje anterior..."
-        : state.isWaitingForResponse
-        ? "Esperando respuesta..."
-        : state.isReadOnly
-        ? "Modo solo lectura"
-        : "Escribe tu mensaje aquí...";
   }
 
   function setProcessing(processing) {
     state.isProcessing = processing;
     elements.input.disabled = processing;
     elements.submitButton.disabled = processing;
-    elements.indicators.error.classList.toggle("visible", processing);
+
+    if (processing) {
+      elements.input.placeholder = "Procesando mensaje...";
+      elements.indicators.error.classList.add("visible");
+    } else {
+      elements.indicators.error.classList.remove("visible");
+      // Only reset placeholder if we're not in another state
+      if (!state.isWaitingForResponse && !state.isReadOnly) {
+        elements.input.placeholder = "Escribe tu mensaje aquí...";
+      }
+    }
+    updateUIState();
   }
 
   function setWaitingForResponse(waiting) {
@@ -111,10 +117,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (waiting) {
       showTypingIndicator();
+      elements.input.placeholder = "Esperando respuesta...";
     } else {
       hideTypingIndicator();
+      elements.input.placeholder = "Escribe tu mensaje aquí...";
     }
-    elements.indicators.error.classList.remove("visible");
   }
 
   function setReadOnly(readonly) {
@@ -128,25 +135,30 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function showTypingIndicator() {
-    if (elements.messages.querySelector(".typing-indicator")) return;
+    // Remove any existing typing indicators first
+    hideTypingIndicator();
 
     const indicator = document.createElement("div");
     indicator.classList.add("typing-indicator");
     indicator.innerHTML = `
-            <div class="typing-dots">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-        `;
+        <div>
+            <span class="message-sender">DDEyC</span>
+        </div>
+        <div class="typing-dots">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    `;
+
     elements.messages.appendChild(indicator);
     elements.messages.scrollTop = elements.messages.scrollHeight;
   }
 
   function hideTypingIndicator() {
-    elements.messages
-      .querySelectorAll(".typing-indicator")
-      .forEach((indicator) => indicator.remove());
+    const existingIndicators =
+      elements.messages.querySelectorAll(".typing-indicator");
+    existingIndicators.forEach((indicator) => indicator.remove());
   }
 
   function addSystemMessage(content, type = "error") {
@@ -403,6 +415,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
     try {
       setProcessing(true);
+      elements.input.value = "";
+      const messageElement = createMessage(message, "user", {});
+
+      // Set waiting state before making the API call
+
       const currentConversation = state.recentConversations.find(
         (c) => c.id === state.currentConversationId
       );
@@ -410,9 +427,8 @@ document.addEventListener("DOMContentLoaded", function () {
       if (!currentConversation) {
         throw new Error("Current conversation not found");
       }
-
-      elements.input.value = "";
-      const messageElement = createMessage(message, "user", {});
+      setProcessing(false);
+      setWaitingForResponse(true);
 
       const data = await api.post(assistantChatEndpoint, {
         threadId: currentConversation.threadId,
@@ -434,7 +450,6 @@ document.addEventListener("DOMContentLoaded", function () {
       if (lastMessage) lastMessage.remove();
     } finally {
       setWaitingForResponse(false);
-      setProcessing(false);
     }
   }
 
