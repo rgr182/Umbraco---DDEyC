@@ -32,34 +32,31 @@
     @if (!Model.HideHeaderImages)
     {
         <div>
-            <div class="row">
-                <div class="col centered-col">
-                    @if (bottomHeaderImage1 != null)
-                    {
-                        <div class="header-atag-a d-flex justify-content-start align-items-center">
-                            <a href="@headerImageUrl1">
-                                <img src="@bottomHeaderImage1.Url()" class="logo-img w-100" alt="ChihuahuaGobiernoMunicipal">
-                            </a>
-                        </div>
-
-                    }
-                    @if (topHeaderImage != null)
-                    {
-                        <div class="header-atag-b d-flex justify-content-start align-items-center">
-                            <a href="@headerImageUrl2">
-                                <img src="@topHeaderImage.Url()" class="logo-img w-100" alt="Logo 1">
-                            </a>
-                        </div>
-                    }
-                    @if (bottomHeaderImage2 != null)
-                    {
-                        <div class="header-atag-c d-flex justify-content-end align-items-center">
-                            <a href="@headerImageUrl3">
-                                <img src="@bottomHeaderImage2.Url()" class="logo-img w-100" alt="Logo 3">
-                            </a>
-                        </div>
-                    }
-                </div>
+            <div class="row centered-col">
+                @if (bottomHeaderImage1 != null)
+                {
+                    <div class="header-atag-a d-flex justify-content-start align-items-center">
+                        <a href="@headerImageUrl1">
+                            <img src="@bottomHeaderImage1.Url()" class="logo-img w-100" alt="ChihuahuaGobiernoMunicipal_logo">
+                        </a>
+                    </div>
+                }
+                @if (topHeaderImage != null)
+                {
+                    <div class="header-atag-b d-flex justify-content-center align-items-center">
+                        <a href="@headerImageUrl2">
+                            <img src="@topHeaderImage.Url()" class="logo-img-b w-100" alt="idea_logo">
+                        </a>
+                    </div>
+                }
+                @if (bottomHeaderImage2 != null)
+                {
+                    <div class="header-atag-c d-flex justify-content-end align-items-center">
+                        <a href="@headerImageUrl3">
+                            <img src="@bottomHeaderImage2.Url()" class="logo-img-c w-100" alt="CapitalChihuahua_logo">
+                        </a>
+                    </div>
+                }
             </div>
             <div class="row">
                 <div class="rainbow-box">

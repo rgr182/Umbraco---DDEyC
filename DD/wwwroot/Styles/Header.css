@@ -11,21 +11,25 @@ html {
     text-align: center;
     justify-content: space-between;
     width: 100%;
-    margin-top: 20px;
 }
 .header-atag-a{
-    width:30%;
+    width:33%;
 }
 .header-atag-b {
-    width: 30%;
+    width: 33%;
 }
-header-atag-c {
-    width: 30%;
+.header-atag-c {
+    width: 33%;
 }
 .logo-img {
     max-height:180px;
 }
-
+.logo-img-b {
+    max-height: 240px;
+}
+.logo-img-c {
+    max-height: 210px;
+}
 .rainbow-box {
   width: 100%;
   height: 10px;
@@ -45,7 +49,4 @@ header-atag-c {
   .rainbow-box {
     height: 0.5rem;
   }
-    .logo-img {
-        max-height: 50px;
-    }
 }
