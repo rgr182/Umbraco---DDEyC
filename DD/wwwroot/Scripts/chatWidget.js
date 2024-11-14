@@ -872,6 +872,18 @@ document.addEventListener("DOMContentLoaded", function () {
       elements.widget.querySelector(".chat-main").classList.toggle("shifted");
     });
 
+    //Close modal event
+    const closeNoteModalButton = document.getElementById(
+        "button-close-note-modal"
+    );
+    const noteModal = document.getElementById("note-modal");
+
+    if (closeNoteModalButton && noteModal) {
+        closeNoteModalButton.addEventListener("click", () => {
+            noteModal.classList.add("hidden");
+        });
+    }
+
     elements.form.addEventListener("submit", (e) => {
       e.preventDefault();
       if (

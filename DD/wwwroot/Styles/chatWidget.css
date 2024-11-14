@@ -715,3 +715,20 @@
   .favorite-thread .conversation-favorite-button:hover {
     transform: scale(1.1);
   }
+
+.btn-close {
+    color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0px;
+    background: none;
+    border: none;
+    font-size: 4rem;
+    cursor: pointer;
+}
+
+    .btn-close:hover {
+        color: #ff0000;
+        background-color: rgba(255, 0, 0, 0.1);
+    }
