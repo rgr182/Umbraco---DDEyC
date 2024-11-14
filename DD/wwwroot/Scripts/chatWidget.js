@@ -862,17 +862,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Event Listeners Setup
   function setupEventListeners() {
-    // Close modal event
-    const closeNoteModalButton = document.getElementById(
-      "button-close-note-modal"
-    );
-    const noteModal = document.getElementById("note-modal");
-
-    if (closeNoteModalButton && noteModal) {
-      closeNoteModalButton.addEventListener("click", () => {
-        noteModal.classList.add("hidden");
-      });
-    }
     elements.pastConversationsBtn.addEventListener("click", () => {
       elements.pastConversations.classList.toggle("hidden");
       elements.widget.querySelector(".chat-main").classList.toggle("shifted");
