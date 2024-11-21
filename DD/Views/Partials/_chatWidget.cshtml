@@ -69,6 +69,19 @@
         </div>
     </div>
 </div>
+<div id="linkedin-auth-popup" class="note-modal hidden">
+    <div class="note-modal-content">
+        <div class="d-flex justify-content-end">
+            <button type="button" class="btn-close" id="close-linkedin-popup" aria-label="Close">&times;</button>
+        </div>
+        <h3>Autenticación de LinkedIn Requerida</h3>
+        <p class="modal-subtitle">Para garantizar una experiencia satisfactoria y acceso completo a las ofertas laborales, es necesario iniciar sesión en LinkedIn.</p>
+        <div class="modal-buttons">
+            <button class="modal-button cancel" id="cancel-linkedin-auth">Cancelar</button>
+            <button class="modal-button confirm" id="confirm-linkedin-auth">Iniciar sesión con LinkedIn</button>
+        </div>
+    </div>
+</div>
 </div>
 
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
@@ -84,4 +97,5 @@
     const assistantGetMessageEndpointContinue = '@Configuration["AppSettings:AssistantGetMessageEndpointContinue"]';
     const loginPageRoute = '@Configuration["AppSettings:LoginPageRoute"]';
 </script>
+<script src="/Scripts/linkedInAuth.js"></script>
 <script src="/Scripts/chatWidget.js"></script>
