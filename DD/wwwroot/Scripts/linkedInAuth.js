@@ -3,39 +3,60 @@ document.addEventListener("DOMContentLoaded", function() {
     const closeButton = document.getElementById("close-linkedin-popup");
     const cancelButton = document.getElementById("cancel-linkedin-auth");
     const confirmButton = document.getElementById("confirm-linkedin-auth");
+    const dontShowCheckbox = document.getElementById("dont-show-again");
+    const hiddenAuthTrigger = document.getElementById("linkedin-auth-trigger");
 
-    function showLinkedInPopup() {
-        if (!localStorage.getItem('linkedInAuthenticated')) {
+    function showLinkedInLoginPrompt() {
+        if (!localStorage.getItem('hideLinkedInPrompt')) {
             popup.classList.remove('hidden');
         }
     }
 
-    function hideLinkedInPopup() {
+    function hideLinkedInLoginPrompt() {
         popup.classList.add('hidden');
+        if (dontShowCheckbox.checked) {
+            localStorage.setItem('hideLinkedInPrompt', 'true');
+        }
     }
 
-    function redirectToLinkedIn() {
-        const linkedInAuthUrl = 'https://www.linkedin.com/oauth/v2/authorization' +
-            '?response_type=code' +
-            '&client_id=8684n009xqmed6' +
-            '&redirect_uri=https://ddeyc.duckdns.org/bolsa-de-trabajo/' +
-            '&scope=email';
+    function redirectToLinkedInLogin() {
+        const authUrl = new URL(linkedInAuthUrl);
+        authUrl.searchParams.append('response_type', 'code');
+        authUrl.searchParams.append('client_id', linkedInClientId);
+        authUrl.searchParams.append('redirect_uri', linkedInRedirectUri);
+        authUrl.searchParams.append('scope', linkedInScope);
         
-        window.location.href = linkedInAuthUrl;
+        window.location.href = authUrl.toString();
     }
 
-    // Show popup when needed
-    showLinkedInPopup();
+    function toggleLinkedInPrompt() {
+        if (popup.classList.contains('hidden')) {
+            localStorage.removeItem('hideLinkedInPrompt');
+            dontShowCheckbox.checked = false;
+            popup.classList.remove('hidden');
+        } else {
+            popup.classList.add('hidden');
+        }
+    }
 
     // Event listeners
-    closeButton?.addEventListener('click', hideLinkedInPopup);
-    cancelButton?.addEventListener('click', hideLinkedInPopup);
-    confirmButton?.addEventListener('click', redirectToLinkedIn);
+    closeButton?.addEventListener('click', hideLinkedInLoginPrompt);
+    cancelButton?.addEventListener('click', hideLinkedInLoginPrompt);
+    confirmButton?.addEventListener('click', function() {
+        hideLinkedInLoginPrompt();
+        redirectToLinkedInLogin();
+    });
+    
+    // Hidden trigger now toggles the popup instead of direct redirect
+    hiddenAuthTrigger?.addEventListener('click', toggleLinkedInPrompt);
 
-    // Close when clicking outside
+    // Only close on outside click, no redirect
     popup?.addEventListener('click', function(event) {
         if (event.target === popup) {
-            redirectToLinkedIn();
+            hideLinkedInLoginPrompt();
         }
     });
+
+    // Show the prompt by default unless user chose not to see it
+    showLinkedInLoginPrompt();
 });

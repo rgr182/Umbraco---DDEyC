@@ -5,9 +5,15 @@
     <div class="chat-header">
         <h2>Bolsa de Trabajo IDEA</h2>
         <p class="chatHeaderText">Tu próximo gran paso comienza aquí.</p>
+        <div class="header-buttons">
+        <button id="linkedin-auth-trigger" class="icon-button" title="Iniciar sesión de LinkedIn">
+            <span class="material-icons">info</span>
+        </button>
         <button id="past-conversations-btn" class="icon-button" title="Ver conversaciones anteriores">
             <span class="material-icons">history</span>
         </button>
+    </div>
+        
     </div>
     <div class="chat-container">
         <div id="past-conversations" class="past-conversations hidden">
@@ -56,32 +62,43 @@
         </div>
     </div>
     <div id="note-modal" class="note-modal hidden">
-    <div class="note-modal-content">
-        <div class="d-flex justify-content-end">
-            <button type="button" class="btn-close" id="button-close-note-modal" aria-label="Close">&times;</button>
-        </div>
-        <h3>Agregar nota al favorito</h3>
-        <p class="modal-subtitle">Agrega una nota opcional para ayudarte a recordar por qué guardaste esto</p>
-        <textarea id="note-input" placeholder="Escribe tu nota aquí..." rows="3"></textarea>
-        <div class="modal-buttons">
-            <button class="modal-button cancel">Guardar sin nota</button>
-            <button class="modal-button confirm">Guardar con nota</button>
-        </div>
-    </div>
-</div>
-<div id="linkedin-auth-popup" class="note-modal hidden">
-    <div class="note-modal-content">
-        <div class="d-flex justify-content-end">
-            <button type="button" class="btn-close" id="close-linkedin-popup" aria-label="Close">&times;</button>
-        </div>
-        <h3>Autenticación de LinkedIn Requerida</h3>
-        <p class="modal-subtitle">Para garantizar una experiencia satisfactoria y acceso completo a las ofertas laborales, es necesario iniciar sesión en LinkedIn.</p>
-        <div class="modal-buttons">
-            <button class="modal-button cancel" id="cancel-linkedin-auth">Cancelar</button>
-            <button class="modal-button confirm" id="confirm-linkedin-auth">Iniciar sesión con LinkedIn</button>
+        <div class="note-modal-content">
+            <div class="d-flex justify-content-end">
+                <button type="button" class="btn-close" id="button-close-note-modal" aria-label="Close">&times;</button>
+            </div>
+            <h3>Agregar nota al favorito</h3>
+            <p class="modal-subtitle">Agrega una nota opcional para ayudarte a recordar por qué guardaste esto</p>
+            <textarea id="note-input" placeholder="Escribe tu nota aquí..." rows="3"></textarea>
+            <div class="modal-buttons">
+                <button class="modal-button cancel">Guardar sin nota</button>
+                <button class="modal-button confirm">Guardar con nota</button>
+            </div>
         </div>
     </div>
-</div>
+    <!-- Add this somewhere discrete in your layout, like a footer or settings menu -->
+    <!-- Update the popup HTML -->
+    <div id="linkedin-auth-popup" class="note-modal hidden">
+        <div class="note-modal-content">
+            <div class="d-flex justify-content-end">
+                <button type="button" class="btn-close" id="close-linkedin-popup" aria-label="Close">&times;</button>
+            </div>
+            <h3>Autenticación de LinkedIn Requerida</h3>
+            <p class="modal-subtitle">Para garantizar una experiencia satisfactoria y acceso completo a las ofertas
+                laborales, es necesario iniciar sesión en LinkedIn.</p>
+
+            <!-- Added checkbox -->
+            <div class="dont-show-again">
+                <label>
+                    <input type="checkbox" id="dont-show-again"> No mostrar este mensaje nuevamente
+                </label>
+            </div>
+
+            <div class="modal-buttons">
+                <button class="modal-button cancel" id="cancel-linkedin-auth">Cancelar</button>
+                <button class="modal-button confirm" id="confirm-linkedin-auth">Iniciar sesión con LinkedIn</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
@@ -96,6 +113,10 @@
     const assistantGetMessageEndpointStart = '@Configuration["AppSettings:AssistantGetMessageEndpointStart"]';
     const assistantGetMessageEndpointContinue = '@Configuration["AppSettings:AssistantGetMessageEndpointContinue"]';
     const loginPageRoute = '@Configuration["AppSettings:LoginPageRoute"]';
+    const linkedInAuthUrl = '@Configuration["AppSettings:LinkedInAuthUrl"]';
+    const linkedInClientId = '@Configuration["AppSettings:LinkedInClientId"]';
+    const linkedInRedirectUri = '@Configuration["AppSettings:LinkedInRedirectUri"]';
+    const linkedInScope = '@Configuration["AppSettings:LinkedInScope"]';
 </script>
 <script src="/Scripts/linkedInAuth.js"></script>
 <script src="/Scripts/chatWidget.js"></script>
