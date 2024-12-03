@@ -34,9 +34,9 @@
     var carouselData = new {
         blocksList = blocksList.Select(b => new {
             content = new {
-                NewsCarouselItemText1 = ((ContentModels.NewsCarouselItems)b.Content).NewsCarouselItemText1.ToString(),
-                NewsCarouselItemText2 = ((ContentModels.NewsCarouselItems)b.Content).NewsCarouselItemText2.ToString(),
-                NewsCarouselItemUrl =((ContentModels.NewsCarouselItems)b.Content).NewsCarouselItemUrl.Url,
+                NewsCarouselItemText1 = ((ContentModels.NewsCarouselItems)b.Content).NewsCarouselItemText1?.ToString() ?? String.Empty,
+                NewsCarouselItemText2 = ((ContentModels.NewsCarouselItems)b.Content).NewsCarouselItemText2?.ToString() ?? String.Empty,
+                NewsCarouselItemUrl =((ContentModels.NewsCarouselItems)b.Content).NewsCarouselItemUrl?.Url ?? "#",
             },
             imageUrl = string.IsNullOrWhiteSpace(((ContentModels.NewsCarouselItems)b.Content).NewsCarouselItemImage?.Url()) ? defaultImageUrl : ((ContentModels.NewsCarouselItems)b.Content).NewsCarouselItemImage?.Url()
         }),
