@@ -104,8 +104,26 @@
 
     /* Third level dropdowns */
     #navigation ul ul ul {
-        left: 100%;
         top: 0;
+        left: auto;
+        right: auto;
+    }
+
+    /* Override hover positioning for sub-dropdowns */
+    #navigation ul li:hover > ul {
+        display: block;
+        animation: fadeIn 0.3s ease;
+    }
+
+    /* Remove any fixed positioning that might interfere */
+    #navigation ul ul li:hover > ul {
+        left: auto;
+        right: auto;
+    }
+
+    /* Ensure sub-dropdowns maintain their JS-assigned position */
+    #navigation ul ul .sub-dropdown {
+        transition: none;
     }
 }
 
