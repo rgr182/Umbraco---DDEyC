@@ -3,12 +3,12 @@
 @{
     Layout = null;
     var rootNode = Umbraco.ContentAtRoot().FirstOrDefault();
-    // Method to get visible children
+    
     IEnumerable<IPublishedContent> GetVisibleChildren(IPublishedContent node)
     {
         return node.Children().Where(x => x.IsVisible());
     }
-    // Method to get visible children of pages with visible children
+    
     IEnumerable<IPublishedContent> GetVisibleChildrenOfPagesWithVisibleChildren(IPublishedContent node)
     {
         var childrenOfPagesWithVisibleChildren = new List<IPublishedContent>();
@@ -22,74 +22,91 @@
         }
         return childrenOfPagesWithVisibleChildren;
     }
+    
     var visibleChildrenOfPagesWithVisibleChildren = GetVisibleChildrenOfPagesWithVisibleChildren(rootNode);
 }
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="~/Styles/navigation.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 </head>
 <body>
     <div class="navigation-container">
-        <nav id="navigation">
-            <div>
-                <div class="mobileMenu">
-                    <a href="@rootNode.Url()">
-                        <i class="homeButton fa-solid fa-house"></i>
+        <nav id="navigation" aria-label="Main navigation">
+            <div class="mobileMenu">
+                <a href="@rootNode.Url()" aria-label="Home">
+                    <i class="homeButton fa-solid fa-house"></i>
+                </a>
+                <button id="open-menu" aria-label="Toggle menu" aria-expanded="false">
+                    <i id="bars" class="fas fa-bars"></i>
+                </button>
+            </div>
+            <ul class="main-menu">
+                <li>
+                    <a href="@rootNode.Url()" aria-label="Home">
+                        <i class="hideHome fa-solid fa-house"></i>
                     </a>
-                    <a id="open-menu">
-                        <i id="bars" class="fas fa-bars"></i>
-                    </a>
-                </div>
-                <ul>
-                    <li>
-                        <a href="@rootNode.Url()">
-                            <i class="hideHome fa-solid fa-house"></i>
-                        </a>
-                    </li>
-                    @if (visibleChildrenOfPagesWithVisibleChildren != null && visibleChildrenOfPagesWithVisibleChildren.Any())
+                </li>
+                @if (visibleChildrenOfPagesWithVisibleChildren != null && visibleChildrenOfPagesWithVisibleChildren.Any())
+                {
+                    foreach (var item in visibleChildrenOfPagesWithVisibleChildren)
                     {
-                        foreach (var item in visibleChildrenOfPagesWithVisibleChildren)
+                        var hasChildLinks = item.Children().Any(x => x.IsVisible());
+                        if (hasChildLinks)
                         {
-                            var hasChildLinks = item.Children().Any(x => x.IsVisible());
-                            if (hasChildLinks)
-                            {
-                                <li class="has-dropdown">
-                                    <a class="parent-link" href="@item.Url()">@item.Name</a>
-                                    <button class="dropdown-arrow fas fa-chevron-down"></button>
-                                    <ul class="dropdown">
-                                        @foreach (var childLink in item.Children().Where(x => x.IsVisible()))
-                                        {
-                                            var visibleGrandChildren = childLink.Children().Where(x => x.IsVisible());
-                                            <li class="has-subdropdown">
-                                                <a class="child-link" href="@childLink.Url()">@childLink.Name</a>
+                            <li class="has-dropdown">
+                                <div class="menu-item-header">
+                                    <a class="parent-link" href="@item.Url()" aria-haspopup="true" aria-expanded="false">@item.Name</a>
+                                    <button class="dropdown-arrow" aria-label="Toggle @item.Name submenu">
+                                        <i class="fas fa-chevron-down"></i>
+                                    </button>
+                                </div>
+                                <ul class="dropdown">
+                                    @foreach (var childLink in item.Children().Where(x => x.IsVisible()))
+                                    {
+                                        var visibleGrandChildren = childLink.Children().Where(x => x.IsVisible());
+                                        <li class="has-subdropdown">
+                                            <div class="menu-item-header">
+                                                <a class="child-link" href="@childLink.Url()" 
+                                                   aria-haspopup="@(visibleGrandChildren.Any() ? "true" : "false")"
+                                                   aria-expanded="false">@childLink.Name</a>
                                                 @if (visibleGrandChildren.Any())
                                                 {
-                                                    <button class="dropdown-arrow fas fa-chevron-down"></button>
-                                                    <ul class="sub-dropdown">
-                                                        @foreach (var grandChildLink in visibleGrandChildren)
-                                                        {
-                                                            <li>
-                                                                <a href="@grandChildLink.Url()">@grandChildLink.Name</a>
-                                                            </li>
-                                                        }
-                                                    </ul>
+                                                    <button class="dropdown-arrow" aria-label="Toggle @childLink.Name submenu">
+                                                        <i class="fas fa-chevron-down"></i>
+                                                    </button>
                                                 }
-                                            </li>
-                                        }
-                                    </ul>
-                                </li>
-                            }
-                            else
-                            {
-                                <li>
+                                            </div>
+                                            @if (visibleGrandChildren.Any())
+                                            {
+                                                <ul class="sub-dropdown">
+                                                    @foreach (var grandChildLink in visibleGrandChildren)
+                                                    {
+                                                        <li>
+                                                            <a href="@grandChildLink.Url()">@grandChildLink.Name</a>
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            }
+                                        </li>
+                                    }
+                                </ul>
+                            </li>
+                        }
+                        else
+                        {
+                            <li>
+                                <div class="menu-item-header">
                                     <a href="@item.Url()">@item.Name</a>
-                                </li>
-                            }
+                                </div>
+                            </li>
                         }
                     }
-                </ul>
-            </div>
+                }
+            </ul>
         </nav>
     </div>
     <script src="~/Scripts/mobileMenuToggle.js"></script>
