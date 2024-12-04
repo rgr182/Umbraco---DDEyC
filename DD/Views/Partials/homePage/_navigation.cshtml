@@ -3,12 +3,12 @@
 @{
     Layout = null;
     var rootNode = Umbraco.ContentAtRoot().FirstOrDefault();
-    
+
     IEnumerable<IPublishedContent> GetVisibleChildren(IPublishedContent node)
     {
         return node.Children().Where(x => x.IsVisible());
     }
-    
+
     IEnumerable<IPublishedContent> GetVisibleChildrenOfPagesWithVisibleChildren(IPublishedContent node)
     {
         var childrenOfPagesWithVisibleChildren = new List<IPublishedContent>();
@@ -22,17 +22,19 @@
         }
         return childrenOfPagesWithVisibleChildren;
     }
-    
+
     var visibleChildrenOfPagesWithVisibleChildren = GetVisibleChildrenOfPagesWithVisibleChildren(rootNode);
 }
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="~/Styles/navigation.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 </head>
+
 <body>
     <div class="navigation-container">
         <nav id="navigation" aria-label="Main navigation">
@@ -50,7 +52,8 @@
                         <i class="hideHome fa-solid fa-house"></i>
                     </a>
                 </li>
-                @if (visibleChildrenOfPagesWithVisibleChildren != null && visibleChildrenOfPagesWithVisibleChildren.Any())
+                @if (visibleChildrenOfPagesWithVisibleChildren != null &&
+                visibleChildrenOfPagesWithVisibleChildren.Any())
                 {
                     foreach (var item in visibleChildrenOfPagesWithVisibleChildren)
                     {
@@ -59,7 +62,8 @@
                         {
                             <li class="has-dropdown">
                                 <div class="menu-item-header">
-                                    <a class="parent-link" href="@item.Url()" aria-haspopup="true" aria-expanded="false">@item.Name</a>
+                                    <a class="parent-link" href="@item.Url()" aria-haspopup="true"
+                                        aria-expanded="false">@item.Name</a>
                                     <button class="dropdown-arrow" aria-label="Toggle @item.Name submenu">
                                         <i class="fas fa-chevron-down"></i>
                                     </button>
@@ -70,9 +74,9 @@
                                         var visibleGrandChildren = childLink.Children().Where(x => x.IsVisible());
                                         <li class="has-subdropdown">
                                             <div class="menu-item-header">
-                                                <a class="child-link" href="@childLink.Url()" 
-                                                   aria-haspopup="@(visibleGrandChildren.Any() ? "true" : "false")"
-                                                   aria-expanded="false">@childLink.Name</a>
+                                                <a class="child-link" href="@childLink.Url()"
+                                                    aria-haspopup="@(visibleGrandChildren.Any() ? "true" : "false")"
+                                                    aria-expanded="false">@childLink.Name</a>
                                                 @if (visibleGrandChildren.Any())
                                                 {
                                                     <button class="dropdown-arrow" aria-label="Toggle @childLink.Name submenu">
@@ -111,4 +115,5 @@
     </div>
     <script src="~/Scripts/mobileMenuToggle.js"></script>
 </body>
+
 </html>
