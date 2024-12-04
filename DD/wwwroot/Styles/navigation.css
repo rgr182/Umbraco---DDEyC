@@ -125,6 +125,9 @@
     #navigation ul ul .sub-dropdown {
         transition: none;
     }
+    .sub-dropdown .open li{
+        background : #6c9dc2;
+    }
 }
 
 /* Smartphone styles */
@@ -231,22 +234,60 @@
         animation: slideDown 0.3s ease-in-out;
     }
 
-    #navigation ul ul .menu-item-header {
-        background-color: #054c93;
+    /* First level items (direct children of root) */
+    #navigation > ul > li > .menu-item-header {
+        background-color: #4471c4;
         padding-left: 12px;
     }
 
-    #navigation ul ul ul .menu-item-header {
-        background-color: #4471c4;
+    /* First level dropdown items */
+    #navigation ul .dropdown > li > .menu-item-header {
+        background-color: #054c93;
         padding-left: 24px;
     }
 
-    #navigation ul ul ul a {
-        padding-left: 12px;
+    #navigation ul .dropdown > li > a {
+        padding-left: 24px;
+    }
+
+    /* Second level dropdown items (children of dropdown items) */
+    #navigation ul .dropdown .dropdown > li > .menu-item-header,
+    #navigation ul .dropdown .sub-dropdown > li > .menu-item-header {
+        background-color: #2c5f9c;
+        padding-left: 36px;
+    }
+
+    #navigation ul .dropdown .dropdown > li > a,
+    #navigation ul .dropdown .sub-dropdown > li > a {
+        padding-left: 36px;
+    }
+
+    /* Visual indicators for hierarchy */
+    .dropdown > li > .menu-item-header::before {
+        content: '';
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        width: 6px;
+        height: 1px;
+        background-color: rgba(255, 255, 255, 0.4);
+    }
+
+    .dropdown .dropdown > li > .menu-item-header::before,
+    .dropdown .sub-dropdown > li > .menu-item-header::before {
+        left: 24px;
     }
 
     .dropdown-arrow.rotated {
         transform: rotate(180deg);
+    }
+    .sub-dropdown.open > li {
+        background-color: #4471c4;
+    }
+
+    /* If you also want to target the menu-item-header within those items */
+    .sub-dropdown.open > li > .menu-item-header {
+        background-color: #4471c4;
     }
 }
 
