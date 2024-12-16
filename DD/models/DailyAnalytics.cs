@@ -1,5 +1,4 @@
 namespace DDEyC.Models{
-
 public class DailyAnalytics
 {
     public DateTime Date { get; set; }
