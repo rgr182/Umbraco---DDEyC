@@ -8,11 +8,4 @@ namespace DDEyC.Models{
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
 }
-
-public class DailyAnalytics
-{
-    public DateTime Date { get; set; }
-    public Dictionary<string, int> PageViews { get; set; } = new Dictionary<string, int>();
-    public int DailyTotal { get; set; }
-}
 }

@@ -1,7 +1,7 @@
 (function () {
     'use strict';
  
-    function analyticsDashboardController($scope, eventsService, $timeout, notificationsService) {
+    function analyticsDashboardController($scope, eventsService, $timeout) {
         var vm = this;
         
         // Initialize state
