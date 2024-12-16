@@ -1,0 +1,81 @@
+@model DDEyC.Models.AnalyticsDashboardViewModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="/App_Plugins/AnalyticsDashboard/analyticsDashboard.css">
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <div class="chart-container" style="height: 400px; min-height: 400px; display: flex; justify-content: center; align-items: center;">
+            <canvas id="pageViewsChart" style="width: 100%; height: 100%;">
+                <!-- Add a fallback/initial content -->
+            </canvas>
+        </div>
+        <div class="table-container">
+            <h2>Page Views Summary</h2>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>URL</th>
+                        <th>Views</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="important-row">
+                        <td></td>
+                        <td>Total</td>
+                        <td>@Model.GrandTotal</td>
+                    </tr>
+                    @foreach (var total in Model.PageTotals)
+                    {
+                        <tr class="important-row">
+                            <td></td>
+                            <td>Overall Total (@total.Key)</td>
+                            <td>@total.Value</td>
+                        </tr>
+                    }
+                    @foreach (var daily in Model.DailyStats)
+                    {
+                        @foreach (var pageView in daily.PageViews)
+                        {
+                            <tr>
+                                <td>@daily.Date.ToString("yyyy-MM-dd")</td>
+                                <td>@pageView.Key</td>
+                                <td>@pageView.Value</td>
+                            </tr>
+                        }
+                        <tr class="important-row">
+                            <td>@daily.Date.ToString("yyyy-MM-dd")</td>
+                            <td>Daily Total</td>
+                            <td>@daily.DailyTotal</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Load dependencies -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Load our chart code -->
+    <script src="/App_Plugins/AnalyticsDashboard/chartHandler.js"></script>
+    
+    <!-- Initialize the chart -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const rawData = '@Html.Raw(Json.Serialize(Model.DailyStats))';
+            window.AnalyticsDashboard.initializeChart(rawData);
+        });
+    </script>
+</body>
+
+</html>

@@ -22,8 +22,9 @@ builder.Services.AddDbContext<AnalyticsContext>(options =>
         builder.Configuration.GetConnectionString("umbracoDbDSN")));
 
 
-builder.Services.AddTransient<DDEyC.Repositories.ViewAnalyticsRepository>();
-builder.Services.AddTransient<DDEyC.Services.ViewAnalyticsService>();
+builder.Services.AddScoped<DDEyC.Repositories.ViewAnalyticsRepository>();
+builder.Services.AddScoped<DDEyC.Services.ViewAnalyticsService>();
+builder.Services.AddScoped<DDEyC.Services.IAnalyticsAggregationService,DDEyC.Services.AnalyticsAggregationService>();
 builder.Services.AddHttpContextAccessor();
 
 // Add session services

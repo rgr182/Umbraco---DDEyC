@@ -1,4 +1,6 @@
+using DDEyC.Controllers;
 using DDEyC.Notifications;
+using Microsoft.AspNetCore.Mvc.Razor;
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.Notifications;
@@ -17,7 +19,15 @@ namespace DDEyC.Composers
             builder.Sections().Append<AnalyticsSection>();
 
             builder.Components().Append<AddAnalyticsSectionToAdminUsers>();
-
+             // Register the controller
+        builder.Services.AddMvc()
+            .AddApplicationPart(typeof(ViewAnalyticsController).Assembly);
+            
+        // Register the view location
+        builder.Services.Configure<RazorViewEngineOptions>(options =>
+        {
+            options.ViewLocationFormats.Add("/App_Plugins/AnalyticsDashboard/{0}.cshtml");
+        });
 
         }
     }
