@@ -9,6 +9,9 @@
     ],
     "javascript": [
         "~/App_Plugins/AnalyticsDashboard/dashboard.controller.js",
-        "~/App_Plugins/AnalyticsDashboard/viewAnalytics.resource.js"
+        "~/App_Plugins/AnalyticsDashboard/chart.handler.js"
+    ],
+    "css": [
+        "~/App_Plugins/AnalyticsDashboard/analyticsDashboard.css"
     ]
 }
