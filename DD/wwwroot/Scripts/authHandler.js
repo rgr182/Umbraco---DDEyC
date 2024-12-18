@@ -23,7 +23,7 @@ const authHandler = {
             }
         }
 
-        const url = `${this.baseUrl}${endpoint}`;
+        const url = endpoint.startsWith(this.baseUrl) ? endpoint : `${this.baseUrl}${endpoint}`;
         const response = await fetch(url, {
             ...options,
             headers,
