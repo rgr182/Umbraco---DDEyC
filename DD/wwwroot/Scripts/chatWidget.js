@@ -224,43 +224,41 @@ document.addEventListener("DOMContentLoaded", function () {
   // API Functions
   const api = {
     async request(endpoint, options = {}) {
-      const response = await fetch(`${constants.apiBaseUrl}${endpoint}`, {
-        ...options,
-        headers: {
-          ...options.headers,
-          Authorization: state.token,
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!response.ok) {
-        const error = new Error();
-        error.status = response.status;
-        try {
-          const errorData = await response.json();
-          error.message =
-            errorData.message || errorData.error || response.statusText;
-        } catch {
-          error.message = response.statusText;
+        // Wait for auth handler to be ready
+        if (!window.authHandler) {
+            throw new Error("Auth handler not initialized");
         }
-        throw error;
-      }
 
-      return response.json();
+        try {
+            // Use the configured API base URL
+            const response = await window.authHandler.fetch(
+                `${constants.apiBaseUrl}${endpoint}`,
+                options
+            );
+            return response;
+        } catch (error) {
+            // Handle authentication errors
+            if (error.message?.includes("HTTP error! status: 401")) {
+                // Add a small delay before redirect
+                setTimeout(() => {
+                    window.location.href = loginPageRoute;
+                }, 2000);
+            }
+            throw error;
+        }
     },
 
     get(endpoint) {
-      return this.request(endpoint);
+        return this.request(endpoint);
     },
 
     post(endpoint, data) {
-      return this.request(endpoint, {
-        method: "POST",
-        body: JSON.stringify(data),
-      });
-    },
-  };
-
+        return this.request(endpoint, {
+            method: "POST",
+            body: JSON.stringify(data),
+        });
+    }
+};
   // Message Handling Functions
   function createMessage(content, role, message = {}) {
     const messageElement = document.createElement("div");
@@ -783,6 +781,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
   // Error Handling Function
+  // In chatWidget.js
   function handleError(error) {
     console.error("Error:", error);
     let errorMessage = "Ha ocurrido un error. Por favor, inténtelo de nuevo.";
@@ -824,10 +823,17 @@ document.addEventListener("DOMContentLoaded", function () {
         statusMessage = errorMessages[error.status].status;
       }
     } else if (error.message) {
-      if (error.message.toLowerCase().includes("unauthorized")) {
+      if (
+        error.message.toLowerCase().includes("unauthorized") ||
+        error.message.includes("HTTP error! status: 401")
+      ) {
         errorMessage =
           "Su sesión ha expirado. Por favor, inicie sesión nuevamente.";
         statusMessage = "Sesión expirada";
+
+        setTimeout(() => {
+          window.location.href = loginPageRoute;
+        }, 2000);
       } else if (
         error.message.includes("CONVERSATION_BUSY") ||
         error.message.includes("PROCESSING_IN_PROGRESS")
@@ -849,17 +855,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     updateStatus("error", statusMessage);
     addSystemMessage(errorMessage, "error");
-
-    if (
-      error.status === 401 ||
-      error.message?.toLowerCase().includes("unauthorized")
-    ) {
-      setTimeout(() => {
-        window.location.href = loginPageRoute;
-      }, 2000);
-    }
   }
-
   // Event Listeners Setup
   function setupEventListeners() {
     elements.pastConversationsBtn.addEventListener("click", () => {
@@ -874,14 +870,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
     //Close modal event
     const closeNoteModalButton = document.getElementById(
-        "button-close-note-modal"
+      "button-close-note-modal"
     );
     const noteModal = document.getElementById("note-modal");
 
     if (closeNoteModalButton && noteModal) {
-        closeNoteModalButton.addEventListener("click", () => {
-            noteModal.classList.add("hidden");
-        });
+      closeNoteModalButton.addEventListener("click", () => {
+        noteModal.classList.add("hidden");
+      });
     }
 
     elements.form.addEventListener("submit", (e) => {
@@ -939,57 +935,49 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     }
   }
-
+  document.addEventListener("DOMContentLoaded", () => {
+    // Start initialization process
+    initialize().catch(error => {
+        console.error("Failed to initialize chat widget:", error);
+        handleError(error);
+    });
+});
   // Initialize Function
-  function initialize() {
-    // Initialize markdown
-    marked.setOptions({
-      gfm: true,
-      breaks: true,
-      sanitize: false,
-      smartLists: true,
-      smartypants: true,
-    });
+  async function initialize() {
+    try {
+        // Wait for auth handler to be available
+        while (!window.authHandler) {
+            await new Promise(resolve => setTimeout(resolve, 100));
+        }
 
-    // Initialize DOMPurify
-    DOMPurify.setConfig({
-      ALLOWED_TAGS: [
-        "p",
-        "br",
-        "b",
-        "i",
-        "em",
-        "strong",
-        "a",
-        "ul",
-        "ol",
-        "li",
-        "code",
-        "pre",
-        "h1",
-        "h2",
-        "h3",
-        "h4",
-        "h5",
-        "h6",
-        "blockquote",
-        "hr",
-        "table",
-        "thead",
-        "tbody",
-        "tr",
-        "th",
-        "td",
-      ],
-      ALLOWED_ATTR: ["href", "target", "class", "id"],
-      ALLOW_DATA_ATTR: false,
-      ADD_ATTR: [["target", "_blank"]],
-      USE_PROFILES: { html: true },
-    });
+        // Initialize markdown
+        marked.setOptions({
+            gfm: true,
+            breaks: true,
+            sanitize: false,
+            smartLists: true,
+            smartypants: true,
+        });
 
-    setupEventListeners();
-    startChat();
-  }
+        // Initialize DOMPurify
+        DOMPurify.setConfig({
+            ALLOWED_TAGS: [
+                "p", "br", "b", "i", "em", "strong", "a", "ul", "ol", "li",
+                "code", "pre", "h1", "h2", "h3", "h4", "h5", "h6",
+                "blockquote", "hr", "table", "thead", "tbody", "tr", "th", "td"
+            ],
+            ALLOWED_ATTR: ["href", "target", "class", "id"],
+            ALLOW_DATA_ATTR: false,
+            ADD_ATTR: [["target", "_blank"]],
+            USE_PROFILES: { html: true },
+        });
+
+        setupEventListeners();
+        await startChat();
+    } catch (error) {
+        handleError(error);
+    }
+}
 
   // Start the application
   initialize();

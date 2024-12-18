@@ -3,57 +3,72 @@
 @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ContentModels.LoginPage>
 
 @inject Microsoft.Extensions.Configuration.IConfiguration Configuration
+@inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment HostingEnvironment
 
 @{
     Layout = "Main.cshtml";
 
-    var logo = Model.Logo as IPublishedContent;
-    var logoUrl = logo != null ? logo.Url() : null;
-    var registrationLink = Model.RegistrationPage?.FirstOrDefault()?.Url;
-    var recoveryLink = Model.RecoveryUrl?.Url ?? "/";
-    var loginUrl = Model.LoginUrl?.Url ?? "/"; 
-    var authApiUrl = Configuration["ApiSettings:AuthApiUrl"];
+    // Logo handling
+    var logo = Model?.Logo as IPublishedContent;
+    var logoUrl = logo?.Url() ?? "";
+
+    // Navigation URLs with proper null checks
+    var registrationLink = Model?.RegistrationPage?.FirstOrDefault()?.Url ?? "";
+    var recoveryLink = Model?.RecoveryUrl?.Url ?? "/";
+    var loginUrl = Model?.LoginUrl?.Url ?? "/";
+
+    // API Base URL
+    var authApiBaseUrl = Configuration["ApiSettings:AuthApiUrl"] ?? "https://ddeycapi.duckdns.org";
+    var loginPageRoute = Configuration["AppSettings:LoginPageRoute"] ?? "/loginpage";
 }
 
 <head>
     <link rel="stylesheet" href="~/Styles/LoginPage.css" />
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const loginForm = document.getElementById("loginForm");
-            loginForm.addEventListener("submit", async function (event) {
-                event.preventDefault();
-
+    <script type="text/javascript" nonce="@ViewBag.Nonce">
+        window.AppSettings = {
+            IsProd: @Json.Serialize((HostingEnvironment.EnvironmentName == "Production")),
+            AuthApiUrl: '@authApiBaseUrl',
+            LoginRedirectUrl: '@loginUrl',
+            LoginPageRoute: '@loginPageRoute'
+        };
+    </script>
+    <script src="~/scripts/authHandler.js" type="text/javascript" defer></script>
+    <script type="text/javascript" nonce="@ViewBag.Nonce">
+        document.addEventListener("DOMContentLoaded", () => {
+            const form = document.getElementById("loginForm");
+            const errorDisplay = document.getElementById("loginError");
+            
+            form.addEventListener("submit", async (e) => {
+                e.preventDefault();
+                errorDisplay.innerText = "";
+                
                 const email = document.getElementById("email").value;
                 const password = document.getElementById("password").value;
-
+                const submitBtn = document.querySelector('button[type="submit"]');
+                
                 try {
-                    const response = await fetch(`@authApiUrl?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`, {
-                        method: 'POST',
-                        headers: {
-                            'accept': '*/*'
-                        }
-                    });
-
-                    if (response.ok) {
-                        const data = await response.json();
-                        console.log("Server response:", data);
-
-                        if (data && data.userToken && data.expirationDate) {
-                            const token = data.userToken;
-                            const expirationDate = data.expirationDate;
-                            localStorage.setItem('authToken', JSON.stringify({ token: token, expiration: expirationDate }));
-                            window.location.href = '@loginUrl'; 
-                        } else {
-                            document.getElementById("loginError").innerText = "Error en la respuesta del servidor. Token no encontrado.";
-                        }
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = 'Iniciando sesión...';
+                    
+                    const response = await authHandler.login(email, password);
+                    if (response.authenticated || response.userToken) {
+                        window.location.href = window.AppSettings.LoginRedirectUrl;
                     } else {
-                        const errorData = await response.json();
-                        console.error("Authentication error:", errorData);
-                        document.getElementById("loginError").innerText = "Error al iniciar sesión. Por favor, revisa tus credenciales.";
+                        errorDisplay.innerText = "Error en la respuesta del servidor.";
                     }
                 } catch (error) {
-                    console.error("Error attempting to log in:", error);
-                    document.getElementById("loginError").innerText = "Ocurrió un error al intentar iniciar sesión.";
+                    console.error("Login error:", error);
+                    errorDisplay.innerText = "Error al iniciar sesión. Por favor, revisa tus credenciales.";
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = 'Iniciar Sesión';
+                }
+            });
+
+            // Check if already logged in
+            authHandler.checkAuth().then(isAuth => {
+                if (isAuth) {
+                    window.location.href = window.AppSettings.LoginRedirectUrl;
                 }
             });
         });
@@ -66,13 +81,28 @@
 </div>
 
 <div class="login-container text-center vh-100">
-    <form id="loginForm">
+    <form id="loginForm" class="login-form" autocomplete="on">
         <div class="login-form-group">
-            <input type="email" id="email" name="email" placeholder="Correo electrónico" required />
+            <input 
+                type="email" 
+                id="email" 
+                name="email" 
+                placeholder="Correo electrónico" 
+                required 
+                autocomplete="email"
+                spellcheck="false"
+            />
         </div>
 
         <div class="login-form-group">
-            <input type="password" id="password" name="password" placeholder="Contraseña" required />
+            <input 
+                type="password" 
+                id="password" 
+                name="password" 
+                placeholder="Contraseña" 
+                required 
+                autocomplete="current-password"
+            />
         </div>
 
         <div class="login-form-group">
@@ -80,35 +110,22 @@
             {
                 <a href="@recoveryLink" class="login-forgot-password-link">¿Olvidaste tu contraseña?</a>
             }
-            else
-            {
-                <p>No se ha configurado una página de recuperación.</p>
-            }
         </div>
+
+        <div id="loginError" class="login-error-message" role="alert" aria-live="polite"></div>
 
         <div class="login-action-buttons">
             <button type="submit" class="login-button">Iniciar Sesión</button>
 
-            @if (registrationLink != null)
+            @if (!string.IsNullOrEmpty(registrationLink))
             {
                 <a href="@registrationLink" class="login-register-button">Crear Usuario</a>
-            }
-            else
-            {
-                <p>No se ha configurado una página de registro.</p>
             }
         </div>
     </form>
 
-    <div id="loginError" class="login-error-message"></div>
-
-    @if (logoUrl != null)
+    @if (!string.IsNullOrEmpty(logoUrl))
     {
         <img src="@logoUrl" alt="Logotipo Gobierno Municipal de Chihuahua" class="login-logo" />
     }
-    else
-    {
-        <p>No se ha configurado un logotipo.</p>
-    }
 </div>
-
