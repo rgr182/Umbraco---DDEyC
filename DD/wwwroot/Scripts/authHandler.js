@@ -12,6 +12,7 @@ const authHandler = {
 
     async fetch(endpoint, options = {}) {
         const headers = {
+            'Content-Type': 'application/json',
             ...options.headers
         };
 
