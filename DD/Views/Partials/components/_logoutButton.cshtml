@@ -6,8 +6,8 @@
     var authApiLogout = Configuration["ApiSettings:AuthApiLogout"];
     var authApiCheckSession = Configuration["ApiSettings:AuthApiCheckSession"];
 }
+
 <head>
-   
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <link href="~/Styles/logoutButton.css" rel="stylesheet" />
 </head>
@@ -20,35 +20,67 @@
     </div>
   
     <script>
-        const authToken = JSON.parse(localStorage.getItem('authToken'));
-        // function to verify expirationDate
-        function TokenExpirationDate() {
-            if (authToken && authToken.expiration) {
-                const tiempoActual = new Date().getTime();
-                const expirationTime = new Date(authToken.expiration).getTime();
-                if (tiempoActual > expirationTime) {
-                    logout();
+        // Check if we're using cookies (either in prod or explicitly preferred)
+        const preferCookies = document.cookie.includes('prefer-cookies') || window.location.hostname !== 'localhost';
+        
+        // Function to get the authentication token
+        function getAuthToken() {
+            if (preferCookies) {
+                // We don't need to manually get the cookie value as it's handled by the backend
+                return true; // Just return true to indicate we have authentication
+            } else {
+                const authToken = JSON.parse(localStorage.getItem('authToken'));
+                return authToken?.token;
+            }
+        }
+
+        // Function to check token expiration
+        function checkTokenExpiration() {
+            if (!preferCookies) {
+                const authToken = JSON.parse(localStorage.getItem('authToken'));
+                if (authToken?.expiration) {
+                    const currentTime = new Date().getTime();
+                    const expirationTime = new Date(authToken.expiration).getTime();
+                    if (currentTime > expirationTime) {
+                        logout();
+                    }
                 }
             }
         }
-        setInterval(TokenExpirationDate, 15 * 60 * 1000);
-        TokenExpirationDate();
 
-        // function to logout and remove authToken
+        // Set up periodic token check
+        setInterval(checkTokenExpiration, 15 * 60 * 1000);
+        checkTokenExpiration();
+
+        // Function to logout
         async function logout() {
-            if (!authToken || !authToken.token) {
-                return;
-            }
-            const response = await fetch('@authApiLogout', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${authToken.token}`
+            const token = getAuthToken();
+            if (!token) return;
+
+            try {
+                const headers = preferCookies 
+                    ? { 'Content-Type': 'application/json' }
+                    : {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    };
+
+                const response = await fetch('@authApiLogout', {
+                    method: 'POST',
+                    headers: headers,
+                    credentials: preferCookies ? 'include' : 'same-origin'
+                });
+
+                if (response.ok) {
+                    if (!preferCookies) {
+                        localStorage.removeItem('authToken');
+                    }
+                    window.location.href = '/loginpage/';
+                } else {
+                    console.error('Logout failed:', response.status);
                 }
-            });
-            if (response.ok) {
-                localStorage.removeItem('authToken');
-                window.location.href = '/loginpage/';
+            } catch (error) {
+                console.error('Error during logout:', error);
             }
         }
     </script>
