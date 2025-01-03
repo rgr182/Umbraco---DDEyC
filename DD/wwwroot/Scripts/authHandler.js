@@ -1,7 +1,7 @@
 const authHandler = {
     init() {
         this.baseUrl = window.AppSettings?.AuthApiUrl;
-        console.log(this.baseUrl);
+        console.log('Auth Handler Base URL:', this.baseUrl);
         this.isProd = window.AppSettings?.IsProd ?? false;
         this.loginPageRoute = window.AppSettings?.LoginPageRoute;
         
@@ -25,19 +25,28 @@ const authHandler = {
         }
 
         const url = endpoint.startsWith(this.baseUrl) ? endpoint : `${this.baseUrl}${endpoint}`;
-        const response = await fetch(url, {
-            ...options,
-            headers,
-            credentials: 'include' // Always include cookies
-        });
+        
+        try {
+            const response = await fetch(url, {
+                ...options,
+                headers,
+                credentials: 'include' // Always include cookies
+            });
 
-        if (!response.ok) {
-            const error = new Error('Authentication failed');
-            error.status = response.status;
+            if (!response.ok) {
+                const error = new Error('Authentication failed');
+                error.status = response.status;
+                throw error;
+            }
+
+            return response.json();
+        } catch (error) {
+            // Ensure error has a status property
+            if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+                error.status = 0; // Network error
+            }
             throw error;
         }
-
-        return response.json();
     },
 
     async login(email, password) {
@@ -88,9 +97,34 @@ const authHandler = {
         try {
             const response = await this.fetch('/api/auth/validateSession');
             return response.Session != null;
-        } catch {
+        } catch (error) {
+            console.error('Check auth error:', error);
             return false;
         }
+    },
+
+    getToken() {
+        if (this.isProd) {
+            // In production, we use cookies so return null
+            return null;
+        }
+        // For non-prod environments, get token from localStorage
+        const auth = JSON.parse(localStorage.getItem('authToken') || '{}');
+        return auth.token || null;
+    },
+
+    handleAuthError(error) {
+        if (error.status === 401 || 
+            (error.message && 
+             (error.message.includes('401') || 
+              error.message.toLowerCase().includes('unauthorized')))) {
+            console.log('Auth error detected, redirecting to login page');
+            if (this.loginPageRoute) {
+                window.location.href = this.loginPageRoute;
+            }
+            return true;
+        }
+        return false;
     }
 };
 

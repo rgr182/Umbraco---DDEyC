@@ -10,10 +10,8 @@
 
     // Retrieve the ValidateSessionUrl from appsettings.json
     var validateSessionUrl = Configuration["ApiSettings:ValidateSessionUrl"];
-
-
-    
-    const string loginPageUrl = "/loginpage";
+    var loginPageUrl = Configuration["AppSettings:LoginPageRoute"] ?? "/loginpage";
+    var authApiBaseUrl = Configuration["ApiSettings:AuthApiUrl"];
 }
 
 @if (!Model.HideHomeRedirectButton)
@@ -25,62 +23,68 @@
 }
 
 <script>
-    document.getElementById('homeRedirectButton').addEventListener('click', function () {
-        const authToken = localStorage.getItem('authToken'); // Get the token string from localStorage
+    document.addEventListener('DOMContentLoaded', () => {
+        // Initialize AppSettings if not already done
+        window.AppSettings = window.AppSettings || {
+            AuthApiUrl: '@authApiBaseUrl'
+        };
 
-        if (!authToken) {
+        const button = document.getElementById('homeRedirectButton');
+        if (!button) return;
 
-            window.location.href = '@loginPageUrl'; // Redirect to login page if there is no token
-            return;
-        }
+        button.addEventListener('click', async () => {
+            try {
+                const isAuthenticated = await window.authHandler.checkAuth();
+                
+                if (!isAuthenticated) {
+                    console.log('No valid authentication found, redirecting to login');
+                    window.location.href = '@loginPageUrl';
+                    return;
+                }
 
-        let token;
-        try {
-            const parsedToken = JSON.parse(authToken); // Attempt to parse the token
-            token = parsedToken.token; // Get the token property
-        } catch (e) {
+                // Add loading state to button
+                const originalText = button.textContent;
+                button.textContent = 'Verificando...';
+                button.disabled = true;
 
+                // Double-check session with backend
+                const response = await fetch('@validateSessionUrl', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${window.authHandler.getToken()}`
+                    }
+                });
 
-            window.location.href = '@loginPageUrl'; // Redirect to login page if parsing fails
-            return;
-        }
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        console.log('Session expired, redirecting to login');
+                        window.location.href = '@loginPageUrl';
+                    } else {
+                        throw new Error('Error validating session');
+                    }
+                    return;
+                }
 
-        if (!token) {
+                // Session is valid, proceed with redirect
+                window.location.href = '@Model.HomeRedirectButtonUrl?.Url';
+            } catch (error) {
+                console.error('Error during authentication check:', error);
+                
+                // Reset button state
+                button.textContent = originalText;
+                button.disabled = false;
 
-            window.location.href = '@loginPageUrl'; // Redirect to login page if there is no token
-            return;
-        }
+                // Show error message
+                const errorMessage = document.createElement('div');
+                errorMessage.className = 'alert alert-danger mt-2';
+                errorMessage.textContent = 'Error al verificar la sesión. Por favor, intente nuevamente.';
+                button.parentNode.insertBefore(errorMessage, button.nextSibling);
 
-        // Use the URL from Razor to make a request to the backend to validate the token
-        fetch('@validateSessionUrl', {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`
+                // Remove error message after 3 seconds
+                setTimeout(() => {
+                    errorMessage.remove();
+                }, 3000);
             }
-        })
-        .then(response => {
-
-            if (response.ok) {
-                return response.json(); // If the response is valid
-            } else if (response.status === 401) {
-                throw new Error('Sesion invalida o expirada');
-            } else {
-                throw new Error('Error en la validacion del token');
-            }
-        })
-        .then(data => {
-
-            if (data.Message) {
-
-            } else {
-
-            }
-            window.location.href = '@Model.HomeRedirectButtonUrl?.Url'; // Redirect to chatbot if the token is valid, change this later
-        })
-        .catch(error => {
-
-
-            window.location.href = '@loginPageUrl'; // Redirect to login page
         });
     });
 </script>

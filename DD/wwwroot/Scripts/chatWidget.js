@@ -224,41 +224,41 @@ document.addEventListener("DOMContentLoaded", function () {
   // API Functions
   const api = {
     async request(endpoint, options = {}) {
-        // Wait for auth handler to be ready
-        if (!window.authHandler) {
-            throw new Error("Auth handler not initialized");
-        }
+      // Wait for auth handler to be ready
+      if (!window.authHandler) {
+        throw new Error("Auth handler not initialized");
+      }
 
-        try {
-            // Use the configured API base URL
-            const response = await window.authHandler.fetch(
-                `${constants.apiBaseUrl}${endpoint}`,
-                options
-            );
-            return response;
-        } catch (error) {
-            // Handle authentication errors
-            if (error.message?.includes("HTTP error! status: 401")) {
-                // Add a small delay before redirect
-                setTimeout(() => {
-                    window.location.href = loginPageRoute;
-                }, 2000);
-            }
-            throw error;
+      try {
+        // Use the configured API base URL
+        const response = await window.authHandler.fetch(
+          `${constants.apiBaseUrl}${endpoint}`,
+          options
+        );
+        return response;
+      } catch (error) {
+        // Handle authentication errors
+        if (error.message?.includes("HTTP error! status: 401")) {
+          // Add a small delay before redirect
+          setTimeout(() => {
+            window.location.href = loginPageRoute;
+          }, 2000);
         }
+        throw error;
+      }
     },
 
     get(endpoint) {
-        return this.request(endpoint);
+      return this.request(endpoint);
     },
 
     post(endpoint, data) {
-        return this.request(endpoint, {
-            method: "POST",
-            body: JSON.stringify(data),
-        });
-    }
-};
+      return this.request(endpoint, {
+        method: "POST",
+        body: JSON.stringify(data),
+      });
+    },
+  };
   // Message Handling Functions
   function createMessage(content, role, message = {}) {
     const messageElement = document.createElement("div");
@@ -780,20 +780,94 @@ document.addEventListener("DOMContentLoaded", function () {
       await loadThread(state.currentConversationId);
     }
   }
-  // Error Handling Function
-  // In chatWidget.js
+  // Error Handling
+  function createRedirectOverlay() {
+    const overlay = document.createElement("div");
+    overlay.className = "redirect-overlay";
+    overlay.innerHTML = `
+        <div class="redirect-content">
+            <div class="redirect-spinner"></div>
+            <div class="redirect-message">Su sesión ha expirado</div>
+            <div class="redirect-countdown"></div>
+        </div>
+    `;
+    document.body.appendChild(overlay);
+    return overlay;
+  }
+  // Helper to disable all interactive elements
+  function disableInteractions() {
+    const interactiveElements = document.querySelectorAll(
+      "#chat-input, " + // Chat input
+        "#chat-form button, " + // Send button
+        ".favorite-button, " + // Favorite buttons
+        ".conversation-favorite-button, " + // Conversation favorite buttons
+        ".past-conversations button, " + // Past conversation buttons
+        "#past-conversations-btn, " + // Past conversations toggle
+        "#close-past-conversations-btn" // Close past conversations button
+    );
+
+    interactiveElements.forEach((element) => {
+      if (element) {
+        element.disabled = true;
+        // Add a disabled class for styling if needed
+        element.classList.add("disabled");
+      }
+    });
+
+    // Also disable the form submission
+    const form = document.querySelector("#chat-form");
+    if (form) {
+      form.onsubmit = (e) => e.preventDefault();
+    }
+  }
+
+  // Helper to re-enable all interactive elements
+  function enableInteractions() {
+    const interactiveElements = document.querySelectorAll(
+      "#chat-input, " +
+        "#chat-form button, " +
+        ".favorite-button, " +
+        ".conversation-favorite-button, " +
+        ".past-conversations button, " +
+        "#past-conversations-btn, " +
+        "#close-past-conversations-btn"
+    );
+
+    interactiveElements.forEach((element) => {
+      if (element) {
+        element.disabled = false;
+        element.classList.remove("disabled");
+      }
+    });
+
+    // Restore form submission
+    const form = document.querySelector("#chat-form");
+    if (form) {
+      form.onsubmit = null; // Remove the preventing handler
+    }
+  }
   function handleError(error) {
     console.error("Error:", error);
     let errorMessage = "Ha ocurrido un error. Por favor, inténtelo de nuevo.";
     let statusMessage = "Error en la operación";
+    let shouldRedirect = false;
 
-    if (error.status) {
+    // First check for 401/auth errors
+    if (
+      error.status === 401 ||
+      (error.message &&
+        (error.message.includes("401") ||
+          error.message.toLowerCase().includes("unauthorized") ||
+          error.message.toLowerCase().includes("authentication failed")))
+    ) {
+      errorMessage =
+        "Su sesión ha expirado. Por favor, inicie sesión nuevamente.";
+      statusMessage = "Sesión expirada";
+      shouldRedirect = true;
+    }
+    // Then check for other specific status codes
+    else if (error.status) {
       const errorMessages = {
-        401: {
-          message:
-            "Su sesión ha expirado. Por favor, inicie sesión nuevamente.",
-          status: "Sesión expirada",
-        },
         403: {
           message: "No tiene permiso para realizar esta acción.",
           status: "Acceso denegado",
@@ -822,39 +896,79 @@ document.addEventListener("DOMContentLoaded", function () {
         errorMessage = errorMessages[error.status].message;
         statusMessage = errorMessages[error.status].status;
       }
-    } else if (error.message) {
-      if (
-        error.message.toLowerCase().includes("unauthorized") ||
-        error.message.includes("HTTP error! status: 401")
-      ) {
-        errorMessage =
-          "Su sesión ha expirado. Por favor, inicie sesión nuevamente.";
-        statusMessage = "Sesión expirada";
-
-        setTimeout(() => {
-          window.location.href = loginPageRoute;
-        }, 2000);
-      } else if (
-        error.message.includes("CONVERSATION_BUSY") ||
-        error.message.includes("PROCESSING_IN_PROGRESS")
-      ) {
-        errorMessage = "Esta conversación está ocupada. Por favor, espere.";
-        statusMessage = "Conversación ocupada";
-      } else if (error.message.includes("INVALID_THREAD")) {
-        errorMessage = "La conversación no es válida o ha expirado.";
-        statusMessage = "Conversación inválida";
-      } else if (
-        error.message.includes("Failed to fetch") ||
-        error.message.includes("NetworkError")
-      ) {
-        errorMessage =
-          "Error de conexión. Por favor, verifique su conexión a internet.";
-        statusMessage = "Error de red";
-      }
+    }
+    // Finally check for network errors
+    else if (
+      error.message &&
+      (error.message.includes("Failed to fetch") ||
+        error.message.includes("NetworkError"))
+    ) {
+      errorMessage =
+        "Error de conexión. Por favor, verifique su conexión a internet.";
+      statusMessage = "Error de red";
     }
 
+    // Log the complete error information for debugging
+    console.log("Error details:", {
+      originalError: error,
+      status: error.status,
+      message: error.message,
+      shouldRedirect,
+    });
     updateStatus("error", statusMessage);
     addSystemMessage(errorMessage, "error");
+
+    if (shouldRedirect && !state.isRedirecting) {
+      state.isRedirecting = true;
+      handleRedirect();
+    }
+  }
+  function handleRedirect() {
+    // Create and show overlay if it doesn't exist
+    let overlay = document.querySelector(".redirect-overlay");
+    if (!overlay) {
+      overlay = createRedirectOverlay();
+    }
+
+    // Show overlay with animation
+    requestAnimationFrame(() => {
+      overlay.classList.add("active");
+    });
+
+    // Disable all interactive elements
+    disableInteractions();
+
+    // Update countdown
+    const countdownEl = overlay.querySelector(".redirect-countdown");
+    let secondsLeft = 2;
+    countdownEl.textContent = `Redirigiendo en ${secondsLeft} segundos...`;
+
+    const countdownInterval = setInterval(() => {
+      secondsLeft--;
+      if (secondsLeft > 0) {
+        countdownEl.textContent = `Redirigiendo en ${secondsLeft} segundo${
+          secondsLeft !== 1 ? "s" : ""
+        }...`;
+      }
+    }, 1000);
+
+    // Handle redirect
+    setTimeout(() => {
+      clearInterval(countdownInterval);
+      try {
+        window.location.href = loginPageRoute;
+      } catch (e) {
+        console.error("Redirect failed:", e);
+        state.isRedirecting = false;
+        enableInteractions();
+        overlay.classList.remove("active");
+        setTimeout(() => overlay.remove(), 300); // Remove after transition
+        addSystemMessage(
+          "Error al redirigir. Por favor, recargue la página.",
+          "error"
+        );
+      }
+    }, 2000);
   }
   // Event Listeners Setup
   function setupEventListeners() {
@@ -937,47 +1051,70 @@ document.addEventListener("DOMContentLoaded", function () {
   }
   document.addEventListener("DOMContentLoaded", () => {
     // Start initialization process
-    initialize().catch(error => {
-        console.error("Failed to initialize chat widget:", error);
-        handleError(error);
+    initialize().catch((error) => {
+      console.error("Failed to initialize chat widget:", error);
+      handleError(error);
     });
-});
+  });
   // Initialize Function
   async function initialize() {
     try {
-        // Wait for auth handler to be available
-        while (!window.authHandler) {
-            await new Promise(resolve => setTimeout(resolve, 100));
-        }
+      // Wait for auth handler to be available
+      while (!window.authHandler) {
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      }
 
-        // Initialize markdown
-        marked.setOptions({
-            gfm: true,
-            breaks: true,
-            sanitize: false,
-            smartLists: true,
-            smartypants: true,
-        });
+      // Initialize markdown
+      marked.setOptions({
+        gfm: true,
+        breaks: true,
+        sanitize: false,
+        smartLists: true,
+        smartypants: true,
+      });
 
-        // Initialize DOMPurify
-        DOMPurify.setConfig({
-            ALLOWED_TAGS: [
-                "p", "br", "b", "i", "em", "strong", "a", "ul", "ol", "li",
-                "code", "pre", "h1", "h2", "h3", "h4", "h5", "h6",
-                "blockquote", "hr", "table", "thead", "tbody", "tr", "th", "td"
-            ],
-            ALLOWED_ATTR: ["href", "target", "class", "id"],
-            ALLOW_DATA_ATTR: false,
-            ADD_ATTR: [["target", "_blank"]],
-            USE_PROFILES: { html: true },
-        });
+      // Initialize DOMPurify
+      DOMPurify.setConfig({
+        ALLOWED_TAGS: [
+          "p",
+          "br",
+          "b",
+          "i",
+          "em",
+          "strong",
+          "a",
+          "ul",
+          "ol",
+          "li",
+          "code",
+          "pre",
+          "h1",
+          "h2",
+          "h3",
+          "h4",
+          "h5",
+          "h6",
+          "blockquote",
+          "hr",
+          "table",
+          "thead",
+          "tbody",
+          "tr",
+          "th",
+          "td",
+        ],
+        ALLOWED_ATTR: ["href", "target", "class", "id"],
+        ALLOW_DATA_ATTR: false,
+        ADD_ATTR: [["target", "_blank"]],
+        USE_PROFILES: { html: true },
+      });
 
-        setupEventListeners();
-        await startChat();
+      setupEventListeners();
+      await startChat();
     } catch (error) {
-        handleError(error);
+      handleError(error);
     }
-}
+  }
 
   // Start the application
   initialize();
