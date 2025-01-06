@@ -839,7 +839,7 @@ ChatWidget.FavoriteManager = {
       }
   },
 
-  async handleThreadFavorite(conversation, favoriteButton) {
+  async handleThreadFavorite(conversation) {
       try {
           const note = conversation.isFavorite ? '' : await ChatWidget.UI.promptForNote();
           if (!conversation.isFavorite && note === null) return;
