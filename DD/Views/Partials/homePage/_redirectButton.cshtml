@@ -2,7 +2,6 @@
 @inject Microsoft.Extensions.Configuration.IConfiguration Configuration
 @inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment HostingEnvironment
 
-
 @{
     const string defaultColor = "#0077b6";
     const string defaultTextColor = "#ffffff";
@@ -28,6 +27,25 @@
         const button = document.getElementById('homeRedirectButton');
         if (!button) return;
 
+        // Store the original button text
+        const defaultButtonText = button.textContent;
+
+        // Reset button state when page becomes visible again (back navigation)
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') {
+                button.textContent = defaultButtonText;
+                button.disabled = false;
+            }
+        });
+
+        // Reset button state when navigating back
+        window.addEventListener('pageshow', (event) => {
+            if (event.persisted) {
+                button.textContent = defaultButtonText;
+                button.disabled = false;
+            }
+        });
+
         button.addEventListener('click', async () => {
             try {
                 // Add loading state to button
@@ -35,18 +53,12 @@
                 button.textContent = 'Verificando...';
                 button.disabled = true;
 
-                // Get token from localStorage or cookie
-                let token = null;
                 const isProd = '@(HostingEnvironment.EnvironmentName.ToString().ToLower()=="production")' === 'true';
                 const preferCookies = document.cookie.includes('prefer-cookies') || isProd;
 
-                if (preferCookies) {
-                    // Get token from cookie
-                    const cookies = document.cookie.split(';');
-                    const authCookie = cookies.find(c => c.trim().startsWith('DDEyC.Auth='));
-                    token = authCookie ? authCookie.split('=')[1] : null;
-                } else {
-                    // Get token from localStorage
+                let token = null;
+                if (!preferCookies) {
+                    // Only try to get token from localStorage if not using cookies
                     const authData = localStorage.getItem('authToken');
                     if (authData) {
                         const parsed = JSON.parse(authData);
@@ -54,12 +66,33 @@
                     }
                 }
 
-                if (!token) {
-                    window.location.href = '@loginPageUrl';
-                    return;
+                // If using cookies or no token found in localStorage, validate session directly
+                if (preferCookies || !token) {
+                    try {
+                        const response = await fetch('@validateSessionUrl', {
+                            method: 'GET',
+                            credentials: 'include' // Important: Include cookies in the request
+                        });
+
+                        if (!response.ok) {
+                            if (response.status === 401) {
+                                window.location.href = '@loginPageUrl';
+                            } else {
+                                throw new Error('Error validating session');
+                            }
+                            return;
+                        }
+
+                        // Session is valid, redirect
+                        window.location.href = '@Model.HomeRedirectButtonUrl?.Url';
+                        return;
+                    } catch (error) {
+                        console.error('Error validating session:', error);
+                        throw error; // Re-throw to be caught by outer catch block
+                    }
                 }
 
-                // Validate session with backend
+                // If we're here, we're using localStorage token
                 const response = await fetch('@validateSessionUrl', {
                     method: 'GET',
                     headers: {
@@ -77,7 +110,9 @@
                 }
 
                 // Session is valid, redirect
+                
                 window.location.href = '@Model.HomeRedirectButtonUrl?.Url';
+
             } catch (error) {
                 console.error('Error during authentication check:', error);
                 
