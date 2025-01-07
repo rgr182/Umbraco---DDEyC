@@ -76,7 +76,6 @@
 
                         if (!response.ok) {
                             if (response.status === 401) {
-                                console.log('Session is invalid, redirecting to login page...');
                                 window.location.href = '@loginPageUrl';
                             } else {
                                 throw new Error('Error validating session');
@@ -85,7 +84,6 @@
                         }
 
                         // Session is valid, redirect
-                        console.log('Session is valid, redirecting...');
                         window.location.href = '@Model.HomeRedirectButtonUrl?.Url';
                         return;
                     } catch (error) {
@@ -104,7 +102,6 @@
 
                 if (!response.ok) {
                     if (response.status === 401) {
-                        console.log('Session is invalid, redirecting to login page...');
                         window.location.href = '@loginPageUrl';
                     } else {
                         throw new Error('Error validating session');
@@ -113,7 +110,7 @@
                 }
 
                 // Session is valid, redirect
-                console.log('Session is valid, redirecting...');
+                
                 window.location.href = '@Model.HomeRedirectButtonUrl?.Url';
 
             } catch (error) {
