@@ -17,177 +17,28 @@
 @if (!Model.HideHomeRedirectButton)
 {
     <div class="button-container">
-        <a id="homeRedirectButton" href="javascript:void(0)"
-            class="btn btn-primary btn-lg home-redirect-button fixed-size-button"
-            style="background-color: @buttonColor; color: @buttonTextColor;">
+        <a id="homeRedirectButton" 
+           href="javascript:void(0)" 
+           class="btn btn-primary btn-lg home-redirect-button fixed-size-button"
+           style="background-color: @buttonColor; color: @buttonTextColor;">
             <span class="loading-spinner"></span>
             <span class="button-text">@Model.HomeRedirectButtonText</span>
         </a>
     </div>
 }
 
+<script src="~/Scripts/redirectButton.js"></script>
 <script>
-    console.log('🔧 Redirect Button Config:', {
-        validateUrl: '@validateSessionUrl',
-        loginPage: '@loginPageRoute',
-        redirectTarget: '@Model.HomeRedirectButtonUrl?.Url'
-    });
-
     document.addEventListener('DOMContentLoaded', () => {
-        const button = document.getElementById('homeRedirectButton');
-        if (!button) return;
-
-        const buttonTextElement = button.querySelector('.button-text');
-        const spinnerElement = button.querySelector('.loading-spinner');
-        const defaultButtonText = buttonTextElement.textContent;
-        const redirectUrl = '@Model.HomeRedirectButtonUrl?.Url';
-        const validateEndpoint = '@Html.Raw(validateSessionUrl)';
-        const loginUrl = '@loginPageRoute';
-
-        const setLoadingState = (isLoading) => {
-            button.disabled = isLoading;
-            spinnerElement.style.display = isLoading ? 'inline-block' : 'none';
-            buttonTextElement.textContent = isLoading ? 'Verificando...' : defaultButtonText;
+        const config = {
+            validateEndpoint: '@Html.Raw(validateSessionUrl)',
+            loginUrl: '@loginPageRoute',
+            redirectUrl: '@Model.HomeRedirectButtonUrl?.Url',
+            isProd: '@(HostingEnvironment.EnvironmentName.ToString().ToLower()=="production")' === 'true',
+            preferCookies: document.cookie.includes('prefer-cookies') || 
+                          '@(HostingEnvironment.EnvironmentName.ToString().ToLower()=="production")' === 'true'
         };
-
-        const showNotification = (message, type = 'danger') => {
-            const notification = document.createElement('div');
-            notification.className = `alert alert-${type} position-fixed top-0 start-50 translate-middle-x mt-3`;
-            notification.style.zIndex = '1050';
-            notification.textContent = message;
-            document.body.appendChild(notification);
-
-            setTimeout(() => {
-                notification.classList.add('fade-out');
-                notification.addEventListener('animationend', () => notification.remove());
-            }, 3000);
-        };
-
-        const handleUnauthorized = () => {
-            console.log('🚪 Auth failed, redirecting to:', loginUrl);
-            window.location.href = loginUrl;
-        };
-
-        const validateSession = async (token = null) => {
-            const isProd = '@(HostingEnvironment.EnvironmentName.ToString().ToLower() == "production")' === 'true';
-            const preferCookies = document.cookie.includes('prefer-cookies') || isProd;
-
-            console.log('🔍 Session Validation:', {
-                endpoint: validateEndpoint,
-                authType: token ? 'Bearer Token' : 'Cookie',
-                env: isProd ? 'Production' : 'Development',
-                preferCookies
-            });
-
-            const requestOptions = {
-                method: 'GET',
-                credentials: 'include',
-                headers: {
-                    'Accept': 'application/json',
-                    'Cache-Control': 'no-cache'
-                }
-            };
-
-            if (token) {
-                console.log('🎟️ Using token for validation:', token.substring(0, 10) + '...');
-                requestOptions.headers['Authorization'] = `Bearer ${token}`;
-            }
-
-            console.log('📡 Making request:', {
-                url: validateEndpoint,
-                options: {
-                    ...requestOptions,
-                    headers: { ...requestOptions.headers }
-                }
-            });
-
-            const response = await fetch(validateEndpoint, requestOptions);
-            console.log('📨 Response:', {
-                status: response.status,
-                ok: response.ok,
-                statusText: response.statusText
-            });
-
-            if (response.status === 401 || response.status === 403) {
-                handleUnauthorized();
-                return null;
-            }
-
-            if (!response.ok) {
-                const error = new Error('Session validation failed');
-                error.status = response.status;
-                throw error;
-            }
-
-            const data = await response.json();
-            console.log('✅ Validation response data:', data);
-            return data;
-        };
-
-        button.addEventListener('click', async () => {
-            console.log('🖱️ Button clicked');
-            try {
-                setLoadingState(true);
-
-                const isProd = '@(HostingEnvironment.EnvironmentName.ToString().ToLower() == "production")' === 'true';
-                const preferCookies = document.cookie.includes('prefer-cookies') || isProd;
-
-                let isValid = false;
-                let validationResult = null;
-
-                try {
-                    if (preferCookies) {
-                        console.log('🔒 Using cookie authentication');
-                        validationResult = await validateSession();
-                        console.log('🔍 Cookie validation result:', validationResult);
-                        isValid = validationResult && validationResult.session && validationResult.session.userId;
-                    } else {
-                        console.log('🔑 Using token authentication');
-                        const authData = localStorage.getItem('authToken');
-                        console.log('📦 Auth data from storage:', authData ? 'Found' : 'Not found');
-
-                        if (authData) {
-                            const { token } = JSON.parse(authData);
-                            validationResult = await validateSession(token);
-                            console.log('🔍 Token validation result:', validationResult);
-                            isValid = validationResult && validationResult.session && validationResult.session.userId;
-                        }
-                    }
-
-                    console.log('🔐 Session validity:', {
-                        isValid,
-                        validationResult,
-                        authMethod: preferCookies ? 'Cookie' : 'Token'
-                    });
-
-                } catch (error) {
-                    console.error('❌ Validation error:', error);
-                    setLoadingState(false);
-
-                    if (error.status === 401 || error.status === 403) {
-                        handleUnauthorized();
-                        return;
-                    }
-
-                    showNotification('Error al verificar la sesión. Por favor, intente nuevamente.');
-                    return;
-                }
-
-                if (isValid) {
-                    console.log('✨ Session valid, redirecting to target:', redirectUrl);
-                    window.location.href = redirectUrl;
-                } else {
-                    console.log('🚫 Invalid session, redirecting to login');
-                    window.location.href = loginUrl;
-                }
-
-            } catch (error) {
-                console.error('💥 Operation failed:', error);
-                setLoadingState(false);
-                showNotification('Error al verificar la sesión. Por favor, intente nuevamente.');
-            } finally {
-                setLoadingState(false);
-            }
-        });
+        
+        new RedirectButtonHandler(config);
     });
 </script>
