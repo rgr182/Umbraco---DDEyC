@@ -263,7 +263,7 @@ ChatWidget.UI = {
     indicator.classList.add("typing-indicator");
     indicator.innerHTML = `
           <div>
-              <span class="message-sender">DDEyC</span>
+              <span class="message-sender">MarkBot</span>
           </div>
           <div class="typing-dots">
               <span></span>
