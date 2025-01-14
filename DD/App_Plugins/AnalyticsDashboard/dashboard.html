@@ -1,0 +1,53 @@
+<div ng-controller="AnalyticsDashboardController as vm">
+    <div class="umb-box">
+        <div class="umb-box-header">
+            <div class="umb-box-header-title">Analytics Dashboard</div>
+        </div>
+        
+        <div class="umb-box-content">
+            <!-- Filter controls -->
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center space-x-4">
+                    <div>
+                        <label for="startDate" class="block">Start Date</label>
+                        <input type="date" 
+                               id="startDate" 
+                               ng-model="vm.dateFilter.startDate" 
+                               class="umb-textbox">
+                    </div>
+                    <div>
+                        <label for="endDate" class="block">End Date</label>
+                        <input type="date" 
+                               id="endDate" 
+                               ng-model="vm.dateFilter.endDate" 
+                               class="umb-textbox">
+                    </div>
+                    
+                    <button type="button" 
+                            class="btn btn-primary" 
+                            ng-click="vm.updateDashboard()"
+                            ng-disabled="vm.loading">
+                        <localize key="general_update">Update</localize>
+                        <span ng-if="vm.loading">...</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Loading indicator with absolute positioning -->
+            <div ng-if="vm.loading" class="umb-load-indicator" 
+                 style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000;">
+                <div class="umb-load-indicator__bubble"></div>
+                <div class="umb-load-indicator__label">
+                    <localize key="general_loading">Loading...</localize>
+                </div>
+            </div>
+
+            <!-- Dashboard iframe with fix for Umbraco's loading background -->
+            <iframe id="analyticsDashboardFrame"
+                    ng-src="{{vm.dashboardUrl}}"
+                    data-ng-init="iframeLoaded()"
+                    style="width: 100%; height: 800px; border: none;">
+            </iframe>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,200 @@
+
+#footerCarousel .carousel-image {
+    max-width: 200px;
+    max-height: 200px;
+}
+#footerCarousel .text-ellipsis {
+    display: inline-block;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+#footerCarousel .carousel-item {
+    min-height: 400px;  
+    width: 98%;
+    position: relative;
+    overflow: hidden;
+}
+#footerCarousel .carousel-img-container {
+    flex: 1; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-height: 50%; 
+}
+#footerCarousel .text-content {
+    flex: 1; 
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    max-height: 50%; 
+    position: relative;
+}
+#footerCarousel .carousel-item-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    padding: 0 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+#footerCarousel .carousel-item-content .row {
+    width: 100%;
+}
+#footerCarousel .carousel-item-content .col-md-6 {
+    display: flex;
+    align-items: center;
+}
+#footerCarousel .carousel-control-prev,
+#footerCarousel .carousel-control-next {
+    align-items: center;
+    height: auto;
+    width: 8%;
+    outline: rgb(0, 0, 0);
+}
+#footerCarousel .carousel-control-next-icon:after,
+#footerCarousel .carousel-control-prev-icon:after {
+    font-size: 55px;
+    color: red;
+}
+#footerCarousel .text-content p {
+    margin: 0;
+    line-height: 1.2;
+    max-height: 10.2em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 6;
+    -webkit-box-orient: vertical;
+}
+#footerCarousel .text-content::after {
+    content: "...";
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    padding: 0 5px;
+    background-color: rgba(255, 255, 255, 0.8);
+    color: #333;
+    font-weight: bold;
+    display: none;
+}
+#footerCarousel .text-content.overflow::after {
+    display: block;
+}
+#footerCarousel .carousel-text{
+    max-height: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 8;
+    -webkit-box-orient: vertical;
+}
+    #footerCarousel .carousel-text p {
+        color:white;
+    }
+    .footerTitle {
+    font-size: 21px;
+}
+@media (min-width: 1380px) {
+    #footerCarousel .carousel-item {
+        min-height: 270px;
+        overflow: hidden;
+        
+    }
+    #footerCarousel .carousel-item-content {
+        top: 40%;
+    }
+}
+@media (min-width: 768px) {
+    #footerCarousel .carousel-item-content{
+        padding: 0 5% 0 7.5%
+    }
+    .footerTitle {
+        display:flex;
+        text-transform: uppercase;
+    }
+}
+/* Responsive styles */
+/* Mobile view styles */
+@media (max-width: 767px) {
+    #footerCarousel .image-container {
+        text-align: center;
+
+    }
+    #footerCarousel .carousel-img-container {
+        display: grid;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+    }
+    #footerCarousel .carousel-item {
+        min-height: 400px;
+        overflow: hidden;
+        
+    }
+    #footerCarousel .carousel-image {
+        object-fit: cover;
+        position: relative;
+    }
+    #footerCarousel .carousel-item-content {
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    #footerCarousel .carousel-item .row {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+    #footerCarousel .col-12 {
+        display: flex;
+        flex-direction: row;
+        height: 100%;
+    }
+    #footerCarousel .text-content p {
+        margin: 0;
+        line-height: 1.2;
+        max-height: 9em;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 6;
+        -webkit-box-orient: vertical;
+    }
+    #footerCarousel .text-content::after {
+        content: "...";
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        padding: 0 5px;
+        background-color: rgba(255, 255, 255, 0.8);
+        color: #333;
+        font-weight: bold;
+        display: none;
+    }
+    #footerCarousel .text-content.overflow::after {
+        display: block;
+    }
+    #footerCarousel .carousel-img-container {
+        flex: 1; 
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        max-height: 50%; 
+    }
+    #footerCarousel .carousel-img {
+        max-height: 100%;
+        max-width: 100%;
+        object-fit: contain;
+    }
+    .footerTitle {
+        display: flex;
+        justify-content: center;
+        text-transform: uppercase;
+    }
+}

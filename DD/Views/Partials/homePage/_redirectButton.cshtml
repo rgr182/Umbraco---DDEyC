@@ -1,0 +1,101 @@
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<IHomeRedirectButtonProperties>
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
+@inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment HostingEnvironment
+
+
+@{
+    const string defaultColor = "#0077b6";
+    const string defaultTextColor = "#ffffff";
+
+    var buttonColor = Model.HomeRedirectButtonColor ?? defaultColor;
+    var buttonTextColor = Model.HomeRedirectButtonTextColor ?? defaultTextColor;
+
+    var validateSessionUrl = Configuration["ApiSettings:ValidateSessionUrl"];
+    var loginPageUrl = Configuration["AppSettings:LoginPageRoute"] ?? "/loginpage";
+    var authApiBaseUrl = Configuration["ApiSettings:AuthApiUrl"];
+}
+
+@if (!Model.HideHomeRedirectButton)
+{
+    <a id="homeRedirectButton" href="javascript:void(0)" class="btn btn-primary btn-lg home-redirect-button fixed-size-button"
+       style="background-color: @buttonColor; color: @buttonTextColor;">
+        @Model.HomeRedirectButtonText
+    </a>
+}
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const button = document.getElementById('homeRedirectButton');
+        if (!button) return;
+
+        button.addEventListener('click', async () => {
+            try {
+                // Add loading state to button
+                const originalText = button.textContent;
+                button.textContent = 'Verificando...';
+                button.disabled = true;
+
+                // Get token from localStorage or cookie
+                let token = null;
+                const isProd = '@(HostingEnvironment.EnvironmentName.ToString().ToLower()=="production")' === 'true';
+                const preferCookies = document.cookie.includes('prefer-cookies') || isProd;
+
+                if (preferCookies) {
+                    // Get token from cookie
+                    const cookies = document.cookie.split(';');
+                    const authCookie = cookies.find(c => c.trim().startsWith('DDEyC.Auth='));
+                    token = authCookie ? authCookie.split('=')[1] : null;
+                } else {
+                    // Get token from localStorage
+                    const authData = localStorage.getItem('authToken');
+                    if (authData) {
+                        const parsed = JSON.parse(authData);
+                        token = parsed.token;
+                    }
+                }
+
+                if (!token) {
+                    window.location.href = '@loginPageUrl';
+                    return;
+                }
+
+                // Validate session with backend
+                const response = await fetch('@validateSessionUrl', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        window.location.href = '@loginPageUrl';
+                    } else {
+                        throw new Error('Error validating session');
+                    }
+                    return;
+                }
+
+                // Session is valid, redirect
+                window.location.href = '@Model.HomeRedirectButtonUrl?.Url';
+            } catch (error) {
+                console.error('Error during authentication check:', error);
+                
+                // Reset button state
+                button.textContent = originalText;
+                button.disabled = false;
+
+                // Show error message
+                const errorMessage = document.createElement('div');
+                errorMessage.className = 'alert alert-danger mt-2';
+                errorMessage.textContent = 'Error al verificar la sesión. Por favor, intente nuevamente.';
+                button.parentNode.insertBefore(errorMessage, button.nextSibling);
+
+                // Remove error message after 3 seconds
+                setTimeout(() => {
+                    errorMessage.remove();
+                }, 3000);
+            }
+        });
+    });
+</script>

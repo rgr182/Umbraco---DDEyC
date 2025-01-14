@@ -1,0 +1,52 @@
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+html {
+  font-size: 62.5%;
+}
+.centered-col {
+    display: flex;
+    text-align: center;
+    justify-content: space-between;
+    width: 100%;
+}
+.header-atag-a{
+    width:33%;
+}
+.header-atag-b {
+    width: 33%;
+}
+.header-atag-c {
+    width: 33%;
+}
+.logo-img {
+    max-height:180px;
+}
+.logo-img-b {
+    max-height: 240px;
+}
+.logo-img-c {
+    max-height: 210px;
+}
+.rainbow-box {
+  width: 100%;
+  height: 10px;
+  background-image: linear-gradient(
+    to right,
+    red,
+    orange,
+    yellow,
+    green,
+    cyan,
+    purple,
+    violet
+  );
+}
+
+@media screen and (max-width: 930px) {
+  .rainbow-box {
+    height: 0.5rem;
+  }
+}

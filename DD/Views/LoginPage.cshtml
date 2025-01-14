@@ -1,0 +1,130 @@
+﻿@using Umbraco.Cms.Web.Common.PublishedModels;
+@using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ContentModels.LoginPage>
+
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
+@inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment HostingEnvironment
+
+@{
+    Layout = "Main.cshtml";
+
+    // Logo handling
+    var logo = Model?.Logo as IPublishedContent;
+    var logoUrl = logo?.Url() ?? "";
+
+    // Navigation URLs with proper null checks
+    var registrationLink = Model?.RegistrationPage?.FirstOrDefault()?.Url ?? "";
+    var recoveryLink = Model?.RecoveryUrl?.Url ?? "/";
+    var loginUrl = Model?.LoginUrl?.Url ?? "/";
+
+    // API Base URL
+    var authApiBaseUrl = Configuration["ApiSettings:AuthApiUrl"] ?? "https://ddeycapi.duckdns.org";
+    var loginPageRoute = Configuration["AppSettings:LoginPageRoute"] ?? "/loginpage";
+}
+
+<head>
+    <link rel="stylesheet" href="~/Styles/LoginPage.css" />
+    <script type="text/javascript" nonce="@ViewBag.Nonce">
+        window.AppSettings = {
+            IsProd: @Json.Serialize((HostingEnvironment.EnvironmentName == "Production")),
+            AuthApiUrl: '@authApiBaseUrl',
+            LoginRedirectUrl: '@loginUrl',
+            LoginPageRoute: '@loginPageRoute'
+        };
+    </script>
+    <script src="~/scripts/authHandler.js" type="text/javascript" defer></script>
+    <script type="text/javascript" nonce="@ViewBag.Nonce">
+        document.addEventListener("DOMContentLoaded", () => {
+            const form = document.getElementById("loginForm");
+            const errorDisplay = document.getElementById("loginError");
+            
+            form.addEventListener("submit", async (e) => {
+                e.preventDefault();
+                errorDisplay.innerText = "";
+                
+                const email = document.getElementById("email").value;
+                const password = document.getElementById("password").value;
+                const submitBtn = document.querySelector('button[type="submit"]');
+                
+                try {
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = 'Iniciando sesión...';
+                    
+                    const response = await authHandler.login(email, password);
+                    if (response.authenticated || response.userToken) {
+                        window.location.href = window.AppSettings.LoginRedirectUrl;
+                    } else {
+                        errorDisplay.innerText = "Error en la respuesta del servidor.";
+                    }
+                } catch (error) {
+                    console.error("Login error:", error);
+                    errorDisplay.innerText = "Error al iniciar sesión. Por favor, revisa tus credenciales.";
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = 'Iniciar Sesión';
+                }
+            });
+
+            // Check if already logged in
+            authHandler.checkAuth().then(isAuth => {
+                if (isAuth) {
+                    window.location.href = window.AppSettings.LoginRedirectUrl;
+                }
+            });
+        });
+    </script>
+</head>
+
+<div class="login-container text-center vh-100">
+    <div class="w-100 d-flex flex-column flex-lg-row justify-content-center justify-content-lg-around justify-content-around align-items-center container">
+        <form id="loginForm" class="login-form" autocomplete="on">
+            <h1 class="login-h1">@Model.Title</h1>
+            <div class="login-form-group">
+                <input 
+                    type="email" 
+                    id="email" 
+                    name="email" 
+                    placeholder="Ingresa tu correo electrónico" 
+                    required 
+                    autocomplete="email"
+                    spellcheck="false"
+                />
+            </div>
+
+            <div class="login-form-group">
+                <input 
+                    type="password" 
+                    id="password" 
+                    name="password" 
+                    placeholder="Ingresa tu contraseña" 
+                    required 
+                    autocomplete="current-password"
+                />
+            </div>
+
+            <div class="login-form-group group-links">
+                @if (!string.IsNullOrEmpty(recoveryLink))
+                {
+                    <a href="@recoveryLink" class="login-forgot-link">¿Olvidaste tu contraseña?</a>
+                }
+                @if (!string.IsNullOrEmpty(registrationLink))
+                {
+                    <a href="@registrationLink" class="login-forgot-link">Crear usuario nuevo</a>
+                }
+            </div>
+
+            <div id="loginError" class="login-error-message" role="alert" aria-live="polite"></div>
+
+            <div class="login-action-buttons">
+                <button type="submit" class="login-button">Iniciar Sesión</button>
+            </div>
+        </form>
+        <div>
+            <img class="login-marckbot" src="@Url.Content("~/assets/loginmarckbot.png")"  alt="Login Marckbot">
+        </div>
+    </div>
+    @if (!string.IsNullOrEmpty(logoUrl))
+    {
+        <img src="@logoUrl" alt="Logotipo Gobierno Municipal de Chihuahua" class="login-logo" />
+    }
+</div>

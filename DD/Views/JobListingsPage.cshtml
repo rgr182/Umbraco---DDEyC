@@ -1,0 +1,21 @@
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ContentModels.JobListingsPage>
+@using Umbraco.Cms.Web.Common.PublishedModels;
+@using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
+@{
+    Layout = "Main.cshtml";
+}
+
+<div>
+    @await Html.PartialAsync("Partials/homePage/_navigation.cshtml")
+</div>
+
+@if (Model.ShowChatBot)
+{
+  <div class="mt-3">
+        @await Html.PartialAsync("Partials/_chatWidget")
+  </div>
+}
+
+<div>
+    @await Html.PartialAsync("_SharedContentPage", Model)
+</div>

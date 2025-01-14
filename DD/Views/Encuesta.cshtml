@@ -1,0 +1,101 @@
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<object>
+@using ContentModels = Umbraco.Cms.Web.Common.PublishedModels
+@using Umbraco.Cms.Core.Models.Blocks
+@using Newtonsoft.Json
+@using System.Text.RegularExpressions
+
+@{
+    Layout = null;
+    const string HomeName = "Home";
+    const string DefaultSurveyNodeName = "DefaultSurvey";
+    const string Questions = "questions";
+
+    var rootNode = Umbraco.ContentAtRoot().Where(x => x.Name == HomeName).FirstOrDefault();
+    var DefaultSurveyNode = rootNode.Children.FirstOrDefault(x => x.Name == DefaultSurveyNodeName) as ContentModels.SurveyForm;
+    IEnumerable<BlockListItem> DefaultQuestions = DefaultSurveyNode?.Value<IEnumerable<BlockListItem>>(Questions) ?? Enumerable.Empty<BlockListItem>();
+
+    string StripHtml(string input)
+    {
+        return Regex.Replace(input ?? "", "<.*?>", String.Empty).Trim();
+    }
+
+    var surveyStructure = new
+    {
+        title = StripHtml(DefaultSurveyNode?.QuestionTitle?.ToString()),
+        description = StripHtml(DefaultSurveyNode?.Description?.ToString()),
+        questions = DefaultQuestions.Select(q => new
+        {
+            id = q.Content.Key.ToString(),
+            text = StripHtml((q.Content as ContentModels.QuestionElement)?.Question?.ToString() ?? ""),
+            answers = (q.Content as ContentModels.QuestionElement)?.Answer
+                .Select(a => new
+                {
+                    id = a.Content.Key.ToString(),
+                    text = StripHtml((a.Content as ContentModels.RichTextItems)?.RichText?.ToString() ?? "")
+                })
+        })
+    };
+
+    var surveyStructureJson = JsonConvert.SerializeObject(surveyStructure);
+}
+<head>
+    <link rel="stylesheet" href="~/Styles/encuesta.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+</head>
+
+<body>
+    <div id="survey-container" class="initial-minimized" data-survey-completed="false">
+        <div class="survey-header">
+            <h2 >@DefaultSurveyNode.QuestionTitle</h2>
+            <button id="minimize-btn" class="minimize-btn">_</button>
+        </div>
+        <div class="survey-content">
+            <div>@Html.Raw(DefaultSurveyNode?.Description?.ToHtmlString())</div>
+            <form id="survey-form" class="survey-form">
+                <div>
+                    <label class="fw-bold" for="name">Nombre:</label>
+                    <input class="info d-flex" type="text" id="name" name="name" placeholder="Juan Lopez" required>
+                </div>
+                <div>
+                    <label class="fw-bold" for="phone">Telefono:</label>
+                    <input class="info d-flex" type="tel" id="phone" name="phone" placeholder="123123123">
+                </div>
+                <div>
+                    <label class="fw-bold" for="email">Email:</label>
+                    <input class="info d-flex" type="email" id="email" name="email" placeholder="ejemplo@dominio.com">
+                </div>
+                <div>
+                    @foreach (var question in DefaultQuestions)
+                    {
+                        @if (question != null && question.Content is ContentModels.QuestionElement questionElement)
+                        {
+                            <div>
+                                <label class="fw-bold" data-question-id="@question.Content.Key">
+                                    @questionElement.Question
+                                </label>
+                                @foreach (var answer in questionElement.Answer)
+                                {
+                                    @if (answer.Content is ContentModels.RichTextItems richTextItems)
+                                    {
+                                        <div>
+                                            <input type="radio" name="@question.Content.Key" value="@answer.Content.Key" />
+                                            <label>@richTextItems.RichText</label>
+                                        </div>
+                                    }
+                                }
+                            </div>
+                        }
+                    }
+                </div>
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+    </div>
+    <script>
+        var surveyStructure = @Html.Raw(surveyStructureJson);
+        var displayTimer = @DefaultSurveyNode.DisplayTimer;
+    </script>
+    <script src="~/Scripts/DisplayTimerSurveyForm.js"></script>
+    <script src="~/Scripts/SubmitSurveyForm.js"></script>
+</body>

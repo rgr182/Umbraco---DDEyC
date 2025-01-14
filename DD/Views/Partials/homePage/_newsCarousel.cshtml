@@ -1,0 +1,56 @@
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<IEnumerable<BlockListItem>>
+@using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
+@using Umbraco.Cms.Core.Models.Blocks;
+@using System.Text.Json
+@using System.Text.Json.Serialization
+
+
+@{
+    var blocksList = Model.ToList();
+    var defaultImageUrl = Url.Content("~/assets/default.webp");
+    string newsCarouselId = ViewData["CarouselId"]?.ToString() ?? "newsCarousel-" + Guid.NewGuid().ToString();
+}
+
+<head>
+    <link href="~/Styles/ContentCarousel.css" rel="stylesheet" />
+</head>
+
+<div id="@newsCarouselId" class="carousel slide text-and-image-carousel" data-bs-ride="">
+    <ol class="carousel-indicators"></ol>
+    <div class="carousel-inner"></div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#@newsCarouselId" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#@newsCarouselId" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
+<script src="~/Scripts/newsCarousel.js"></script>
+@{
+    var carouselData = new {
+        blocksList = blocksList.Select(b => new {
+            content = new {
+                NewsCarouselItemText1 = ((ContentModels.NewsCarouselItems)b.Content).NewsCarouselItemText1?.ToString() ?? String.Empty,
+                NewsCarouselItemText2 = ((ContentModels.NewsCarouselItems)b.Content).NewsCarouselItemText2?.ToString() ?? String.Empty,
+                NewsCarouselItemUrl =((ContentModels.NewsCarouselItems)b.Content).NewsCarouselItemUrl?.Url ?? "#",
+            },
+            imageUrl = string.IsNullOrWhiteSpace(((ContentModels.NewsCarouselItems)b.Content).NewsCarouselItemImage?.Url()) ? defaultImageUrl : ((ContentModels.NewsCarouselItems)b.Content).NewsCarouselItemImage?.Url()
+        }),
+        defaultImageUrl = defaultImageUrl,
+        carouselId = newsCarouselId
+    };
+    var carouselDataJson = System.Text.Json.JsonSerializer.Serialize(carouselData);
+}
+
+<script>
+    window.addEventListener('DOMContentLoaded', function() {
+        initNewsCarousel(@Html.Raw(carouselDataJson));
+    });
+</script>
+
+
+<script src="~/Scripts/imageErrorHandler.js"></script>

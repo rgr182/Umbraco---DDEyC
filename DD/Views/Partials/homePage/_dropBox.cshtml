@@ -1,0 +1,121 @@
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ISearchComboProperties>
+@using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
+@using Umbraco.Cms.Core.Models.PublishedContent;
+@using Umbraco.Cms.Web.Common.PublishedModels;
+@using Newtonsoft.Json;
+@using Umbraco.Cms.Core.Models.Blocks;
+
+@{
+    Layout = null;
+    var Hide = Model.HideSearchComboContents;
+    var uniqueId = Guid.NewGuid().ToString().Replace("-", "");
+    var blocksList = Model.SearchComboContents;
+    var defaultText = Model.DefaultSearchComboText ?? "Selecciona una opción";
+    var ComboBox1Title = Model.ComboBox1Title ?? "Quién eres?";
+    var ComboBox2Title = Model.ComboBox2Title ?? "Qué buscas?";
+    var ComboBox3Title = Model.ComboBox3Title ?? "Respuestas disponibles";
+
+    var transformedData = new List<dynamic>();
+
+    if (blocksList != null)
+    {
+        foreach (var block in blocksList)
+        {
+            var userType = block?.Content as ComboBoxUserType;
+            if (userType == null || string.IsNullOrEmpty(userType.ComboBoxUserName))
+                continue;
+
+            var userMatches = new List<dynamic>();
+            
+            if (userType.ComboBoxUserMatches != null)
+            {
+                foreach (var matchBlock in userType.ComboBoxUserMatches)
+                {
+                    var match = matchBlock?.Content as ComboBoxMatchElement;
+                    if (match == null || string.IsNullOrEmpty(match.ComboBoxMatchElementText))
+                        continue;
+
+                    var matchUrls = new List<dynamic>();
+
+                    if (match.ComboBoxMatchElementUrl != null)
+                    {
+                        foreach (var urlBlock in match.ComboBoxMatchElementUrl)
+                        {
+                            var dropdown3 = urlBlock?.Content as ComboBoxDropdown3;
+                            if (dropdown3?.ComboBoxThirdUrl == null)
+                                continue;
+
+                            matchUrls.Add(new
+                            {
+                                ComboBoxThirdText = dropdown3.ComboBoxThirdUrl.Name ?? "",
+                                ComboBoxThirdUrl = dropdown3.ComboBoxThirdUrl.Url ?? "#"
+                            });
+                        }
+                    }
+
+                    userMatches.Add(new
+                    {
+                        ComboBoxMatchElementText = match.ComboBoxMatchElementText,
+                        ComboBoxMatchElementUrl = matchUrls
+                    });
+                }
+            }
+
+            transformedData.Add(new
+            {
+                ComboBoxUserName = userType.ComboBoxUserName,
+                ComboBoxUserMatches = userMatches
+            });
+        }
+    }
+
+    var json = JsonConvert.SerializeObject(transformedData, Formatting.None,
+        new JsonSerializerSettings 
+        { 
+            NullValueHandling = NullValueHandling.Ignore,
+            ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+        });
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    @await Html.PartialAsync("~/Views/Partials/_metaData.cshtml")
+    <link rel="stylesheet" href="~/Styles/dropbox.css" />
+    <script src="~/Scripts/searchCombo.js"></script>
+</head>
+@if (!Hide)
+{
+    <body>
+        <div class="DropboxContainer">
+            <label class="title">@ComboBox1Title</label>
+            <select id="parent-dropdown-@uniqueId" class="dropboxItem">
+                <option selected>@defaultText</option>
+                @foreach (var item in transformedData)
+                {
+                    <option value="@item.ComboBoxUserName">@item.ComboBoxUserName</option>
+                }
+            </select>
+
+            <label class="title">@ComboBox2Title</label>
+            <select id="child-dropdown-@uniqueId" class="dropboxItem">
+                <option selected>@defaultText</option>
+            </select>
+
+            <label class="title">@ComboBox3Title</label>
+            <select id="grandchild-dropdown-@uniqueId" class="dropboxItem">
+                <option selected>@defaultText</option>
+            </select>
+
+            <a id="search-icon-@uniqueId" href="#" class="searchButton"><i class="fas fa-search"></i></a>
+        </div>
+
+        <script>
+            const DefaultText = '@defaultText';
+            const uniqueId = '@uniqueId';
+            const searchComboContents = @Html.Raw(json);
+            initSearchCombo(uniqueId, searchComboContents, DefaultText);
+        </script>
+    </body>
+}
+</html>

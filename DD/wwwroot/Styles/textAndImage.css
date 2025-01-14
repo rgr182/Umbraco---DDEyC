@@ -1,0 +1,19 @@
+.image {
+    max-height: 350px;
+    width: auto;
+    object-fit: cover;
+}
+
+.column-title {
+    
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.text-start {    
+    text-align: start;
+}
+
+.general-content .ms-card {
+    border-color: white;
+}

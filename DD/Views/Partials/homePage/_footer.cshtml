@@ -1,0 +1,212 @@
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<object>;
+@using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
+@using Umbraco.Cms.Core.Models.Blocks;
+@{
+    const string DefaultFooterNodeName = "DefaultFooter";
+    const string HomeName = "Home";
+    const string FooterItemsPropertyName = "footerItems";
+    const string FooterTitlePropertyName = "footerTitle";
+    var paddingString = "";
+    // Get Home Node
+    var rootNode = Umbraco.ContentAtRoot().Where(x => x.Name == HomeName).FirstOrDefault();
+    // Get Default Footer Properties
+    var defaultFooterNode = rootNode.Children.FirstOrDefault(x => x.Name == DefaultFooterNodeName);
+    var defaultFooterTitle = defaultFooterNode?.Value<string>(FooterTitlePropertyName) ?? "Contacto y Ubicaciones.";
+    var defaultBlocksList = defaultFooterNode?.Value<IEnumerable<BlockListItem>>(FooterItemsPropertyName);
+
+    List<BlockListItem> blocksList;
+    var footerTitle = string.Empty;
+
+    if (Model is null || Model is not IFooterProperties)
+    {
+        blocksList = defaultBlocksList?.ToList() ?? [];
+        footerTitle = defaultFooterTitle ?? string.Empty;
+    }
+    else
+    {
+        IFooterProperties model = (IFooterProperties)Model;
+        footerTitle = string.IsNullOrEmpty(model?.FooterTitle?.ToString()) ? defaultFooterTitle : model.FooterTitle.ToString();
+        var currentModelList = (model.FooterItems is not null && model.FooterItems.Any()) ? model.FooterItems.ToList() : [];
+        var defaultFooterItems = defaultBlocksList.ToList();
+        if (currentModelList.Any())
+        {
+            blocksList = currentModelList;
+        }
+        else
+        {
+            blocksList = defaultFooterItems ?? [];
+        }
+        
+    }
+    
+    var defaultImageUrl = Url.Content("~/assets/default.webp");
+}
+<head>
+    <link href="~/Styles/footer-carousel.css" rel="stylesheet" />
+</head>
+<div class="footerTitle my-3">
+    @Html.Raw(footerTitle)
+</div>
+<div id="footerCarousel" class="carousel slide" data-bs-ride="carousel">
+    <ol class="carousel-indicators">
+        <!-- Carousel indicators will be rendered here -->
+    </ol>
+    <div class="carousel-inner">
+        <!-- Carousel content will be rendered here -->
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#footerCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#footerCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
+</div>
+<script>
+    let prevWidth = window.innerWidth;
+    let isMobile = prevWidth <= 767;
+    let isTablet = prevWidth >= 768 && prevWidth <= 1380;
+    function handleResizeFooter() {
+        const currentWindowWidth = window.innerWidth;
+        const newIsMobile = currentWindowWidth <= 767;
+        const newIsTablet = currentWindowWidth >= 768 && currentWindowWidth <= 1380;
+        if (isMobile !== newIsMobile || isTablet !== newIsTablet) {
+            isMobile = newIsMobile;
+            isTablet = newIsTablet;
+            renderFooterLayout();
+        }
+        prevWidth = currentWindowWidth;
+    }
+    function renderFooterLayout() {
+        const carouselInner = document.querySelector('#footerCarousel .carousel-inner');
+        const carouselIndicators = document.querySelector('#footerCarousel .carousel-indicators');
+        carouselIndicators.innerHTML = '';
+        carouselInner.innerHTML = '';
+        if (isMobile) {
+           
+            @{
+                int index = 0;
+            }
+            @foreach (var block in blocksList)
+            {
+                var content = (ContentModels.FooterItems)block.Content;
+                
+                var imageUrl = string.IsNullOrWhiteSpace(content.FooterItemImage?.Url()) ? defaultImageUrl : content.FooterItemImage?.Url();
+                var isActive = index == 0 ? "active" : "";
+                <text>
+                    carouselInner.insertAdjacentHTML('beforeend', `
+                        <div class="carousel-item @(isActive)">
+                            <div class="carousel-item-content h-100">
+                                <div class="row">
+                                    <div class="col-12 w-100"> <!-- Adjust column size for mobile -->
+                                        <div class="image-container align-items-center w-100">
+                                            <div class="carousel-img-container">
+                                                <a href="@content.FooterItemUrl?.Url">
+                                                                    <img src="@imageUrl" class="d-block object-fit-cover carousel-image" alt="..." > <!-- Adjust max-width for smaller images -->
+                                                </a>
+                                            </div>
+                                            <div class="mt-2 md-2"> <!-- Add more margin for spacing -->
+                                                <div class="carousel-text h-100">
+                                                    <p class="text-ellipsis" style="font-size: 14px;">@content.FooterItemText1</p> <!-- Adjust font size -->
+                                                    <p class="text-ellipsis" style="font-size: 14px;">@content.FooterItemText2</p> <!-- Adjust font size -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `);
+                    carouselIndicators.insertAdjacentHTML('beforeend', `
+                        <li data-bs-target="#footerCarousel" data-bs-slide-to="@index" class="@isActive"></li>`);
+                </text>
+                index++;
+            }
+        } else if (isTablet) {
+            // Render tablet layout
+            @for (int i = 0; i < blocksList.Count; i += 2)
+            {
+                var isFirst = i == 0;
+                <text>
+                    carouselInner.insertAdjacentHTML('beforeend', `
+                        <div class="carousel-item @(isFirst ? "active" : "")">
+                            <div class="row">
+                                @for (int j = 0; j < 2 && i + j < blocksList.Count; j++)
+                                {
+                                    if (j%2 ==0){
+                                        paddingString= "padding: 0 0 0 12%";
+                                    }else{
+                                        paddingString= "padding: 0 12% 0 0";
+                                    }
+
+                                    var block = blocksList[i + j];
+                                    var content = (ContentModels.FooterItems)block.Content;
+                                    var imageUrl = string.IsNullOrWhiteSpace(content.FooterItemImage?.Url()) ? defaultImageUrl : content.FooterItemImage?.Url();
+                                    <div class="col-md-6">
+                                        <div class="align-items-center text-center" style="@paddingString">
+                                            <div class="carousel-img-container">
+                                                <a href="@content.FooterItemUrl?.Url">
+                                                                            <img src="@imageUrl" class="d-block object-fit-cover carousel-image" alt="..." /> <!-- Adjust max-width for smaller images -->
+                                                </a>
+                                            </div>
+                                            <div>
+                                                <div class="carousel-text">
+                                                    <p class="text-ellipsis" style="font-size: 16px;">@content.FooterItemText1</p>
+                                                    <p class="text-ellipsis" style="font-size: 16px;">@content.FooterItemText2</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    `);
+                    carouselIndicators.insertAdjacentHTML('beforeend', `
+                        <li data-bs-target="#footerCarousel" data-bs-slide-to="@(i / 2)" class="@(i==0 ? "active" : "")"></li>`);
+                </text>
+            }
+        } else {
+           @for (int i = 0; i < blocksList.Count; i += 3)
+            {
+                var isFirst = i == 0;
+                <text>
+                    carouselInner.insertAdjacentHTML('beforeend', `
+                        <div class="carousel-item @(isFirst ? "active" : "")">
+                            <div class="carousel-item-content">
+                                <div class="row">
+                                    @for (int j = 0; j < 3 && i + j < blocksList.Count; j++)
+                                    {
+                                        var block = blocksList[i + j];
+                                        var content = (ContentModels.FooterItems)block.Content;
+                                        var imageUrl = string.IsNullOrWhiteSpace(content.FooterItemImage?.Url()) ? defaultImageUrl : content.FooterItemImage?.Url();
+                                        <div class="col-md-4"> <!-- Adjust column size for desktop -->
+                                            <div class="d-flex align-items-center">
+                                                <div class="carousel-img-container">
+                                                    <a href="@content.FooterItemUrl?.Url">
+                                                                                <img src="@imageUrl" class="d-block object-fit-cover carousel-image" alt="..."> <!-- Adjust max-width for smaller images -->
+                                                    </a>
+                                                </div>
+                                                <div style="margin-left: 20px;"> <!-- Add more margin for spacing -->
+                                                    <div class="carousel-text">
+                                                        <p class="text-ellipsis" style="font-size: 14px;">@content.FooterItemText1</p> <!-- Adjust font size -->
+                                                        <p class="text-ellipsis" style="font-size: 14px;">@content.FooterItemText2</p> <!-- Adjust font size -->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    `);
+                    carouselIndicators.insertAdjacentHTML('beforeend', `
+                        <li data-bs-target="#footerCarousel" data-bs-slide-to="@(i / 3)" class="@(i==0 ? "active" : "")"></li>`);
+                </text>
+            }
+        }
+    }
+    window.addEventListener('load', renderFooterLayout);
+    window.addEventListener('resize', handleResizeFooter);
+    window.addEventListener('DOMContentLoaded', renderFooterLayout);
+</script>

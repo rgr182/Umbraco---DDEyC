@@ -1,0 +1,79 @@
+@using Umbraco.Cms.Web.Common.PublishedModels;
+@using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<object>
+@model IHeaderProperties
+@{
+    var richTextStyle = string.Empty;
+    dynamic model;
+    if(Model is ContentModels.JobListingsPage jobListingsPage){
+        model = jobListingsPage;
+    }else if(Model is ContentModels.GeneralContentPage generalContentPage){
+        model = generalContentPage;
+    }else{
+        return;
+    }
+}
+
+<div class="general-content">
+    @foreach (var item in model.ContentPageBlocks)
+    {
+        if (item.Content is ContentModels.LogoItems logoItem)
+        {
+            @await Html.PartialAsync("blocklistItems/_logoItem", logoItem)
+        }
+        if (item.Content is ContentModels.RichTextItems text)
+        {
+            richTextStyle = string.Empty;
+
+            if (!string.IsNullOrEmpty(text.TextColor))
+            {
+                richTextStyle += $"color:{text.TextColor};";
+            }
+            if (text.FontSize != null && text.FontSize != 0)
+            {
+                richTextStyle += $"font-size:{text.FontSize}px ;";
+            }
+            else
+            {
+                richTextStyle += $"font-size:27px;";
+            }
+            <div class="rich-content-div mt-3" style="@richTextStyle">
+                <div class="rich-content-text">
+                    @Html.Raw(text.RichText)
+                </div>
+            </div>
+        }
+        if (item.Content is ContentModels.NewsCarouselRow newsRow)
+        {
+            string uniqueCarouselId = $"newsCarousel-{item.GetHashCode()}";
+            <div class="mt-3">
+                @Html.Partial("homePage/_newsCarousel", newsRow.NewsCarouselRowItems, new ViewDataDictionary(ViewContext.ViewData) { { "CarouselId", uniqueCarouselId } })
+            </div>
+        }
+        if (item.Content is ContentModels.ImageCarouselRow imageRow)
+        {
+            string uniqueCarouselId = $"imageCarousel-{item.GetHashCode()}";
+            <div class="mt-3">
+                @Html.Partial("homePage/_imageCarousel", imageRow.ImageCarouselRowItems, new ViewDataDictionary(ViewContext.ViewData) { { "CarouselId", uniqueCarouselId } })
+            </div>
+        }
+        if (item.Content is ContentModels.RichTextAndImageItems richTextAndImageItems)
+        {
+            <div class="mt-3">
+                @Html.Partial("_textAndImage", richTextAndImageItems)
+            </div>
+        }
+        if (item.Content is ContentModels.VideoEmbedElement videoEmbed)
+        {
+            <div class="mt-3">
+                @Html.Partial("blocklistItems/_embededVideo", videoEmbed)
+            </div>
+        }
+    }
+</div>
+<div class="mt-3">
+    @await Html.PartialAsync("homePage/_footer")
+</div>
+<div class="mt-3">
+    @await Html.PartialAsync("blocklist/_socialMediaItems")
+</div>
