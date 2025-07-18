@@ -4,7 +4,6 @@
     function analyticsDashboardController($scope, eventsService, $timeout) {
         var vm = this;
         
-        // Initialize state
         vm.loading = false;
         vm.dateFilter = {
             startDate: moment().subtract(30, 'days').startOf('day').toDate(),
@@ -27,44 +26,46 @@
             return baseUrl + '?' + params.toString();
         }
 
-        // Function to ensure proper iframe and chart container heights
         function setupIframeHeight(iframe) {
-            // Set initial height
             iframe.style.height = '800px';
             iframe.style.minHeight = '800px';
             
-            // Try to communicate with the iframe content
             iframe.onload = function() {
                 $timeout(function() {
                     vm.loading = false;
                     removeLoader();
                     iframe.style.background = 'none';
 
-                    // Send message to iframe content about parent height
-                    try {
-                        iframe.contentWindow.postMessage({
-                            type: 'parentHeight',
-                            height: iframe.offsetHeight
-                        }, '*');
-                    } catch (e) {
-                        console.warn('Could not send height to iframe:', e);
-                    }
+                    sendUpdateChartMessage(vm.dateFilter.startDate, vm.dateFilter.endDate);
                 });
             };
         }
  
+        function sendUpdateChartMessage(startDate, endDate) {
+            const iframe = document.getElementById('analyticsDashboardFrame');
+            if (iframe && iframe.contentWindow) {
+                iframe.contentWindow.postMessage({
+                    type: 'updateChart',
+                    startDate: startDate.toISOString(),
+                    endDate: endDate.toISOString()
+                }, '*');
+            }
+        }
+
         vm.updateDashboard = function() {
             vm.loading = true;
             removeLoader();
             
             var iframe = document.getElementById('analyticsDashboardFrame');
             if (iframe) {
-                setupIframeHeight(iframe);
+                // Reload the iframe to update the @Model based data (tables, counts)
                 iframe.src = buildDashboardUrl();
+                // Ensure onload handler is re-attached for message sending to chart
+                setupIframeHeight(iframe);
             }
         };
  
-        // Initialize
+        // Initial setup on controller load
         $timeout(function() {
             var iframe = document.getElementById('analyticsDashboardFrame');
             if (iframe) {
@@ -74,8 +75,10 @@
             }
         });
 
-        // Listen for resize messages from iframe
-        window.addEventListener('message', function(event) {
+        vm.messageHandler = function(event) {
+            if (event.data && event.data.type === 'iframeReady') {
+                console.log('Iframe reported ready.');
+            }
             if (event.data && event.data.type === 'requestHeight') {
                 var iframe = document.getElementById('analyticsDashboardFrame');
                 if (iframe) {
@@ -85,14 +88,16 @@
                     }, '*');
                 }
             }
-        });
+        };
+
+        window.addEventListener('message', vm.messageHandler);
 
         $scope.$on('$destroy', function() {
             var iframe = document.getElementById('analyticsDashboardFrame');
             if (iframe) {
                 iframe.onload = null;
             }
-            window.removeEventListener('message', this.messageHandler);
+            window.removeEventListener('message', vm.messageHandler);
         });
     }
  
@@ -102,7 +107,7 @@
             '$scope',
             'eventsService',
             '$timeout',
-            'notificationsService',
+            'notificationsService', // Ensure notificationsService is injected if used elsewhere
             analyticsDashboardController
         ]);
 })();

@@ -51,8 +51,9 @@ namespace DDEyC.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetPageViewsByDateRange([FromQuery] DateTime start, [FromQuery] DateTime end)
         {
-            if (start >= end)
+            if (start > end)
             {
+                _logger.LogInformation( "Start date must be before end date. {Start} to {End}", start, end);
                 return BadRequest("Start date must be before end date.");
             }
 
@@ -70,6 +71,7 @@ namespace DDEyC.Controllers
                 return StatusCode(500, "An error occurred while processing your request.");
             }
         }
+
         [HttpGet]
         [Route("umbraco/backoffice/AnalyticsDashboard/Dashboard")]
         public async Task<IActionResult> Dashboard(DateTime? start, DateTime? end)
@@ -134,6 +136,7 @@ namespace DDEyC.Controllers
                 return Problem("An error occurred while loading the dashboard");
             }
         }
+
         [HttpGet]
         [Route("/umbraco/backoffice/AnalyticsDashboard/GetChartData")]
         public async Task<IActionResult> GetChartData(DateTime start, DateTime end, string selectedUrl = null)
@@ -156,6 +159,7 @@ namespace DDEyC.Controllers
 
             return Ok(chartData);
         }
+
         [HttpGet]
         [Route("umbraco/backoffice/api/ViewAnalytics/GetAggregatedChartData")]
         [ProducesResponseType(StatusCodes.Status200OK)]

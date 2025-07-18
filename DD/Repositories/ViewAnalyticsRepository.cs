@@ -49,11 +49,13 @@ namespace DDEyC.Repositories
 
         public async Task<IEnumerable<AnalyticsView>> GetByDateRangeAsync(DateTime start, DateTime end)
         {
-            if (start >= end)
+            if (start > end)
             {
                 throw new ArgumentException("Start date must be before end date.");
             }
-
+            if(start == end){
+                end = end.AddDays(1);
+            }
             try
             {
                 return await _context.SiteViews

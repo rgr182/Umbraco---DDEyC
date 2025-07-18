@@ -1,81 +1,260 @@
 @model DDEyC.Models.AnalyticsDashboardViewModel
 @{
-    Layout = null;
+    Layout = null; // Important for partial views within Umbraco backoffice
 }
 
 <!DOCTYPE html>
 <html>
-
 <head>
-    <link rel="stylesheet" href="/App_Plugins/AnalyticsDashboard/analyticsDashboard.css">
+    <title>Analytics Dashboard</title>
+    <link rel="stylesheet" href="/App_Plugins/AnalyticsDashboard/analyticsDashboard.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@1.0.0/dist/chartjs-adapter-moment.min.js"></script>
 </head>
-
 <body>
     <div class="dashboard-container">
-        <div class="chart-container" style="height: 400px; min-height: 400px; display: flex; justify-content: center; align-items: center;">
-            <canvas id="pageViewsChart" style="width: 100%; height: 100%;">
-                <!-- Add a fallback/initial content -->
-            </canvas>
+        <h2 class="section-header">Overview</h2>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <strong>@Model.GrandTotal</strong>
+                <span>Total Page Views</span>
+            </div>
+            <div class="stat-card">
+                <strong>@Model.UniqueUrls.Count()</strong>
+                <span>Unique URLs Tracked</span>
+            </div>
+            <div class="stat-card">
+                <strong>@Model.StartDate.ToShortDateString()</strong>
+                <span>Start Date</span>
+            </div>
+            <div class="stat-card">
+                <strong>@Model.EndDate.ToShortDateString()</strong>
+                <span>End Date</span>
+            </div>
         </div>
-        <div class="table-container">
-            <h2>Page Views Summary</h2>
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>URL</th>
-                        <th>Views</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="important-row">
-                        <td></td>
-                        <td>Total</td>
-                        <td>@Model.GrandTotal</td>
-                    </tr>
-                    @foreach (var total in Model.PageTotals)
+
+        <h2 class="section-header">Page Views Chart</h2>
+        <div class="chart-container">
+            <canvas id="pageViewsChart"></canvas>
+        </div>
+
+        <h2 id="topPagesHeader" class="collapsible-header collapsed">Top Pages</h2>
+        <div id="topPagesContent" class="collapsible-content">
+            <div class="page-list">
+                <ul>
+                    @foreach (var pagina in Model.PageTotals.OrderByDescending(p => p.Value))
                     {
-                        <tr class="important-row">
-                            <td></td>
-                            <td>Overall Total (@total.Key)</td>
-                            <td>@total.Value</td>
-                        </tr>
+                        <li>
+                            <span>@pagina.Key </span>
+                            <span>@pagina.Value</span>
+                        </li>
                     }
-                    @foreach (var daily in Model.DailyStats)
+                </ul>
+            </div>
+        </div>
+        
+        <h2 id="dailyBreakdownHeader" class="collapsible-header collapsed">Daily Breakdown</h2>
+        <div id="dailyBreakdownContent" class="collapsible-content">
+            <div class="page-list">
+                <ul>
+                    @foreach (var dailyStat in Model.DailyStats.OrderByDescending(d => d.Date))
                     {
-                        @foreach (var pageView in daily.PageViews)
-                        {
-                            <tr>
-                                <td>@daily.Date.ToString("yyyy-MM-dd")</td>
-                                <td>@pageView.Key</td>
-                                <td>@pageView.Value</td>
-                            </tr>
-                        }
-                        <tr class="important-row">
-                            <td>@daily.Date.ToString("yyyy-MM-dd")</td>
-                            <td>Daily Total</td>
-                            <td>@daily.DailyTotal</td>
-                        </tr>
+                        <li>
+                            <span>@dailyStat.Date.ToShortDateString()</span>
+                            <span>@dailyStat.DailyTotal views</span>
+                        </li>
                     }
-                </tbody>
-            </table>
+                </ul>
+            </div>
         </div>
     </div>
 
-    <!-- Load dependencies -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
-    <!-- Load our chart code -->
-    <script src="/App_Plugins/AnalyticsDashboard/chartHandler.js"></script>
-    
-    <!-- Initialize the chart -->
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const rawData = '@Html.Raw(Json.Serialize(Model.DailyStats))';
-            window.AnalyticsDashboard.initializeChart(rawData);
+    (function () {
+        'use strict';
+
+        let currentChart = null;
+
+        // Function to fetch data from the server-side aggregated endpoint
+        async function fetchAggregatedChartData(startDate, endDate) {
+            const startParam = moment(startDate).format('YYYY-MM-DDTHH:mm:ss') + 'Z';
+            const endParam = moment(endDate).format('YYYY-MM-DDTHH:mm:ss') + 'Z';
+
+            const url = `/umbraco/backoffice/api/ViewAnalytics/GetAggregatedChartData?start=${startParam}&end=${endParam}`;
+            
+            try {
+                const response = await fetch(url);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status} - ${response.statusText}`);
+                }
+
+                const text = await response.text();
+                const cleanData = text.startsWith(")]}',\n") ? text.substring(5) : text;
+
+                return JSON.parse(cleanData);
+
+            } catch (error) {
+                console.error("Error fetching aggregated chart data:", error);
+                return null;
+            }
+        }
+
+        // Initialize Chart
+        async function initializeChart(startDate, endDate) {
+            const canvas = document.getElementById('pageViewsChart');
+            const ctx = canvas.getContext('2d');
+
+            if (currentChart) {
+                currentChart.destroy();
+                currentChart = null;
+            }
+
+            const aggregatedData = await fetchAggregatedChartData(startDate, endDate);
+
+            if (!aggregatedData || aggregatedData.length === 0) {
+                console.warn('No aggregated data received to draw chart.');
+                ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear previous chart
+                ctx.font = '20px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillStyle = '#666'; // Gray text
+                ctx.fillText('No Data Available for this period.', canvas.width / 2, canvas.height / 2);
+                return;
+            }
+
+            // For simplified chart, we'll only display the total views.
+            // If you later want to show individual URLs, you'll need to re-add 'urls' and `datasets` loop.
+            const datasets = [{
+                label: 'Total Views',
+                data: aggregatedData.map(day => day.dailyTotal),
+                backgroundColor: 'rgba(75, 192, 192, 0.8)', // Solid color for bars
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1,
+                type: 'bar', // Keep as bar chart for clarity
+            }];
+            
+            // Optional: If you still want a distinct line for total, uncomment this and adjust above `datasets`
+            // datasets.push({
+            //     label: 'Total Views (Line)',
+            //     data: aggregatedData.map(day => day.dailyTotal),
+            //     backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            //     borderColor: 'rgba(75, 192, 192, 1)',
+            //     borderWidth: 2,
+            //     type: 'line',
+            //     fill: true,
+            //     tension: 0.4,
+            //     order: 1
+            // });
+
+            currentChart = new Chart(ctx, {
+                type: 'bar', // Default type for the chart
+                data: {
+                    labels: aggregatedData.map(d => d.date),
+                    datasets: datasets
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: false,
+                    scales: {
+                        x: {
+                            type: 'time',
+                            time: {
+                                unit: 'day',
+                                displayFormats: {
+                                    day: 'MMM DD, YYYY'
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: 'Date'
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            ticks: { precision: 0 },
+                            title: {
+                                display: true,
+                                text: 'Page Views'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false // Hide legend
+                        },
+                        tooltip: {
+                            enabled: false // Disable tooltips entirely
+                        }
+                    }
+                }
+            });
+
+            return currentChart;
+        }
+
+        // --- Collapsible Sections Logic (Added) ---
+        function setupCollapsible(headerId, contentId) {
+            const header = document.getElementById(headerId);
+            const content = document.getElementById(contentId);
+
+            if (header && content) {
+                // Ensure content is hidden initially by default, then set max-height to its scrollHeight
+                // to enable smooth transition.
+                content.style.maxHeight = '0px'; 
+                content.style.opacity = '0'; // Initially hidden
+                content.classList.add('collapsible-content'); // Add base class
+
+                header.addEventListener('click', () => {
+                    header.classList.toggle('collapsed');
+                    if (header.classList.contains('collapsed')) {
+                        content.style.maxHeight = '0px';
+                        content.style.opacity = '0';
+                        content.classList.remove('expanded');
+                    } else {
+                        // Set max-height to scrollHeight to allow smooth transition to full height
+                        content.style.maxHeight = content.scrollHeight + 'px';
+                        content.style.opacity = '1';
+                        content.classList.add('expanded');
+                    }
+                });
+
+                // Adjust max-height on window resize to ensure content isn't cut off after expansion
+                window.addEventListener('resize', () => {
+                    if (!header.classList.contains('collapsed')) {
+                        content.style.maxHeight = 'none'; // Temporarily unset to get natural height
+                        content.style.maxHeight = content.scrollHeight + 'px';
+                    }
+                });
+            }
+        }
+
+        // Initial dates from the model
+        const initialStartDate = moment('@Model.StartDate.ToString("yyyy-MM-ddTHH:mm:ss")').toDate();
+        const initialEndDate = moment('@Model.EndDate.ToString("yyyy-MM-ddTHH:mm:ss")').toDate();
+
+        // Initialize Chart on load
+        initializeChart(initialStartDate, initialEndDate);
+
+        // Setup Collapsible sections on load
+        setupCollapsible('topPagesHeader', 'topPagesContent');
+        setupCollapsible('dailyBreakdownHeader', 'dailyBreakdownContent');
+
+
+        // Listen for messages from the parent window (AnalyticsDashboardController)
+        window.addEventListener('message', function(event) {
+            if (event.data && event.data.type === 'updateChart') {
+                const { startDate, endDate } = event.data;
+                initializeChart(new Date(startDate), new Date(endDate));
+            }
         });
+
+        // Inform the parent that we are ready
+        if (window.parent) {
+             window.parent.postMessage({ type: 'iframeReady' }, '*');
+        }
+    })();
     </script>
 </body>
-
 </html>
